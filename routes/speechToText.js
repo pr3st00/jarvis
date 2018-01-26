@@ -1,9 +1,15 @@
+'use strict';
+
 var express = require('express');
 var router = express.Router();
+var factory = require('../services/factory.js');
 
-/* GET users listing. */
 router.post('/', function(req, res, next) {
-    res.json({ text : "Text is : " + req.body.text});
+
+    var response = factory.getProcessor(factory.SPEECH_TO_TEXT, factory.WATSON);
+
+    res.json(response);
+
 });
 
 module.exports = router;
