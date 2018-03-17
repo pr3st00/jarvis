@@ -1,52 +1,37 @@
 'use strict'
 
-var exceptions = require('exceptions.js');
+var exceptions = require('./exceptions');
+var factory = require('./factory');
 
-const ACTION_PLAY = "PLAY";
+const ACTIONS = [ "PLAY",  "HTTPGET", "HTTPOST", "EXECUTE", "STOP"];
 
 /**
- * Processes all the actions returned by the callback function
+ * Process multipleActions executing each action with the processor
  * 
- * @param {*} request 
- * @param {*} callback 
+ * @param {*} multipleActions 
  */
-function processActions(request, callback)
+function process(multipleActions)
 {
-    var actionList = callback(request);
-
-    if (! actionList)
-    {
-        throw new exceptions.ActionServiceError("actionList cannot be empty!");
-    }
-
-    for (action in actionList)
-    {
-        processSingleAction(action);
-    }
+    return processActions(multipleActions, factory.getProcessor());
 }
 
 /**
- * Execute action 
- * 
- * @param {*} action 
+ * Processes all the actions using the processor provided.
+ *   
+ * @param {*} multipleActions 
+ * @param {*} processor 
  */
-function processSingleAction(action)
+function processActions(multipleActions, processor)
 {
-    switch (action)
+    if (! multipleActions)
     {
-        case ACTION_PLAY:
-        break;
-
-        default:
-                processNonStandardAction(action);
-        break;
+        throw new exceptions.ActionServiceError("actions cannot be empty!");
     }
 
-}
-
-function processNonStandardAction(action)
-{
-    console.log("Processing non standard action : " + JSON.stringify(message));
+    for (var i in multipleActions.actions)
+    {
+        processor.process(multipleActions.actions[i]);
+    }
 }
 
 /**
@@ -58,7 +43,7 @@ function buildPlayAction(message)
 {
         return { "actions" : [
         {
-            "action" : ACTION_PLAY,
+            "action" : "PLAY",
             "parameters" : [
                 message
             ],
@@ -67,4 +52,4 @@ function buildPlayAction(message)
     ]};
 }
 
-module.exports = processAction;
+module.exports = { process, buildPlayAction }

@@ -1,17 +1,8 @@
 'use strict'
 
-var actionProcessor = require('../actionsProcessor.js');
-
-function process(request)
+function process(parameters)
 {
-    return actionProcessor.processActions(request, watsonSpeechToText(request));
+    console.log("Need to call speech to text for parameters ", parameters);
 }
 
-function watsonSpeechToText(request)
-{
-    var message = "Hello from Watson!";
-
-    return actionProcessor.buildPlayJson(message);
-}
-
-modules.export = process;
+module.exports = { process };

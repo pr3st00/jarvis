@@ -1,12 +1,5 @@
 {
     "jarvis": {
-        "services": {
-            "textToSpeech": {
-                "implementation": "watson"
-            },
-            "speechToText": {
-                "implementation": "watson"
-            }
-        }
+        "processor": "watson"
     }
 }

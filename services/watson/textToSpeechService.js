@@ -1,17 +1,30 @@
 'use strict'
 
-var actionProcessor = require('../actionsProcessor.js');
+var ogg = require('ogg');
+var opus = require('node-opus');
+var Speaker = require('speaker');
 
-function process(request)
+const TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
+
+const textToSpeech = new TextToSpeechV1({
+  username: '<username>',
+  password: '<password>',
+  version: v1
+});
+
+function process(parameters)
 {
-    return actionProcessor.processActions(request, watsonTextToSpeech(request));
+    var params = {
+        text = parameters[0],
+        accept: 'audio/ogg; codec=opus'
+    }
+
+    textToSpeech.synthesize(params).
+        pipe(new ogg.Decoder()).
+        on('stream', function (opusStream) {
+            opusStream.pipe(new opus.Decoder()).
+            pipe(new Speaker());
+});
 }
 
-function watsonTextToSpeech(request)
-{
-    var message = "Hello from Watson!";
-
-    return actionProcessor.buildPlayJson(message);
-}
-
-modules.export = process;
+module.exports = { process };

@@ -1,19 +1,20 @@
 'use strict'
 
-const SPEECH_TO_TEXT = "SPEECH_TO_TEXT";
+var watsonProcessor = require('./watson/processor');
+
 const WATSON = "WATSON";
 
-var speechToTextService = require('watson/speechToTextService.js');
-
-function getProcessor(processorName, implementation) 
+var getProcessor = function() 
 {   
-    switch (processorName)
+    var implementation = WATSON;
+
+    switch (implementation)
     {
-        case SPEECH_TO_TEXT:
-          if (WATSON == implementation) return speechToTextService; 
+        case WATSON:
+          return watsonProcessor; 
     }
 
     return undefined;
 }
 
-modules.export = getProcessor, SPEECH_TO_TEXT;
+module.exports = { getProcessor };
