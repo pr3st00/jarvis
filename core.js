@@ -9,10 +9,11 @@ jarvis.running = true
 jarvis.start = function() {
     while (this.running) {
 
-        if (keyWordRecognized)
-            {
+        if (keyWordRecognized) {
                 this.speak("Pois nao!");
-            }
+        }
+
+	this.running = false
 
     }
 }
