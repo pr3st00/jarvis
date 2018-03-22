@@ -1,9 +1,7 @@
 'use strict'
 
-var ogg = require('ogg');
-var opus = require('node-opus');
+var wav = require('wav');
 var Speaker = require('speaker');
-var fs = require('fs');
 
 var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 
@@ -18,20 +16,25 @@ function process(parameters)
 
     var params = {
         text: parameters[0],
-        voice: 'en-US_AllisonVoice',
+        voice: 'pt-BR_IsabelaVoice',
         accept: 'audio/wav'
     };    
+
+    var reader = new wav.Reader();
+
+    reader.on('format', function (format) {
+        reader.pipe(new Speaker(format));
+    });
+
+    reader.on('error', function (err) {
+        console.error('Reader error: %s', err);
+    });
 
     textToSpeech.synthesize(params).
         on('error', function(error) {
           console.log('Error:', error);
         }).
-        //pipe(new ogg.Decoder()).
-        //on('stream', function (opusStream) {
-        //    opusStream.pipe(new ogg.Decoder()).
-        //    pipe(new Speaker());
-        //});
-        pipe(fs.createWriteStream('/tmp/hello.wav'));
+        pipe(reader);
 }
 
 module.exports = { process };

@@ -9,10 +9,15 @@ const ACTIONS = [ "PLAY",  "HTTPGET", "HTTPOST", "EXECUTE", "STOP"];
  * Process multipleActions executing each action with the processor
  * 
  * @param {*} multipleActions 
+ * @param {*} onError
  */
-function process(multipleActions)
+function process(multipleActions, onError)
 {
-    return processActions(multipleActions, factory.getProcessor());
+    try {
+        return processActions(multipleActions, factory.getProcessor());
+    } catch (err) {
+        onError(err.message);
+    }
 }
 
 /**

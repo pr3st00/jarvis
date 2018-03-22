@@ -1,12 +1,13 @@
 'use strict'
 
 var watsonProcessor = require('./watson/processor');
+var config = require('./config');
 
 const WATSON = "WATSON";
 
 var getProcessor = function() 
 {   
-    var implementation = WATSON;
+    var implementation = config.getProcessorImplementation();
 
     switch (implementation)
     {

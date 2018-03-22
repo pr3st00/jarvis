@@ -18,7 +18,8 @@
     "request": "^2.85.0",
     "serve-favicon": "~2.4.5",
     "speaker": "^0.4.0",
-    "watson-developer-cloud": "^3.2.1"
+    "watson-developer-cloud": "^3.2.1",
+    "wav": "^1.0.1"
   },
   "devDependencies": {
     "eslint-config-google": "^0.9.1",
