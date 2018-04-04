@@ -26,18 +26,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/speechToText', speechToText);
-app.use('/textToSpeech',textToSpeech);
-app.use('/actions',actions);
+app.use('/textToSpeech', textToSpeech);
+app.use('/actions', actions);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -47,8 +47,11 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+var jarvis = require('./jarvis/core');
 
-var jarvis = require('./core');
+jarvis.on('running', function() {
+  console.log("Jarvis started sucessfully.");
+})
 
 jarvis.start();
 

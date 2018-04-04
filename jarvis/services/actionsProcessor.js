@@ -3,7 +3,7 @@
 var exceptions = require('./exceptions');
 var factory = require('./factory');
 
-const ACTIONS = [ "PLAY",  "HTTPGET", "HTTPOST", "EXECUTE", "STOP"];
+const ACTIONS = ["PLAY", "HTTPGET", "HTTPOST", "EXECUTE", "STOP"];
 
 /**
  * Process multipleActions executing each action with the processor
@@ -11,8 +11,7 @@ const ACTIONS = [ "PLAY",  "HTTPGET", "HTTPOST", "EXECUTE", "STOP"];
  * @param {*} multipleActions 
  * @param {*} onError
  */
-function process(multipleActions, onError)
-{
+function process(multipleActions, onError) {
     try {
         return processActions(multipleActions, factory.getProcessor());
     } catch (err) {
@@ -26,15 +25,12 @@ function process(multipleActions, onError)
  * @param {*} multipleActions 
  * @param {*} processor 
  */
-function processActions(multipleActions, processor)
-{
-    if (! multipleActions)
-    {
+function processActions(multipleActions, processor) {
+    if (!multipleActions) {
         throw new exceptions.ActionServiceError("actions cannot be empty!");
     }
 
-    for (var i in multipleActions.actions)
-    {
+    for (var i in multipleActions.actions) {
         processor.process(multipleActions.actions[i]);
     }
 }
@@ -44,17 +40,18 @@ function processActions(multipleActions, processor)
  * 
  * @param {*} message 
  */
-function buildPlayAction(message)
-{
-        return { "actions" : [
-        {
-            "action" : "PLAY",
-            "parameters" : [
-                message
-            ],
-            "synchronous" : true
-        }
-    ]};
+function buildPlayAction(message) {
+    return {
+        "actions": [
+            {
+                "action": "PLAY",
+                "parameters": [
+                    message
+                ],
+                "synchronous": true
+            }
+        ]
+    };
 }
 
 module.exports = { process, buildPlayAction }

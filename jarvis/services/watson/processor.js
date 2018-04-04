@@ -6,7 +6,7 @@ var ttsService = require('./textToSpeechService');
 function process(singleAction) {
 
     switch (singleAction.action) {
-        
+
         case "PLAY":
             ttsService.process(singleAction.parameters);
             break;

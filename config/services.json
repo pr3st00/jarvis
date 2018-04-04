@@ -1,5 +1,22 @@
 {
     "jarvis": {
-        "processor": "WATSON"
+        "processor": "WATSON",
+        "dialogs": {
+            "not_recognized": "Desculpe, nao entendi.",
+            "greeting": "Oi Manu"
+        },
+        "services": {
+            "text_to_speech": {
+                "username": "89163d74-3d65-41e3-b97e-879bfc240c50",
+                "password": "Kq4aGlRIcErq",
+                "voice": "pt-BR_IsabelaVoice"
+            },
+            "speech_to_text": {
+                "username": "89163d74-3d65-41e3-b97e-879bfc240c50",
+                "password": "Kq4aGlRIcErq",
+                "voice": "pt-BR_IsabelaVoice"
+            }
+
+        }
     }
 }

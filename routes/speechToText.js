@@ -2,7 +2,7 @@
 
 var express = require('express');
 var router = express.Router();
-var factory = require('../services/factory.js');
+var factory = require('../jarvis/services/factory.js');
 
 router.post('/', function(req, res, next) {
 

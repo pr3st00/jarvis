@@ -1,8 +1,7 @@
 'use strict'
 
 class ActionServiceError extends Error {
-    constructor(message)
-    {
+    constructor(message) {
         super(message);
     }
 }

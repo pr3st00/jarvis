@@ -5,14 +5,12 @@ var config = require('./config');
 
 const WATSON = "WATSON";
 
-var getProcessor = function() 
-{   
+var getProcessor = function () {
     var implementation = config.getProcessorImplementation();
 
-    switch (implementation)
-    {
+    switch (implementation) {
         case WATSON:
-          return watsonProcessor; 
+            return watsonProcessor;
     }
 
     return undefined;
