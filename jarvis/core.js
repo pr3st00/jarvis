@@ -7,56 +7,86 @@ const EventEmitter = require('events');
 
 var processor = require('./services/actionsProcessor');
 var config = require('./services/config').getConfig();
+var player = require('./services/player');
+
+// TODO: Make platform agnostic
+var sttService = require('./services/watson/speechToTextService');
+var dialogService = require('./services/watson/dialogService');
 
 var emitter = new EventEmitter();
 var jarvis = {};
 
-jarvis.init = function() {
+const WAITING_FOR_COMMAND_WAV = "./jarvis/resources/ding.wav";
+const COMMAND_TEMP_WAV = '/tmp/command.wav';
+
+jarvis.init = function () {
     this.busy = false;
     emitter = new EventEmitter();
 }
 
-jarvis.listen = function() {
-    console.log("Listening");
+jarvis.listen = function () {
+    emitAndLog('listening');
+    player.recordFile(
+        COMMAND_TEMP_WAV,
+        function () {
+            sttService.process(
+                COMMAND_TEMP_WAV,
+                function (text) {
+                    dialogService.process(text,
+                        function (actions) {
+                            /**
+                             * Process all actions and then listens
+                             * for keyword again
+                             */
+                            processor.process(actions, onError);
+                            waitForHotWord();
+                        });
+                    }, 
+                    function(message) { onError(message); }
+            )
+        }
+    );
 }
 
 jarvis.start = function () {
     this.init();
-    waitForCommand();
-    emitter.emit('running');
+    //jarvis.processCommand();
+    waitForHotWord();
+    emitAndLog('running');
 }
 
-jarvis.on = function(event, callback) {
+jarvis.on = function (event, callback) {
     emitter.on(event, callback);
 }
 
-jarvis.isBusy = function () {
-    return this.busy;
+jarvis.processCommand = function () {
+    if (!jarvis.busy) {
+        jarvis.busy = true;
+
+        emitAndLog('hotword');
+
+        player.play(WAITING_FOR_COMMAND_WAV);
+        jarvis.listen();
+    }
+
 }
 
 jarvis.speak = function (text) {
-
-    if (this.isBusy()) {
-        console.error("Busy");
-        return;
-    }
-
     emitter.emit('speaking', text);
-
-    this.busy = true;
     processor.process(processor.buildPlayAction(text), onError);
-    this.busy = false;
 }
 
-function onError() {
-    console.error(config.jarvis.dialogs.not_recognized);
-    emitter.emit('error');
-    this.busy = false;
+function onError(message) {
+    console.error(message || config.jarvis.dialogs.not_recognized);
+    //emitter.emit('error');
+    waitForHotWord();
 }
 
-function waitForCommand() {
+function waitForHotWord() {
 
     const models = new Models();
+
+    jarvis.busy = false;
 
     models.add({
         file: 'jarvis/resources/jarvis-ptbr.pmdl',
@@ -86,9 +116,8 @@ function waitForCommand() {
 
     detector.on('hotword', function (index, hotword, buffer) {
         console.log('Hotword [' + hotword + "] received at index [" + index + "]");
-        emitter.emit('hotword');
-        jarvis.speak(config.jarvis.dialogs.greeting);
-        jarvis.listen();
+        record.stop()
+        jarvis.processCommand();
     });
 
     const mic = record.start({
@@ -98,6 +127,12 @@ function waitForCommand() {
     });
 
     mic.pipe(detector);
+
 }
 
+function emitAndLog(event) {
+    console.log("Emmiting event: [" + event + "]");
+    emitter.emit(event);
+
+}
 exports = module.exports = jarvis;

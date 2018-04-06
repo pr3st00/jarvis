@@ -12,11 +12,12 @@
                 "voice": "pt-BR_IsabelaVoice"
             },
             "speech_to_text": {
-                "username": "89163d74-3d65-41e3-b97e-879bfc240c50",
-                "password": "Kq4aGlRIcErq",
-                "voice": "pt-BR_IsabelaVoice"
+                "password": "OOH6Z1dQhnpw",
+                "username": "24c3e489-c30c-465a-88c7-f8874ea072c6"
+            },
+            "dialog": {
+                "url": "http://pr3st00iot.mybluemix.net/jarvisdialog"
             }
-
         }
     }
 }

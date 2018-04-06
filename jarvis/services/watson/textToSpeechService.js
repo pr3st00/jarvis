@@ -1,10 +1,12 @@
 'use strict'
 
-var fs = require('fs');
-var Speaker = require('speaker');
 var config = require('../config').getConfig();
+var fs = require('fs');
+var player = require('../player');
 
 var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
+
+const AUDIO_FILE = '/tmp/out.wav';
 
 function process(parameters) {
     console.log("Invoking tts with text [" + parameters[0] + "]");
@@ -23,20 +25,9 @@ function process(parameters) {
     };
 
     textToSpeech.synthesize(params)
-        .pipe(fs.createWriteStream('/tmp/out.wav'))
+        .pipe(fs.createWriteStream(AUDIO_FILE))
         .on('close', function () {
-            var speaker = new Speaker({
-                channels: 1,
-                bitDepth: 16,
-                sampleRate: 22050,
-                device: "hw:0,0"
-            });
-
-            speaker.on('error', function (err) {
-                console.error('Speaker error : %s', err);
-            });
-
-            fs.createReadStream('/tmp/out.wav').pipe(speaker);
+            player.play(AUDIO_FILE);
         });
 
 }
