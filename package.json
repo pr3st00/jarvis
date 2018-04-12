@@ -11,6 +11,7 @@
     "debug": "~2.6.9",
     "express": "~4.15.5",
     "morgan": "~1.9.0",
+    "node-cmd": "^3.0.0",
     "node-opus": "^0.2.7",
     "node-record-lpcm16": "^0.3.0",
     "ogg": "^1.2.5",

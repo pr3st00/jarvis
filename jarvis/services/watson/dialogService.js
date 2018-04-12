@@ -4,7 +4,7 @@ var config = require('../config').getConfig();
 var request = require('request');
 
 function process(text, callback) {
-    console.log("Calling dialog with text [" + text + "]");
+    console.log("[SERVICE_CALL] Calling dialog with text [" + text + "]");
 
     var serviceConfig = config.jarvis.services.dialog;
 

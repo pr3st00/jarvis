@@ -47,12 +47,8 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-var jarvis = require('./jarvis/core');
+var core = require('./jarvis/core');
 
-jarvis.on('running', function() {
-  console.log("Jarvis started sucessfully.");
-})
-
-jarvis.start();
+core.startHotWordDetector();
 
 module.exports = app;

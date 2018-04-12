@@ -7,7 +7,7 @@ const record = require('node-record-lpcm16');
 var SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 
 function process(file, callback, errorCallBack) {
-    console.log("Calling stt with parameters [" + file + "]");
+    console.log("[SERVICE_CALL] Calling stt with parameters [" + file + "]");
 
     var serviceConfig = config.jarvis.services.speech_to_text;
 
@@ -29,7 +29,7 @@ function process(file, callback, errorCallBack) {
         else {
             //No answer found   = {"results":[],"result_index":0}
             //Sucessfully found = {"results":[{"alternatives":[{"confidence":0.191,"transcript":"fã "}],"final":true}],"result_index":0}
-            //console.log(JSON.stringify(transcript));
+            console.log(JSON.stringify(transcript));
             if (transcript.results[0] &&
                 transcript.results[0].alternatives[0]) {
                 callback(transcript.results[0].alternatives[0].transcript);

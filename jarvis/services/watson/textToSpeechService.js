@@ -9,7 +9,7 @@ var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 const AUDIO_FILE = '/tmp/out.wav';
 
 function process(parameters) {
-    console.log("Invoking tts with text [" + parameters[0] + "]");
+    console.log("[SERVICE_CALL] Caling tts with text [" + parameters[0] + "]");
 
     var serviceConfig = config.jarvis.services.text_to_speech;
 

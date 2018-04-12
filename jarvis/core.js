@@ -4,89 +4,48 @@ const record = require('node-record-lpcm16');
 const Detector = require('snowboy').Detector;
 const Models = require('snowboy').Models;
 const EventEmitter = require('events');
+const fs = require('fs');
+const player = require('./services/player')
 
-var processor = require('./services/actionsProcessor');
-var config = require('./services/config').getConfig();
-var player = require('./services/player');
-
-// TODO: Make platform agnostic
-var sttService = require('./services/watson/speechToTextService');
-var dialogService = require('./services/watson/dialogService');
-
-var emitter = new EventEmitter();
-var jarvis = {};
-
-const WAITING_FOR_COMMAND_WAV = "./jarvis/resources/ding.wav";
 const COMMAND_TEMP_WAV = '/tmp/command.wav';
+const WAITING_FOR_COMMAND_WAV = "./jarvis/resources/ding.wav";
 
-jarvis.init = function () {
-    this.busy = false;
-    emitter = new EventEmitter();
-}
+/**
+ * Controls how we save buffers
+ */
+const SILENCE_MAX_EVENTS = 5;
+const COMMAND_MIN_CHUNKS = 10;
+const SKIP_FIRST_CHUNK = false;
 
-jarvis.listen = function () {
-    emitAndLog('listening');
-    player.recordFile(
-        COMMAND_TEMP_WAV,
-        function () {
-            sttService.process(
-                COMMAND_TEMP_WAV,
-                function (text) {
-                    dialogService.process(text,
-                        function (actions) {
-                            /**
-                             * Process all actions and then listens
-                             * for keyword again
-                             */
-                            processor.process(actions, onError);
-                            waitForHotWord();
-                        });
-                    }, 
-                    function(message) { onError(message); }
-            )
-        }
-    );
-}
+var waiting_for_command = false;
+var command_received = false;
+var silence_events = 0;
+var command_events = 0;
 
-jarvis.start = function () {
-    this.init();
-    //jarvis.processCommand();
-    waitForHotWord();
-    emitAndLog('running');
-}
+var FINALBUFFER = new Buffer('');
+var emitter = new EventEmitter();
 
-jarvis.on = function (event, callback) {
-    emitter.on(event, callback);
-}
+var jarvis = require('./jarvis');
+jarvis.init();
 
-jarvis.processCommand = function () {
-    if (!jarvis.busy) {
-        jarvis.busy = true;
-
-        emitAndLog('hotword');
-
-        player.play(WAITING_FOR_COMMAND_WAV);
-        jarvis.listen();
+function saveCommandBuffer(buffer) {
+    /**
+     * Skips the very first chunk after the keyword
+     */
+    if (command_events === 0 && SKIP_FIRST_CHUNK) {
+        return;
     }
 
+    console.log('[CORE] Saving command buffer.');
+    FINALBUFFER = saveBuffer(buffer, FINALBUFFER);
+
+    command_events++;
+    command_received = true;
 }
 
-jarvis.speak = function (text) {
-    emitter.emit('speaking', text);
-    processor.process(processor.buildPlayAction(text), onError);
-}
-
-function onError(message) {
-    console.error(message || config.jarvis.dialogs.not_recognized);
-    //emitter.emit('error');
-    waitForHotWord();
-}
-
-function waitForHotWord() {
+function startHotWordDetector() {
 
     const models = new Models();
-
-    jarvis.busy = false;
 
     models.add({
         file: 'jarvis/resources/jarvis-ptbr.pmdl',
@@ -101,38 +60,85 @@ function waitForHotWord() {
     });
 
     detector.on('silence', function () {
+        if (waiting_for_command && command_received) {
+
+            if (silence_events++ <= SILENCE_MAX_EVENTS) {
+                return;
+            }
+
+            if (command_events < COMMAND_MIN_CHUNKS) {
+                return;
+            }
+
+            command_events = 0;
+            waiting_for_command = false;
+
+            console.log("[CORE] Processing command.");
+            player.createWavFile(FINALBUFFER, COMMAND_TEMP_WAV,
+                function () {
+                    jarvis.processCommand(COMMAND_TEMP_WAV, function () {
+                        command_received = false;
+                        FINALBUFFER = new Buffer('');
+                    });
+                }, this);
+        }
+
         if (new Date().getSeconds() == 0) {
-            console.log('..silence..');
+            console.log('[CORE] Silence. [waiting_for_comand=' + waiting_for_command + ', command_received=' + command_received + ', events = ' + silence_events + ']');
         }
     });
 
     detector.on('sound', function (buffer) {
-        console.log('Sound detected.');
+        silence_events = 0;
+
+        if (waiting_for_command) {
+            saveCommandBuffer(buffer);
+        }
+        else {
+            console.log('[CORE] Sound detected.');
+        }
     });
 
     detector.on('error', function () {
-        console.log('error');
+        console.log('[ERROR] error');
     });
 
     detector.on('hotword', function (index, hotword, buffer) {
-        console.log('Hotword [' + hotword + "] received at index [" + index + "]");
-        record.stop()
-        jarvis.processCommand();
+        silence_events = 0;
+
+        if (waiting_for_command) {
+            saveCommandBuffer(buffer);
+            return;
+        }
+
+        console.log('[CORE] Hotword [' + hotword + "] received at index [" + index + "]");
+        player.play(WAITING_FOR_COMMAND_WAV);
+
+        waiting_for_command = true;
     });
 
     const mic = record.start({
         threshold: 0,
+        channels: 1,
+        sampleRate: 48000,
         device: "hw:1,0",
         verbose: false
     });
 
     mic.pipe(detector);
 
+    emitAndLog('wating_hotword');
+
+}
+
+function saveBuffer(buffer, finalBuffer) {
+    var newBuffer = Buffer.concat([finalBuffer, buffer]);
+    return newBuffer;
 }
 
 function emitAndLog(event) {
-    console.log("Emmiting event: [" + event + "]");
+    console.log("[EVENT] " + event);
     emitter.emit(event);
-
 }
-exports = module.exports = jarvis;
+
+exports = module.exports = { startHotWordDetector };
