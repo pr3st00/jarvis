@@ -9,13 +9,15 @@ const ACTIONS = ["PLAY", "HTTPGET", "HTTPOST", "EXECUTE", "STOP"];
  * Process multipleActions executing each action with the processor
  * 
  * @param {*} multipleActions 
- * @param {*} onError
+ * @param {*} errorCallBack
+ * @param {*} successCallBack
  */
-function process(multipleActions, onError) {
+function process(multipleActions, errorCallBack, successCallBack) {
     try {
-        return processActions(multipleActions, factory.getProcessor());
+        processActions(multipleActions, factory.getProcessor());
+        successCallBack();
     } catch (err) {
-        onError(err.message);
+        errorCallBack(err.message);
     }
 }
 
@@ -24,8 +26,9 @@ function process(multipleActions, onError) {
  *   
  * @param {*} multipleActions 
  * @param {*} processor 
+ * @param {*} callback
  */
-function processActions(multipleActions, processor) {
+function processActions(multipleActions, processor, callback) {
     if (!multipleActions) {
         throw new exceptions.ActionServiceError("actions cannot be empty!");
     }
@@ -33,6 +36,8 @@ function processActions(multipleActions, processor) {
     for (var i in multipleActions.actions) {
         processor.process(multipleActions.actions[i]);
     }
+
+    callback();
 }
 
 /**

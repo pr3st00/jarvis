@@ -19,13 +19,14 @@ jarvis.init = function () {
     emitter = new EventEmitter();
 }
 
-jarvis.process = function (fileName, callback) {
+jarvis.processCommandFile = function (fileName, callback) {
+
+    emitAndLog('processing_command');
 
     var sucessCallback = function (text) {
         dialogService.process(text,
             function (actions) {
-                processor.process(actions, onError);
-                callback();
+                processor.process(actions, onError, callback);
             });
     };
 
@@ -47,11 +48,6 @@ jarvis.start = function () {
 
 jarvis.on = function (event, callback) {
     emitter.on(event, callback);
-}
-
-jarvis.processCommand = function (fileName, callback) {
-        emitAndLog('processing_command');
-        jarvis.process(fileName, callback);
 }
 
 jarvis.speak = function (text) {

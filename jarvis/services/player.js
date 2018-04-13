@@ -109,20 +109,21 @@ function appendWavHeader(buffer, detector) {
 
 }
 
-function createWavFile(buffer, fileName, callback, detector) {
+function createWavFile(buffer, fileName, callback) {
     console.log("[CORE] Creating command file. [filename=" + fileName + ']')
 
     var writer = new wav.FileWriter(fileName);
 
-    writer.on('done', function () {
-        setTimeout(callback, 3000);
-    });
+    //writer.on('done', function () {
+    //    setTimeout(callback, 3000);
+    //});
+
+    writer.on('done', function () { callback() });
 
     writer.write(buffer);
     writer.end();
 
     //fs.writeFileSync(fileName,player.appendWavHeader(buffer,detector));
-
     //callback();
 }
 

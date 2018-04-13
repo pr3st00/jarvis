@@ -7,15 +7,18 @@ const EventEmitter = require('events');
 const fs = require('fs');
 const player = require('./services/player')
 
-const COMMAND_TEMP_WAV = '/tmp/command.wav';
+const COMMAND_TEMP_WAV = '/tmp/command#date#.wav';
 const WAITING_FOR_COMMAND_WAV = "./jarvis/resources/ding.wav";
 
 /**
  * Controls how we save buffers
  */
-const SILENCE_MAX_EVENTS = 5;
+const SILENCE_MIN_EVENTS = 5;
+const SILENCE_MAX_EVENTS = 100;
 const COMMAND_MIN_CHUNKS = 10;
 const SKIP_FIRST_CHUNK = false;
+
+const WAIT_FOR_JARVIS_TIME = 8000;
 
 var waiting_for_command = false;
 var command_received = false;
@@ -30,7 +33,7 @@ jarvis.init();
 
 function saveCommandBuffer(buffer) {
     /**
-     * Skips the very first chunk after the keyword
+     * Skips the very first chunk after the keyword. Usually it's the beep!
      */
     if (command_events === 0 && SKIP_FIRST_CHUNK) {
         return;
@@ -49,7 +52,7 @@ function startHotWordDetector() {
 
     models.add({
         file: 'jarvis/resources/jarvis-ptbr.pmdl',
-        sensitivity: '0.40',
+        sensitivity: '0.50',
         hotwords: 'jarvis'
     });
 
@@ -62,25 +65,35 @@ function startHotWordDetector() {
     detector.on('silence', function () {
         if (waiting_for_command && command_received) {
 
-            if (silence_events++ <= SILENCE_MAX_EVENTS) {
+            if (silence_events++ <= SILENCE_MIN_EVENTS) {
                 return;
             }
 
-            if (command_events < COMMAND_MIN_CHUNKS) {
+            if (command_events < COMMAND_MIN_CHUNKS &&
+                silence_events <= SILENCE_MAX_EVENTS
+            ) {
                 return;
             }
 
             command_events = 0;
             waiting_for_command = false;
 
+            var commandFile = COMMAND_TEMP_WAV.replace('#date#', Date.now());
+
             console.log("[CORE] Processing command.");
-            player.createWavFile(FINALBUFFER, COMMAND_TEMP_WAV,
+            player.createWavFile(FINALBUFFER, commandFile,
                 function () {
-                    jarvis.processCommand(COMMAND_TEMP_WAV, function () {
-                        command_received = false;
-                        FINALBUFFER = new Buffer('');
+                    jarvis.processCommandFile(commandFile, function () {
+                        /**
+                         * Give it sometime for JARVIS to talk.
+                         * Avoid Jarvis responding to itself :-)
+                         */
+                        setTimeout(function () {
+                            command_received = false;
+                            FINALBUFFER = new Buffer('');
+                        }, WAIT_FOR_JARVIS_TIME);
                     });
-                }, this);
+                });
         }
 
         if (new Date().getSeconds() == 0) {
@@ -108,6 +121,10 @@ function startHotWordDetector() {
 
         if (waiting_for_command) {
             saveCommandBuffer(buffer);
+            return;
+        }
+
+        if (command_received) {
             return;
         }
 

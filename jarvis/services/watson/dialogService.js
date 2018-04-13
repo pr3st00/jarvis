@@ -15,6 +15,7 @@ function process(text, callback) {
         }
     },
     function (err, httpResponse, body) {
+        console.log(body);
         callback(body);
     });
 
