@@ -47,8 +47,4 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-var core = require('./jarvis/core');
-
-core.startHotWordDetector();
-
 module.exports = app;

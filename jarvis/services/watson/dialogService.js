@@ -11,13 +11,19 @@ function process(text, callback) {
     request.post({
         url: serviceConfig.url,
         json: {
-            "parameter" : text
+            "parameter": text
         }
     },
-    function (err, httpResponse, body) {
-        console.log(body);
-        callback(body);
-    });
+        function (err, httpResponse, body) {
+            console.log(body);
+
+            if (err) {
+                callback(err);
+            }
+            else {
+                callback(body);
+            }
+        });
 
 }
 

@@ -4,17 +4,6 @@ const fs = require('fs');
 const Speaker = require('speaker');
 const record2 = require('node-record-lpcm16');
 const wav = require('wav');
-const cmd = require('node-cmd');
-
-function recordVoiceCommand(fileName, callback) {
-    cmd.get(
-        'jarvis/scripts/detectVoiceCommand.sh ' + fileName,
-        function (err, data, stderr) {
-            console.log(err, data, stderr);
-            callback(data);
-        }
-    );
-}
 
 function recordFile(fileName, callback) {
 
@@ -114,17 +103,11 @@ function createWavFile(buffer, fileName, callback) {
 
     var writer = new wav.FileWriter(fileName);
 
-    //writer.on('done', function () {
-    //    setTimeout(callback, 3000);
-    //});
-
-    writer.on('done', function () { callback() });
+    writer.on('done', function () { setTimeout(callback, 1000) });
+    writer.on('error', function (err) { console.error(err); });
 
     writer.write(buffer);
     writer.end();
-
-    //fs.writeFileSync(fileName,player.appendWavHeader(buffer,detector));
-    //callback();
 }
 
 module.exports = { play, recordFile, appendWavHeader, createWavFile }

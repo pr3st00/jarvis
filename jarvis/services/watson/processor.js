@@ -2,6 +2,7 @@
 
 var sttService = require('./speechToTextService');
 var ttsService = require('./textToSpeechService');
+var defaultProcessor = require('../defaultProcessor');
 
 function process(singleAction) {
 
@@ -9,6 +10,10 @@ function process(singleAction) {
 
         case "PLAY":
             ttsService.process(singleAction.parameters);
+            break;
+
+        case "EXECUTE":
+            defaultProcessor.process(singleAction.parameters);
             break;
 
     }

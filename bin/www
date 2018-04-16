@@ -34,6 +34,10 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+var core = require('../jarvis/core');
+core.setIO(io);
+core.startHotWordDetector();
+
 /**
  * Normalize a port into a number, string, or false.
  */

@@ -37,7 +37,7 @@ function processActions(multipleActions, processor, callback) {
         processor.process(multipleActions.actions[i]);
     }
 
-    callback();
+    //callback();
 }
 
 /**
