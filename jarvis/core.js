@@ -11,7 +11,7 @@ const COMMAND_TEMP_WAV = '/tmp/command#date#.wav';
  * Controls how we save buffers
  */
 const SILENCE_MIN_EVENTS = 5;
-const SILENCE_MAX_EVENTS = 100;
+const SILENCE_MAX_EVENTS = 60;
 const COMMAND_MIN_CHUNKS = 10;
 const SKIP_FIRST_CHUNK = false;
 
@@ -32,20 +32,27 @@ function setIO(_io) {
     io = _io;
 }
 
-jarvis.on('error', function (err) {
+function dumpFlags() {
+    console.log('[CORE] STATUS [waiting_for_comand=' + waiting_for_command + ', processing_command=' + processing_command + ', events = ' + silence_events + ']');
+    setTimeout(dumpFlags, 20000);
+}
 
-    console.log("[ERROR] " + err);
-
-    io.emit('error', JSON.stringify({ status: "ERROR", text: err.message}));
-
+function resetFlags() {
     waiting_for_command = false;
     processing_command = false;
     silence_events = 0;
     command_events = 0;
+}
+
+jarvis.on('error', function (err) {
+    console.log("[ERROR] " + err);
+    io.emit('error', JSON.stringify({ status: "ERROR", text: err.message}));
+    resetFlags();
+
 });
 
 jarvis.on('speaking', function (event) {
-    io.emit('speaking', event);
+    io.emit('speaking', JSON.stringify(event));
 });
 
 jarvis.on('waiting_for_command', function (event) {
@@ -55,7 +62,6 @@ jarvis.on('waiting_for_command', function (event) {
 jarvis.on('processing_command', function (event) {
     io.emit('waiting_for_command', JSON.stringify({ status: "PROCESSING", text: "Proccesing command..."}));
 });
-
 
 
 /**
@@ -87,14 +93,15 @@ function startHotWordDetector() {
 
     models.add({
         file: 'jarvis/resources/jarvis-ptbr.pmdl',
-        sensitivity: '0.90',
+        sensitivity: '0.50',
         hotwords: 'jarvis'
     });
 
     const detector = new Detector({
         resource: "jarvis/resources/common.res",
         models: models,
-        audioGain: 2.0
+        audioGain: 1.0,
+        applyFrontend: false
     });
 
     detector.on('silence', function () {
@@ -108,7 +115,7 @@ function startHotWordDetector() {
         }
 
         if (new Date().getSeconds() == 0) {
-            console.log('[CORE] Silence. [waiting_for_comand=' + waiting_for_command + ', processing_command=' + processing_command + ', events = ' + silence_events + ']');
+            console.log('[CORE] Silence.');
         }
     });
 
@@ -156,8 +163,8 @@ function startHotWordDetector() {
 
     mic.pipe(detector);
 
-    logStatus('wating_hotword');
-
+    logStatus('STARTED');
+    dumpFlags();
 }
 
 function saveBuffer(buffer, finalBuffer) {

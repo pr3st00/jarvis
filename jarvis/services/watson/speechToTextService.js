@@ -29,8 +29,8 @@ function processWithRest(file, callback, errorCallBack) {
         audio: fs.createReadStream(file),
         content_type: 'audio/wav',
         timestamps: false,
-        model: serviceConfig.model
-        //acoustic_customization_id: serviceConfig.acoustic_customization_id
+        model: serviceConfig.model,
+        acoustic_customization_id: serviceConfig.acoustic_customization_id
     };
 
     speech_to_text.recognize(params, function (error, transcript) {

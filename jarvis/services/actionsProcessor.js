@@ -4,7 +4,15 @@ var exceptions = require('./exceptions');
 var factory = require('./factory');
 
 const ACTIONS = ["PLAY", "HTTPGET", "HTTPOST", "EXECUTE", "STOP"];
+var _jarvis;
 
+/**
+ * 
+ * @param {*} jarvis 
+ */
+function setJarvis(jarvis) {
+    _jarvis = jarvis;
+}
 /**
  * Process multipleActions executing each action with the processor
  * 
@@ -33,6 +41,8 @@ function processActions(multipleActions, processor, callback) {
         throw new exceptions.ActionServiceError("actions cannot be empty!");
     }
 
+    processor.setJarvis(_jarvis);
+    
     for (var i in multipleActions.actions) {
         processor.process(multipleActions.actions[i]);
     }
@@ -59,4 +69,4 @@ function buildPlayAction(message) {
     };
 }
 
-module.exports = { process, buildPlayAction }
+module.exports = { process, buildPlayAction, setJarvis }

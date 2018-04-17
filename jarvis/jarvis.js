@@ -27,6 +27,7 @@ class Jarvis extends EventEmitter {
         this.emit('processing_command');
 
         var _jarvis = this;
+        processor.setJarvis(this);
 
         var errorCallback = function (message) {
             callback();
@@ -36,7 +37,12 @@ class Jarvis extends EventEmitter {
         var sucessCallback = function (text) {
             dialogService.process(text,
                 function (actions) {
-                    processor.process(actions, _jarvis.onError("Error in dialog service"), function () {
+                    processor.process(actions, 
+                    function () { 
+                        callback()
+                        _jarvis.onError("Error in dialog service") 
+                    }, 
+                    function () {
                         callback();
                         _jarvis.busy = false;
                     });
@@ -60,9 +66,9 @@ class Jarvis extends EventEmitter {
         player.play(WAITING_FOR_COMMAND_WAV);
     }
 
-    speak(text) {
-        this.emit('speaking', { status: SPEAKING, messsage: text } );
-        processor.process(processor.buildPlayAction(text), this.onError("Error speaking."));
+    speak(message) {
+        this.emit('speaking', { status: SPEAKING, text: message });
+        processor.process(processor.buildPlayAction(message), this.onError("Error speaking."));
     }
 
     onError(message) {

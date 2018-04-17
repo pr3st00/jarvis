@@ -23,30 +23,79 @@
 
       var socket = io();
 
+      function say(text) {
+        var url = 'https://api.voicerss.org/?key=f716f782b498444c95b14a63fe05a917&hl=pt-br&r=2&src=' + encodeURIComponent(text);
+        var a = new Audio(url);
+        a.play();
+      }
+
+      function fillWithZero(number) {
+        if (number < 10) {
+          return "0" + number;
+        }
+
+        return number;
+      }
+
       function setDateAndTime() {
         var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        
         var today = new Date();
 
         $("#day").text(today.getDate());
         $("#dayofweek").text(days[today.getDay()]);
         $("#month").text(months[today.getMonth()]);
-        $("#hour").text(today.getHours() + ":" + today.getMinutes());
-        $("#minutes").text(today.getHours() + ":" + today.getMinutes());
-        $("#seconds").text(today.getSeconds());
+        $("#hour").text(fillWithZero(today.getHours()) + ":" + fillWithZero(today.getMinutes()));
+        $("#minutes").text(fillWithZero(today.getHours()) + ":" + fillWithZero(today.getMinutes()));
+        $("#seconds").text(fillWithZero(today.getSeconds()));
 
         setTimeout(setDateAndTime, 1000);
       }
 
-      setDateAndTime();
+      function getSystemResources() {
 
-      function updateStatus(msg) {
+        var response;
+
+        $.ajax({
+          type: "GET",
+          url: "/systemresources",
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          async: false,
+          success: function (data) { response = data; },
+          failure: function (errMsg) { alert(errMsg); }
+        });
+
+        return response;
+      }
+
+      function setSystemResources() {
+
+        var response = getSystemResources();
+
+        $("#proc").text("Processes: " + response.processes);
+        $("#cpu").text("CPU Usage: " + response.cpu + "%");
+        $("#mem").text("Memory: " + response.memory + "%");
+
+        setTimeout(setSystemResources, 10000);
+
+      }
+
+      setDateAndTime();
+      setSystemResources();
+
+      function updateStatus(msg, play) {
         console.log("Received :" + msg);
 
         var event = JSON.parse(msg);
 
         if (event.text) {
           $("#note_input").val(event.text);
+
+          if (play) {
+            say(event.text);
+          }
         }
 
         if (event.status) {
@@ -55,11 +104,10 @@
 
       }
 
-      socket.on('speaking', updateStatus);
-      socket.on('processing_command', updateStatus);
-      socket.on('waiting_for_command', updateStatus);
-      socket.on('error', updateStatus);
-
+      socket.on('speaking', function (mesg) { updateStatus(mesg, true) });
+      socket.on('processing_command', function (mesg) { updateStatus(mesg, false) });
+      socket.on('waiting_for_command', function (mesg) { updateStatus(mesg, false) });
+      socket.on('error', function (mesg) { updateStatus(mesg, false) });
 
     });
   </script>
@@ -78,8 +126,8 @@
 
       <div id="time" class="arc e1">
         <div id="hour" style="font-size: 23px; margin-left: -10px; margin-top: 23px;"></div>
-        <div id="seconds" style="font-size: 15px; margin-left: 40px; margin-top: -30px; display; inline;"></div>
-        <div id="dayofweek" style="font-size: 17px; margin-top: 10px;"></div>
+        <div id="seconds" style="font-size: 7px; margin-left: 40px; margin-top: -35px; display; inline;"></div>
+        <div id="dayofweek" style="font-size: 17px; margin-top: 20px;"></div>
       </div>
     </div>
 
@@ -91,11 +139,11 @@
   </span> <br/>
 
     <span class="menuitem entypo-chart-area" style="font-size: 30px; margin-left: 10px;">
-    <p id="ram" class="caption" style="font-size: 20px;">Memory: 28%</p>
+    <p id="mem" class="caption" style="font-size: 20px;"></p>
   </span> <br/>
 
     <span class="menuitem entypo-chart-pie" style="font-size: 30px; margin-left: 10px;">
-    <p id="proc" class="caption" style="font-size: 20px;">Processes: 73</p>
+    <p id="proc" class="caption" style="font-size: 20px;"></p>
   </span>
 
     <p class="title">Status</p>
@@ -111,6 +159,7 @@
 
     <div class="hline title_underline"></div>
 
+    <!--
     <div class="app_icon entypo-facebook-squared"></div>
     <div class="app_icon entypo-twitter"></div>
     <div class="app_icon entypo-gplus"></div>
@@ -120,17 +169,18 @@
     <div class="app_icon entypo-pinterest"></div>
     <div class="app_icon entypo-soundcloud"></div>
     <div class="app_icon entypo-stumbleupon"></div>
+    -->
 
   </div>
 
 
   <!-- Right Menu -->
   <div id="rightmenu">
-    <p class="title" style="text-align: left; margin-left: 10px;">JARVIS</p>
+    <p class="title" style="text-align: left; margin-left: 25px;">MESSAGES</p>
     <div id="particle10" class="hline"></div>
     <div id="particle11" class="hline"></div>
     <div id="particle12" class="vline"></div>
-    <textarea id="note_input" rows="12" cols="44">...</textarea>
+    <textarea id="note_input" rows="20" cols="44">...</textarea>
   </div>
 
 

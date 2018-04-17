@@ -22,6 +22,7 @@
     "snowboy": "^1.2.0",
     "socket.io": "^2.1.0",
     "speaker": "^0.4.0",
+    "systeminformation": "^3.38.0",
     "watson-developer-cloud": "^3.2.1",
     "wav": "^1.0.1"
   },
