@@ -40,7 +40,7 @@
       function setDateAndTime() {
         var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        
+
         var today = new Date();
 
         $("#day").text(today.getDate());
@@ -85,13 +85,17 @@
       setDateAndTime();
       setSystemResources();
 
-      function updateStatus(msg, play) {
+      function updateStatus(msg, play, append) {
         console.log("Received :" + msg);
 
         var event = JSON.parse(msg);
 
         if (event.text) {
-          $("#note_input").val(event.text);
+          var text = append ? $("#note_input").val()
+            + "\n> " + event.text
+            : "> " + event.text;
+
+          $("#note_input").val(text);
 
           if (play) {
             say(event.text);
@@ -104,8 +108,9 @@
 
       }
 
-      socket.on('speaking', function (mesg) { updateStatus(mesg, true) });
+      socket.on('speaking', function (mesg) { updateStatus(mesg, true, true) });
       socket.on('processing_command', function (mesg) { updateStatus(mesg, false) });
+      socket.on('command_received', function (mesg) { updateStatus(mesg, false) });
       socket.on('waiting_for_command', function (mesg) { updateStatus(mesg, false) });
       socket.on('error', function (mesg) { updateStatus(mesg, false) });
 

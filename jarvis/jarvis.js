@@ -21,7 +21,7 @@ class Jarvis extends EventEmitter {
         this.busy = false;
     }
 
-    processCommandFile(fileName, callback) {
+    processCommandFile(fileNameOrdata, callback) {
 
         this.busy = true;
         this.emit('processing_command');
@@ -35,22 +35,23 @@ class Jarvis extends EventEmitter {
         };
 
         var sucessCallback = function (text) {
-            dialogService.process(text,
+            _jarvis.emit('command_received', text);
+            dialogService.process(text, _jarvis,
                 function (actions) {
-                    processor.process(actions, 
-                    function () { 
-                        callback()
-                        _jarvis.onError("Error in dialog service") 
-                    }, 
-                    function () {
-                        callback();
-                        _jarvis.busy = false;
-                    });
+                    processor.process(actions,
+                        function () {
+                            callback()
+                            _jarvis.onError("Error in dialog service")
+                        },
+                        function () {
+                            callback();
+                            _jarvis.busy = false;
+                        });
                 });
         };
 
         sttService.process(
-            fileName,
+            fileNameOrdata,
             sucessCallback,
             errorCallback
         );

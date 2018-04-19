@@ -7,11 +7,11 @@ router.get('/', function (req, res, next) {
     var response = {};
 
     si.processes().then(data => {
-        response['processes'] = data.running;
+        response['processes'] = data.all;
         si.currentLoad().then(data => {
             response['cpu'] = Math.round(data.currentload);
             si.mem().then(data => {
-                response['memory'] = Math.round(100 * data.used / data.total);
+                response['memory'] = Math.round(100 * data.active / data.total);
                 res.send(response);
             })
         })

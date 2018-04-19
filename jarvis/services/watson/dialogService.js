@@ -3,7 +3,14 @@
 var config = require('../config').getConfig();
 var request = require('request');
 
-function process(text, callback) {
+/**
+ * Calls waston assistant and receives an action back
+ * 
+ * @param {*} text 
+ * @param {*} jarvis 
+ * @param {*} callback 
+ */
+function process(text, jarvis, callback) {
     console.log("[SERVICE_CALL] Calling dialog with text [" + text + "]");
 
     var serviceConfig = config.jarvis.services.dialog;
