@@ -23,7 +23,7 @@ var core_config = {
     },
     skip_first_chunk: false,
     wait_for_javis_time: 5000,
-    use_websockets: false,
+    use_websockets: true,
     detector: {
         sensitivity: 0.70,
         audio_gain: 2.0,
