@@ -3,6 +3,9 @@
 var config = require('../config').getConfig();
 var request = require('request');
 
+var Logger = require('../../logger');
+var logger = new Logger("DIALOG_SERVICE");
+
 /**
  * Calls waston assistant and receives an action back
  * 
@@ -11,9 +14,11 @@ var request = require('request');
  * @param {*} callback 
  */
 function process(text, jarvis, callback) {
-    console.log("[SERVICE_CALL] Calling dialog with text [" + text + "]");
+    logger.log("Calling dialog with text [" + text + "]");
 
     var serviceConfig = config.jarvis.services.dialog;
+
+    var ini = new Date().getTime();
 
     request.post({
         url: serviceConfig.url,
@@ -22,7 +27,10 @@ function process(text, jarvis, callback) {
         }
     },
         function (err, httpResponse, body) {
-            console.log(body);
+
+            logger.log("Response: " + body);
+            var timeTaken = new Date().getTime() - ini;
+            logger.log("Took: (" + timeTaken + ") ms.")
 
             if (err) {
                 callback(err);

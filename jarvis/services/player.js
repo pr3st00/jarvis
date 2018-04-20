@@ -5,6 +5,9 @@ const Speaker = require('speaker');
 const record2 = require('node-record-lpcm16');
 const wav = require('wav');
 
+var Logger = require('../logger');
+var logger = new Logger("PLAYER");
+
 function recordFile(fileName, callback) {
 
     if (fs.existsSync(fileName)) {
@@ -39,7 +42,7 @@ function play(file) {
     });
 
     speaker.on('error', function (err) {
-        console.error('Speaker error : %s', err);
+        logger.logError('Speaker error : %s', err);
     });
 
     fs.createReadStream(file).pipe(speaker);
@@ -99,7 +102,7 @@ function appendWavHeader(buffer, detector) {
 }
 
 function createWavFile(buffer, fileName, callback) {
-    console.log("[CORE] Creating command file. [filename=" + fileName + ']')
+    logger.log("Creating command file. [filename=" + fileName + ']')
 
     var writer = new wav.FileWriter(fileName);
 

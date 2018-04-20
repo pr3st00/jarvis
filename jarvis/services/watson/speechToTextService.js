@@ -7,13 +7,16 @@ var SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 
 var serviceConfig = config.jarvis.services.speech_to_text;
 
+var Logger = require('../../logger');
+var logger = new Logger("SPEECH_TO_TEXT");
+
 var speech_to_text = new SpeechToTextV1({
     username: serviceConfig.username,
     password: serviceConfig.password
 });
 
 function process(data, callback, errorCallBack) {
-    console.log("[SERVICE_CALL] Calling stt.");
+    logger.log("[SERVICE_CALL] Calling stt.");
 
     if (serviceConfig.use_websockets) {
         processWithSockets2(data, callback, errorCallBack);
@@ -25,6 +28,8 @@ function process(data, callback, errorCallBack) {
 }
 
 function processWithRest(file, callback, errorCallBack) {
+    var ini = new Date().getTime();
+
     var params = {
         audio: fs.createReadStream(file),
         content_type: 'audio/wav',
@@ -34,12 +39,16 @@ function processWithRest(file, callback, errorCallBack) {
     };
 
     speech_to_text.recognize(params, function (error, transcript) {
+
+        var timeTaken = new Date().getTime() - ini;
+        logger.log("Took: (" + timeTaken + ") ms.")
+
         if (error)
             errorCallBack(error);
         else {
             //No answer found   = {"results":[],"result_index":0}
             //Sucessfully found = {"results":[{"alternatives":[{"confidence":0.191,"transcript":"fã "}],"final":true}],"result_index":0}
-            console.log(JSON.stringify(transcript));
+            logger.log(JSON.stringify(transcript));
             if (transcript.results[0] &&
                 transcript.results[0].alternatives[0]) {
                 callback(transcript.results[0].alternatives[0].transcript);
@@ -57,6 +66,8 @@ function processWithSockets2(buffer, callback, errorCallBack) {
     var wav = require('wav');
     var writer = new wav.Writer();
 
+    var ini = new Date().getTime();
+
     writer.write(buffer);
     writer.end();
 
@@ -70,12 +81,16 @@ function processWithSockets2(buffer, callback, errorCallBack) {
     };
 
     speech_to_text.recognize(params, function (error, transcript) {
+
+        var timeTaken = new Date().getTime() - ini;
+        logger.log("Took: (" + timeTaken + ") ms.")
+
         if (error)
             errorCallBack(error);
         else {
             //No answer found   = {"results":[],"result_index":0}
             //Sucessfully found = {"results":[{"alternatives":[{"confidence":0.191,"transcript":"fã "}],"final":true}],"result_index":0}
-            console.log(JSON.stringify(transcript));
+            logger.log(JSON.stringify(transcript));
             if (transcript.results[0] &&
                 transcript.results[0].alternatives[0]) {
                 callback(transcript.results[0].alternatives[0].transcript);
@@ -111,7 +126,7 @@ function processWithSockets(buffer, callback, errorCallBack) {
     recognizeStream.on('finish', function (event) {
         //No answer found   = {"results":[],"result_index":0}
         //Sucessfully found = {"results":[{"alternatives":[{"confidence":0.191,"transcript":"fã "}],"final":true}],"result_index":0}
-        console.log(JSON.stringify(event));
+        logger.log(JSON.stringify(event));
 
         //if (transcript.results[0] &&
         //    transcript.results[0].alternatives[0]) {

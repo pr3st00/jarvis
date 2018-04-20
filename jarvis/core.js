@@ -5,6 +5,7 @@ const Detector = require('snowboy').Detector;
 const Models = require('snowboy').Models;
 const player = require('./services/player');
 
+var Logger = require('./logger');
 var Jarvis = require('./jarvis');
 
 const COMMAND_TEMP_WAV = '/tmp/command#date#.wav';
@@ -40,13 +41,14 @@ var FINALBUFFER = new Buffer('');
 var io;
 
 var jarvis = new Jarvis();
+var logger = new Logger("CORE");
 
 function setIO(_io) {
     io = _io;
 }
 
 jarvis.on('error', function (err) {
-    console.log("[ERROR] " + err);
+    logger.logError(err);
     io.emit('error', JSON.stringify({ status: "ERROR", text: err.message }));
     resetFlags();
 
@@ -81,7 +83,7 @@ function saveCommandBuffer(buffer) {
         return;
     }
 
-    console.log('[CORE] Saving command buffer.');
+    logger.log('Saving command buffer.');
     FINALBUFFER = saveBuffer(buffer, FINALBUFFER);
 }
 
@@ -116,7 +118,7 @@ function startHotWordDetector() {
             processCommand();
         }
 
-        logRestricted('[CORE] Silence.');
+        logger.log('Silence.');
     });
 
     detector.on('sound', function (buffer) {
@@ -134,18 +136,18 @@ function startHotWordDetector() {
             }
         }
         else {
-            logRestricted('[CORE] Sound.');
+            logger.logRestricted('Sound.');
         }
     });
 
     detector.on('error', function () {
-        console.log('[ERROR] error');
+        logger.logError('error');
     });
 
     detector.on('hotword', function (index, hotword, buffer) {
         silence_events = 0;
 
-        console.log('[CORE] Hotword [' + hotword + "] received at index [" + index + "]");
+        logger.log('Hotword [' + hotword + "] received at index [" + index + "]");
 
         if (waiting_for_command) {
             saveCommandBuffer(buffer);
@@ -171,7 +173,7 @@ function startHotWordDetector() {
 
     mic.pipe(detector);
 
-    logStatus('STARTED');
+    logger.log('STARTED');
     dumpFlags();
 }
 
@@ -180,15 +182,11 @@ function saveBuffer(buffer, finalBuffer) {
     return newBuffer;
 }
 
-function logStatus(event) {
-    console.log("[STATUS] " + event);
-}
-
 function processCommand() {
     command_events = 0;
     waiting_for_command = false;
 
-    console.log("[CORE] Processing command.");
+    logger.log("Processing command.");
 
     if (core_config.use_websockets) {
         jarvis.processCommandFile(FINALBUFFER, function () {
@@ -242,15 +240,9 @@ function stillNotReadyForCommand() {
 
 }
 
-function logRestricted(mesg) {
-    if (new Date().getSeconds() == 0) {
-        console.log(mesg);
-    }
-}
-
 function dumpFlags() {
-    console.log('[CORE] STATUS [waiting_for_comand=' + waiting_for_command + ', processing_command=' + processing_command + ']');
-    console.log('[CORE] EVENTS [silence=' + silence_events + ', command=' + command_events + ']');
+    logger.log('STATUS [waiting_for_comand=' + waiting_for_command + ', processing_command=' + processing_command + ']');
+    logger.log('EVENTS [silence=' + silence_events + ', command=' + command_events + ']');
     setTimeout(dumpFlags, 20000);
 }
 

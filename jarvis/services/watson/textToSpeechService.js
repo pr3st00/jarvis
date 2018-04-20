@@ -8,8 +8,11 @@ var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 
 const AUDIO_FILE = '/tmp/out.wav';
 
+var Logger = require('../../logger');
+var logger = new Logger("TEXT_TO_SPEECH");
+
 function process(parameters, jarvis) {
-    console.log("[SERVICE_CALL] Caling tts with text [" + parameters[0] + "]");
+    logger.log("[SERVICE_CALL] Caling tts with text [" + parameters[0] + "]");
 
     var serviceConfig = config.jarvis.services.text_to_speech;
 
@@ -24,11 +27,16 @@ function process(parameters, jarvis) {
         accept: 'audio/wav'
     };
 
-    jarvis.emit("speaking", { status: "SPEAKING", text: params.text});
+    jarvis.emit("speaking", { status: "SPEAKING", text: params.text });
+
+    var ini = new Date().getTime();
 
     textToSpeech.synthesize(params)
         .pipe(fs.createWriteStream(AUDIO_FILE))
         .on('close', function () {
+            var timeTaken = new Date().getTime() - ini;
+            logger.log("Took: (" + timeTaken + ") ms.")
+
             player.play(AUDIO_FILE);
         });
 
