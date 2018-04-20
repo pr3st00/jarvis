@@ -13,6 +13,7 @@ var _jarvis;
 function setJarvis(jarvis) {
     _jarvis = jarvis;
 }
+
 /**
  * Process multipleActions executing each action with the processor
  * 
@@ -42,9 +43,20 @@ function processActions(multipleActions, processor, callback) {
     }
 
     processor.setJarvis(_jarvis);
-    
+
     for (var i in multipleActions.actions) {
-        processor.process(multipleActions.actions[i]);
+        var action = processor.process(multipleActions.actions[i]);
+
+        if (action) {
+            if (action instanceof Promise) {
+                action.then(function(r) {
+                    processor.process(r.actions[0]);
+                })
+            }
+            else {
+                processor.process(action);
+            }
+        }
     }
 
     //callback();

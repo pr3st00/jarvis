@@ -15,11 +15,16 @@
                 "password": "OOH6Z1dQhnpw",
                 "username": "24c3e489-c30c-465a-88c7-f8874ea072c6",
                 "model": "pt-BR_BroadbandModel",
-                "acoustic_customization_id" : "5a38b07e-219f-4d1e-bc9a-a9bb62ab7fcd",
-                "use_websockets" : true
+                "acoustic_customization_id": "5a38b07e-219f-4d1e-bc9a-a9bb62ab7fcd",
+                "use_websockets": true
             },
             "dialog": {
                 "url": "http://pr3st00iot.mybluemix.net/jarvisdialog"
+            },
+            "weather": {
+                "city": "4456",
+                "token": "180c833c29d08f7190aec2e86c41378c",
+                "url": "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/"
             }
         }
     }

@@ -11,7 +11,9 @@ const AUDIO_FILE = '/tmp/out.wav';
 var Logger = require('../../logger');
 var logger = new Logger("TEXT_TO_SPEECH");
 
-function process(parameters, jarvis) {
+function process(singleAction, jarvis) {
+    var parameters = singleAction.parameters;
+    
     logger.log("[SERVICE_CALL] Caling tts with text [" + parameters[0] + "]");
 
     var serviceConfig = config.jarvis.services.text_to_speech;
