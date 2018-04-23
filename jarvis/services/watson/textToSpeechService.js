@@ -3,6 +3,7 @@
 var config = require('../config').getConfig();
 var fs = require('fs');
 var player = require('../player');
+var cache = require('../cache');
 
 var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 
@@ -13,7 +14,7 @@ var logger = new Logger("TEXT_TO_SPEECH");
 
 function process(singleAction, jarvis) {
     var parameters = singleAction.parameters;
-    
+
     logger.log("[SERVICE_CALL] Caling tts with text [" + parameters[0] + "]");
 
     var serviceConfig = config.jarvis.services.text_to_speech;
@@ -32,6 +33,20 @@ function process(singleAction, jarvis) {
     jarvis.emit("speaking", { status: "SPEAKING", text: params.text });
 
     var ini = new Date().getTime();
+    var fromCache;
+
+    if (serviceConfig.useCache) {
+        fromCache = cache.getCacheValue(params.text);
+
+        if (fromCache) {
+            var timeTaken = new Date().getTime() - ini;
+            logger.log("Took: (" + timeTaken + ") ms.")
+
+            player.play(fromCache);
+            return;
+        }
+    }
+
 
     textToSpeech.synthesize(params)
         .pipe(fs.createWriteStream(AUDIO_FILE))
@@ -40,8 +55,11 @@ function process(singleAction, jarvis) {
             logger.log("Took: (" + timeTaken + ") ms.")
 
             player.play(AUDIO_FILE);
+            
+            if (serviceConfig.useCache) {
+                cache.putFileCacheValue(params.text, AUDIO_FILE);
+            }
         });
-
 }
 
 module.exports = { process };

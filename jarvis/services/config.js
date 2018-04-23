@@ -17,5 +17,4 @@ function getConfig() {
     return JSON.parse(fs.readFileSync(SERVICES_CONFIG_FILE, 'utf8'));
 }
 
-
 module.exports = { getProcessorImplementation, getConfig }

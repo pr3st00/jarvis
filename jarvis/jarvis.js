@@ -21,7 +21,7 @@ class Jarvis extends EventEmitter {
         this.busy = false;
     }
 
-    processCommandFile(fileNameOrdata, callback) {
+    processCommandData(fileNameOrdata, callback) {
 
         this.busy = true;
         this.emit('processing_command');
@@ -64,7 +64,7 @@ class Jarvis extends EventEmitter {
 
     waitForCommand() {
         this.emit('waiting_for_command');
-        player.play(WAITING_FOR_COMMAND_WAV);
+        player.play(WAITING_FOR_COMMAND_WAV, 44100);
     }
 
     speak(message) {

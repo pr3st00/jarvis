@@ -9,14 +9,15 @@
             "text_to_speech": {
                 "username": "89163d74-3d65-41e3-b97e-879bfc240c50",
                 "password": "Kq4aGlRIcErq",
-                "voice": "pt-BR_IsabelaVoice"
+                "voice": "pt-BR_IsabelaVoice",
+                "useCache" : true
             },
             "speech_to_text": {
                 "password": "OOH6Z1dQhnpw",
                 "username": "24c3e489-c30c-465a-88c7-f8874ea072c6",
                 "model": "pt-BR_BroadbandModel",
                 "acoustic_customization_id": "5a38b07e-219f-4d1e-bc9a-a9bb62ab7fcd",
-                "use_websockets": true
+                "use_websockets": false
             },
             "dialog": {
                 "url": "http://pr3st00iot.mybluemix.net/jarvisdialog"

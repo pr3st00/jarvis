@@ -5,6 +5,8 @@ const Speaker = require('speaker');
 const record2 = require('node-record-lpcm16');
 const wav = require('wav');
 
+const DEFAULT_SAMPLE_RATE = 22050;
+
 var Logger = require('../logger');
 var logger = new Logger("PLAYER");
 
@@ -32,13 +34,16 @@ function recordFile(fileName, callback) {
 
 }
 
-function play(file) {
+function play(file, sampleRate) {
+
+    var rate = sampleRate || DEFAULT_SAMPLE_RATE;
 
     var speaker = new Speaker({
         channels: 1,
         bitDepth: 16,
-        sampleRate: 22050,
-        device: "hw:0,0"
+        sampleRate: rate,
+        //device: "hw:0,0",
+        verbose: true
     });
 
     speaker.on('error', function (err) {

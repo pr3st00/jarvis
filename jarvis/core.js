@@ -22,9 +22,15 @@ var core_config = {
         min: 10,
         max: 40
     },
+    logging: {
+        dumpFlags: true,
+        dumpFlagsInterval: 30000
+    },
+    devices: {
+        mic: "hw:1,0"
+    },
     skip_first_chunk: false,
     wait_for_javis_time: 5000,
-    use_websockets: true,
     detector: {
         sensitivity: 0.70,
         audio_gain: 2.0,
@@ -167,14 +173,17 @@ function startHotWordDetector() {
         threshold: 0,
         channels: 1,
         sampleRate: 16000,
-        device: "hw:1,0",
+        device: core_config.devices.mic,
         verbose: false
     });
 
     mic.pipe(detector);
 
     logger.log('STARTED');
-    dumpFlags();
+
+    if (core_config.logging.dumpFlags) {
+        dumpFlags();
+    }
 }
 
 function saveBuffer(buffer, finalBuffer) {
@@ -188,38 +197,16 @@ function processCommand() {
 
     logger.log("Processing command.");
 
-    if (core_config.use_websockets) {
-        jarvis.processCommandFile(FINALBUFFER, function () {
-            /**
-             * Give it sometime for JARVIS to talk.
-             * Avoid Jarvis responding to itself :-)
-             */
-            setTimeout(function () {
-                processing_command = false;
-                FINALBUFFER = new Buffer('');
-            }, core_config.wait_for_javis_time);
-        });
-
-    }
-    else {
-        var commandFile = COMMAND_TEMP_WAV.replace('#date#', Date.now());
-
-        player.createWavFile(FINALBUFFER, commandFile,
-            function () {
-                jarvis.processCommandFile(commandFile, function () {
-                    /**
-                     * Give it sometime for JARVIS to talk.
-                     * Avoid Jarvis responding to itself :-)
-                     */
-                    setTimeout(function () {
-                        processing_command = false;
-                        FINALBUFFER = new Buffer('');
-                    }, core_config.wait_for_javis_time);
-                });
-            });
-    }
-
-
+    jarvis.processCommandData(FINALBUFFER, function () {
+        /**
+         * Give it sometime for JARVIS to talk.
+         * Avoid Jarvis responding to itself :-)
+         */
+        setTimeout(function () {
+            processing_command = false;
+            FINALBUFFER = new Buffer('');
+        }, core_config.wait_for_javis_time);
+    });
 
 }
 
@@ -243,7 +230,7 @@ function stillNotReadyForCommand() {
 function dumpFlags() {
     logger.log('STATUS [waiting_for_comand=' + waiting_for_command + ', processing_command=' + processing_command + ']');
     logger.log('EVENTS [silence=' + silence_events + ', command=' + command_events + ']');
-    setTimeout(dumpFlags, 20000);
+    setTimeout(dumpFlags, core_config.logging.dumpFlagsInterval);
 }
 
 function resetFlags() {

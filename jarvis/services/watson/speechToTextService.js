@@ -19,7 +19,7 @@ function process(data, callback, errorCallBack) {
     logger.log("[SERVICE_CALL] Calling stt.");
 
     if (serviceConfig.use_websockets) {
-        processWithSockets2(data, callback, errorCallBack);
+        processWithSockets(data, callback, errorCallBack);
     }
     else {
         processWithRest(data, callback, errorCallBack);
@@ -27,42 +27,7 @@ function process(data, callback, errorCallBack) {
 
 }
 
-function processWithRest(file, callback, errorCallBack) {
-    var ini = new Date().getTime();
-
-    var params = {
-        audio: fs.createReadStream(file),
-        content_type: 'audio/wav',
-        timestamps: false,
-        model: serviceConfig.model,
-        acoustic_customization_id: serviceConfig.acoustic_customization_id
-    };
-
-    speech_to_text.recognize(params, function (error, transcript) {
-
-        var timeTaken = new Date().getTime() - ini;
-        logger.log("Took: (" + timeTaken + ") ms.")
-
-        if (error)
-            errorCallBack(error);
-        else {
-            //No answer found   = {"results":[],"result_index":0}
-            //Sucessfully found = {"results":[{"alternatives":[{"confidence":0.191,"transcript":"fã "}],"final":true}],"result_index":0}
-            logger.log(JSON.stringify(transcript));
-            if (transcript.results[0] &&
-                transcript.results[0].alternatives[0]) {
-                callback(transcript.results[0].alternatives[0].transcript);
-            }
-            else {
-                errorCallBack("No answer found.");
-            }
-        }
-    });
-
-}
-
-function processWithSockets2(buffer, callback, errorCallBack) {
-
+function processWithRest(buffer, callback, errorCallBack) {
     var wav = require('wav');
     var writer = new wav.Writer();
 
@@ -106,7 +71,6 @@ function processWithSockets(buffer, callback, errorCallBack) {
 
     var streamify = require('stream-converter');
     var wav = require('wav');
-
     var writer = new wav.Writer();
 
     var params = {
