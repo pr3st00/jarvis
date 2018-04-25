@@ -3,7 +3,6 @@
 var config = require('../config').getConfig();
 var fs = require('fs');
 var player = require('../player');
-var cache = require('../cache');
 
 var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 
@@ -11,6 +10,9 @@ const AUDIO_FILE = '/tmp/out.wav';
 
 var Logger = require('../../logger');
 var logger = new Logger("TEXT_TO_SPEECH");
+var Cache = require('../cache');
+var cache = new Cache("TEXT_TO_SPEECH");
+
 
 function process(singleAction, jarvis) {
     var parameters = singleAction.parameters;
@@ -46,7 +48,6 @@ function process(singleAction, jarvis) {
             return;
         }
     }
-
 
     textToSpeech.synthesize(params)
         .pipe(fs.createWriteStream(AUDIO_FILE))

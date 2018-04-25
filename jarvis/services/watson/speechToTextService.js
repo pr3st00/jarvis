@@ -1,8 +1,6 @@
 'use strict'
 
-var fs = require('fs');
 var config = require('../config').getConfig();
-const record = require('node-record-lpcm16');
 var SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 
 var serviceConfig = config.jarvis.services.speech_to_text;
@@ -31,8 +29,6 @@ function processWithRest(buffer, callback, errorCallBack) {
     var wav = require('wav');
     var writer = new wav.Writer();
 
-    var ini = new Date().getTime();
-
     writer.write(buffer);
     writer.end();
 
@@ -44,6 +40,8 @@ function processWithRest(buffer, callback, errorCallBack) {
         model: serviceConfig.model,
         acoustic_customization_id: serviceConfig.acoustic_customization_id
     };
+
+    var ini = new Date().getTime();
 
     speech_to_text.recognize(params, function (error, transcript) {
 

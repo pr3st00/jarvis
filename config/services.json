@@ -1,16 +1,22 @@
 {
     "jarvis": {
         "processor": "WATSON",
+        "waiting_for_command_wav": "./jarvis/resources/ding.wav",
         "dialogs": {
             "not_recognized": "Desculpe, nao entendi.",
             "greeting": "Oi Manu"
         },
         "services": {
+            "cache": {
+                "enabled": true,
+                "cacheDir": "/tmp/jarviscache",
+                "cacheConfig": "/tmp/jarviscache/cache.json"
+            },
             "text_to_speech": {
                 "username": "89163d74-3d65-41e3-b97e-879bfc240c50",
                 "password": "Kq4aGlRIcErq",
                 "voice": "pt-BR_IsabelaVoice",
-                "useCache" : true
+                "useCache": true
             },
             "speech_to_text": {
                 "password": "OOH6Z1dQhnpw",
@@ -20,7 +26,8 @@
                 "use_websockets": false
             },
             "dialog": {
-                "url": "http://pr3st00iot.mybluemix.net/jarvisdialog"
+                "url": "http://pr3st00iot.mybluemix.net/jarvisdialog",
+                "useCache": true
             },
             "weather": {
                 "city": "4456",

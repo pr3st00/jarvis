@@ -6,13 +6,12 @@ const player = require('./services/player')
 var processor = require('./services/actionsProcessor');
 var config = require('./services/config').getConfig();
 
+var Logger = require('./logger');
+var logger = new Logger("JARVIS");
+
 // TODO: Make platform agnostic
 var sttService = require('./services/watson/speechToTextService');
 var dialogService = require('./services/watson/dialogService');
-
-const WAITING_FOR_COMMAND_WAV = "./jarvis/resources/ding.wav";
-
-var emitter = new EventEmitter();
 
 class Jarvis extends EventEmitter {
 
@@ -21,10 +20,12 @@ class Jarvis extends EventEmitter {
         this.busy = false;
     }
 
-    processCommandData(fileNameOrdata, callback) {
+    processCommandData(buffer, callback) {
 
         this.busy = true;
         this.emit('processing_command');
+
+        logger.log("Processing buffer of size: [" + buffer.byteLength + "]");
 
         var _jarvis = this;
         processor.setJarvis(this);
@@ -35,26 +36,36 @@ class Jarvis extends EventEmitter {
         };
 
         var sucessCallback = function (text) {
-            _jarvis.emit('command_received', text);
-            dialogService.process(text, _jarvis,
-                function (actions) {
-                    processor.process(actions,
-                        function () {
-                            callback()
-                            _jarvis.onError("Error in dialog service")
-                        },
-                        function () {
-                            callback();
-                            _jarvis.busy = false;
-                        });
-                });
+            _jarvis.processCommandText(text, callback);
         };
 
         sttService.process(
-            fileNameOrdata,
+            buffer,
             sucessCallback,
             errorCallback
         );
+    }
+
+    processCommandText(text, callback) {
+
+        this.emit('command_received', text);
+
+        var _jarvis = this;
+        processor.setJarvis(this);
+
+        dialogService.process(text, _jarvis,
+            function (actions) {
+                processor.process(actions,
+                    function () {
+                        callback()
+                        _jarvis.onError("Error in dialog service")
+                    },
+                    function () {
+                        callback();
+                        _jarvis.busy = false;
+                    });
+            });
+
     }
 
     start() {
@@ -64,7 +75,7 @@ class Jarvis extends EventEmitter {
 
     waitForCommand() {
         this.emit('waiting_for_command');
-        player.play(WAITING_FOR_COMMAND_WAV, 44100);
+        player.play(config.jarvis.waiting_for_command_wav, 44100);
     }
 
     speak(message) {

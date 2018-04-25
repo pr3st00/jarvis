@@ -9,6 +9,7 @@ var Logger = require('./logger');
 var Jarvis = require('./jarvis');
 
 const COMMAND_TEMP_WAV = '/tmp/command#date#.wav';
+const INITIAL_QUESTION = "O que voce pode fazer?";
 
 /**
  * CORE configuration
@@ -16,11 +17,11 @@ const COMMAND_TEMP_WAV = '/tmp/command#date#.wav';
 var core_config = {
     silence: {
         min: 5,
-        max: 60
+        max: 50
     },
     command: {
         min: 10,
-        max: 40
+        max: 30
     },
     logging: {
         dumpFlags: true,
@@ -99,6 +100,8 @@ function saveCommandBuffer(buffer) {
 function startHotWordDetector() {
 
     const models = new Models();
+
+    jarvis.processCommandText(INITIAL_QUESTION, function () { });
 
     models.add({
         file: core_config.detector.model,

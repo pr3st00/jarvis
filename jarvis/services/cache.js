@@ -1,55 +1,67 @@
 'use strict'
 
 var fs = require('fs');
+var cacheConfig = require('./config').getConfig();
 
 const CACHE_DIR = "/tmp/jarviscache";
 const CACHE_CONFIG = CACHE_DIR + "/cache.json";
 
-var config = getConfig();
 var Logger = require('../logger');
 var logger = new Logger("CACHE");
 
+class Cache {
 
-function putFileCacheValue(key, fileName) {
-    var cacheFileName = CACHE_DIR + "/" + "cache_" + new Date().getTime();
+    constructor(serviceName) {
+        this.serviceName = serviceName;
+        this.serviceConfig = cacheConfig.jarvis.services.cache;
+        this.config = this.getConfig();
 
-    fs.copyFile(fileName, cacheFileName, function () {
-        putCacheValue(key, cacheFileName);
-    });
-}
+    }
 
-function putCacheValue(key, value) {
-    logger.log('Adding to cache. [key =' + key + ', value=' + value + ']');
-    config.entries.push({ key: key, value: value });
-    saveConfig();
-}
+    putFileCacheValue(key, fileName) {
+        var cacheFileName = this.serviceConfig.cacheDir + "/" + "cache_" + new Date().getTime();
+        var _cache = this;
 
-function getCacheValue(key) {
+        fs.copyFile(fileName, cacheFileName, function () {
+            _cache.putCacheValue(key, cacheFileName);
+        });
+    }
 
-    for (var i in config.entries) {
-        if (config.entries[i].key == key) {
-            return config.entries[i].value;
+    putCacheValue(key, value) {
+        logger.log('Adding to cache. [key =' + key + ', value=' + value + ']');
+        this.config.entries.push({ key: key, value: value, service: this.serviceName, date: new Date().getTime() });
+        this.saveConfig();
+    }
+
+    getCacheValue(key) {
+
+        for (var i in this.config.entries) {
+            if (this.config.entries[i].key == key && this.config.entries[i].service == this.serviceName) {
+                logger.log('Found in cache [value=' + this.config.entries[i].value + ']');
+                return this.config.entries[i].value;
+            }
         }
+
+        return undefined;
     }
 
-    return undefined;
-}
+    saveConfig() {
+        fs.writeFile(this.serviceConfig.cacheConfig, JSON.stringify(this.config), function () {
+            logger.log('Cache saved.')
+        });
+    }
 
-function saveConfig() {
-    fs.writeFile(CACHE_CONFIG, JSON.stringify(config), function () {
-        logger.log('Cache saved.')
-    });
-}
+    getConfig() {
+        try {
+            return JSON.parse(fs.readFileSync(this.serviceConfig.cacheConfig, 'utf8'));
+        } catch (err) {
+            return this.config = {
+                "entries": [
+                ]
+            };
+        }
 
-function getConfig() {
-    try {
-        return JSON.parse(fs.readFileSync(CACHE_CONFIG, 'utf8'));
-    } catch (err) {
-        return config = {
-            "entries": [
-            ]
-        };
     }
 }
 
-module.exports = { getCacheValue, putCacheValue, putFileCacheValue };
+module.exports = Cache;
