@@ -12,6 +12,7 @@ var logger = new Logger("JARVIS");
 // TODO: Make platform agnostic
 var sttService = require('./services/watson/speechToTextService');
 var dialogService = require('./services/watson/dialogService');
+var NO_ANSWER_FOUND = "NO_ANSWER_FOUND";
 
 class Jarvis extends EventEmitter {
 
@@ -32,6 +33,12 @@ class Jarvis extends EventEmitter {
 
         var errorCallback = function (message) {
             callback();
+
+            if (config.jarvis.dialogs.speak_when_not_recognized &&
+                NO_ANSWER_FOUND == message) {
+                _jarvis.speak(config.jarvis.dialogs.not_recognized_message);
+            }
+
             _jarvis.onError(message);
         };
 
@@ -79,8 +86,14 @@ class Jarvis extends EventEmitter {
     }
 
     speak(message) {
-        this.emit('speaking', { status: SPEAKING, text: message });
-        processor.process(processor.buildPlayAction(message), this.onError("Error speaking."));
+        this.emit('speaking', { status: "SPEAKING", text: message });
+        var _jarvis = this;
+        processor.process(processor.buildPlayAction(message),
+            function () {
+                this.onError("Error speaking.")
+            },
+            function () {
+            });
     }
 
     onError(message) {

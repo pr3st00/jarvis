@@ -8,7 +8,6 @@ const player = require('./services/player');
 var Logger = require('./logger');
 var Jarvis = require('./jarvis');
 
-const COMMAND_TEMP_WAV = '/tmp/command#date#.wav';
 const INITIAL_QUESTION = "O que voce pode fazer?";
 
 /**
@@ -33,8 +32,8 @@ var core_config = {
     skip_first_chunk: false,
     wait_for_javis_time: 5000,
     detector: {
-        sensitivity: 0.70,
-        audio_gain: 2.0,
+        sensitivity: 0.65,
+        audio_gain: 8.0,
         model: 'jarvis/resources/jarvis.umdl'
     }
 };
@@ -46,6 +45,7 @@ var command_events = 0;
 
 var FINALBUFFER = new Buffer('');
 var io;
+var processCommandIniTime;
 
 var jarvis = new Jarvis();
 var logger = new Logger("CORE");
@@ -55,7 +55,7 @@ function setIO(_io) {
 }
 
 jarvis.on('error', function (err) {
-    logger.logError(err);
+    logger.logError(err.message);
     io.emit('error', JSON.stringify({ status: "ERROR", text: err.message }));
     resetFlags();
 
@@ -76,6 +76,14 @@ jarvis.on('command_received', function (event) {
 jarvis.on('processing_command', function (event) {
     io.emit('waiting_for_command', JSON.stringify({ status: "PROCESSING", text: "Proccesing command..." }));
 });
+
+/**
+ * Starts the core.
+ */
+function start() {
+    jarvis.processCommandText(INITIAL_QUESTION, function () { });
+    startHotWordDetector();
+}
 
 /**
  * Saves buffer to FINALLBUFFER
@@ -100,8 +108,6 @@ function saveCommandBuffer(buffer) {
 function startHotWordDetector() {
 
     const models = new Models();
-
-    jarvis.processCommandText(INITIAL_QUESTION, function () { });
 
     models.add({
         file: core_config.detector.model,
@@ -200,7 +206,16 @@ function processCommand() {
 
     logger.log("Processing command.");
 
+    processCommandIniTime = new Date().getTime();
+
     jarvis.processCommandData(FINALBUFFER, function () {
+
+        /**
+         * Total time spent for procesing a command.
+         */
+        var totalTime = new Date().getTime() - processCommandIniTime;
+        logger.log("TOTAL COMMAND PROCESSING TIME = [" + totalTime + "] ms");
+
         /**
          * Give it sometime for JARVIS to talk.
          * Avoid Jarvis responding to itself :-)
@@ -243,4 +258,4 @@ function resetFlags() {
     command_events = 0;
 }
 
-exports = module.exports = { startHotWordDetector, setIO };
+exports = module.exports = { start, setIO };

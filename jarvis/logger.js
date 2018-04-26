@@ -1,6 +1,7 @@
 'use strict';
 
 /**
+ * Logging stuff
  * 
  */
 class Logger {

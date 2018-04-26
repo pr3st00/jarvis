@@ -3,22 +3,26 @@
 var fs = require('fs');
 var cacheConfig = require('./config').getConfig();
 
-const CACHE_DIR = "/tmp/jarviscache";
-const CACHE_CONFIG = CACHE_DIR + "/cache.json";
-
 var Logger = require('../logger');
 var logger = new Logger("CACHE");
 
+/**
+ * Caches files and json responses.
+ * 
+ */
 class Cache {
 
     constructor(serviceName) {
         this.serviceName = serviceName;
         this.serviceConfig = cacheConfig.jarvis.services.cache;
         this.config = this.getConfig();
-
     }
 
     putFileCacheValue(key, fileName) {
+        if (!this.serviceConfig.enabled) {
+            return undef;
+        }
+
         var cacheFileName = this.serviceConfig.cacheDir + "/" + "cache_" + new Date().getTime();
         var _cache = this;
 
@@ -28,12 +32,19 @@ class Cache {
     }
 
     putCacheValue(key, value) {
+        if (!this.serviceConfig.enabled) {
+            return undef;
+        }
+
         logger.log('Adding to cache. [key =' + key + ', value=' + value + ']');
         this.config.entries.push({ key: key, value: value, service: this.serviceName, date: new Date().getTime() });
         this.saveConfig();
     }
 
     getCacheValue(key) {
+        if (!this.serviceConfig.enabled) {
+            return undef;
+        }
 
         for (var i in this.config.entries) {
             if (this.config.entries[i].key == key && this.config.entries[i].service == this.serviceName) {
@@ -46,6 +57,10 @@ class Cache {
     }
 
     saveConfig() {
+        if (!this.serviceConfig.enabled) {
+            return undef;
+        }
+
         fs.writeFile(this.serviceConfig.cacheConfig, JSON.stringify(this.config), function () {
             logger.log('Cache saved.')
         });

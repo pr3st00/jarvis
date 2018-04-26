@@ -3,7 +3,8 @@
         "processor": "WATSON",
         "waiting_for_command_wav": "./jarvis/resources/ding.wav",
         "dialogs": {
-            "not_recognized": "Desculpe, nao entendi.",
+            "speak_when_not_recognized": true,
+            "not_recognized_message": "Desculpe, nao entendi.",
             "greeting": "Oi Manu"
         },
         "services": {
@@ -33,6 +34,11 @@
                 "city": "4456",
                 "token": "180c833c29d08f7190aec2e86c41378c",
                 "url": "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/"
+            },
+            "braviatv": {
+                "ip": "192.168.1.131",
+                "success_message": "Feito!",
+                "key": "05trunks"
             }
         }
     }
