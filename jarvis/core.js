@@ -20,7 +20,7 @@ var core_config = {
     },
     command: {
         min: 10,
-        max: 30
+        max: 25
     },
     logging: {
         dumpFlags: true,

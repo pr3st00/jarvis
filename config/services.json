@@ -38,6 +38,7 @@
             "braviatv": {
                 "ip": "192.168.1.131",
                 "success_message": "Feito!",
+                "error_message": "A tv nao respondeu",
                 "key": "05trunks"
             }
         }
