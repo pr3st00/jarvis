@@ -40,6 +40,11 @@
                 "success_message": "Feito!",
                 "error_message": "A tv nao respondeu",
                 "key": "05trunks"
+            },
+            "music": {
+                "folder": "/home/pi/Music",
+                "config": "/home/pi/Music/music.json",
+                "not_found_message": "Desculpe, nao achei a musica"
             }
         }
     }

@@ -1,0 +1,349 @@
+[
+    {
+        "id": "6edd93d3.185104",
+        "type": "subflow",
+        "name": "Wikipedia",
+        "info": "",
+        "in": [
+            {
+                "x": -35.50001525878906,
+                "y": 383.5999755859375,
+                "wires": [
+                    {
+                        "id": "e67babb1.863b78"
+                    }
+                ]
+            }
+        ],
+        "out": [
+            {
+                "x": 909.5,
+                "y": 385.20001220703125,
+                "wires": [
+                    {
+                        "id": "ec21c361.252ee",
+                        "port": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "928d80ed.505998",
+        "type": "http request",
+        "z": "6edd93d3.185104",
+        "name": "Wikipedia",
+        "method": "GET",
+        "ret": "obj",
+        "url": "",
+        "tls": "",
+        "x": 231.49998474121094,
+        "y": 383.20001220703125,
+        "wires": [
+            [
+                "2975b0a2.528768"
+            ]
+        ]
+    },
+    {
+        "id": "a39efe75.cf9f7",
+        "type": "function",
+        "z": "6edd93d3.185104",
+        "name": "Get Extract",
+        "func": "var results = msg.payload;\n\nmsg.payload = results[0];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 567.5,
+        "y": 383.20001220703125,
+        "wires": [
+            [
+                "ec21c361.252ee"
+            ]
+        ]
+    },
+    {
+        "id": "2975b0a2.528768",
+        "type": "jsonpath",
+        "z": "6edd93d3.185104",
+        "expression": "$.query.pages.*.extract",
+        "split": false,
+        "name": "Get Extract",
+        "x": 389.9000244140625,
+        "y": 383.20001220703125,
+        "wires": [
+            [
+                "a39efe75.cf9f7"
+            ]
+        ]
+    },
+    {
+        "id": "e67babb1.863b78",
+        "type": "function",
+        "z": "6edd93d3.185104",
+        "name": "Set url      ",
+        "func": "// base url\nvar url = \"https://pt.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro&exsentences=1&titles=\";\nvar text = msg.payload.trim();\n\nvar textToSearch;\n\nnode.warn(\"Original question was: \" + text);\n\nvar regex = /\\s+/;\nvar matches = text.split(regex);\n\nif (matches)\n{\n    var originalText = matches[matches.length-1];\n    textToSearch = originalText.replace(/[^A-Z]/ig,'');\n}\n\nnode.warn(\"Text to be searched is \" + textToSearch);\nmsg.url = url+textToSearch;\n\nnode.warn(\"URL is : \" + msg.url);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 85.49998474121094,
+        "y": 383.5999755859375,
+        "wires": [
+            [
+                "928d80ed.505998"
+            ]
+        ]
+    },
+    {
+        "id": "ec21c361.252ee",
+        "type": "function",
+        "z": "6edd93d3.185104",
+        "name": "Strip html",
+        "func": "var response = msg.payload;\n\nif (response)\n{\n    response=response.replace(/<[^>]*>?/g,'');\n    response=response.replace(/\\([^)]*\\)?/g,'');\n    response=response.replace(/\\n/g,'');\n    \n    msg.payload = response;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 752.5,
+        "y": 384.60003662109375,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c3ce0d31.1bdfa8",
+        "type": "tab",
+        "label": "JARVIS Dialog"
+    },
+    {
+        "id": "d0f08741.ef79b8",
+        "type": "http in",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "GET /jarvisdialog",
+        "url": "/jarvisdialog",
+        "method": "get",
+        "swaggerDoc": "",
+        "x": 149.1999969482422,
+        "y": 131.1999969482422,
+        "wires": [
+            [
+                "713c66ab.8189d8"
+            ]
+        ]
+    },
+    {
+        "id": "713c66ab.8189d8",
+        "type": "change",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "Set Payload",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "req.query.text",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "question",
+                "pt": "flow",
+                "to": "req.query.text",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 341.1999969482422,
+        "y": 131.19998168945312,
+        "wires": [
+            [
+                "4135238d.e83314"
+            ]
+        ]
+    },
+    {
+        "id": "4135238d.e83314",
+        "type": "watson-conversation-v1",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "Conversation",
+        "workspaceid": "4a1ad54c-abe0-421e-a9e3-19d9bb922466",
+        "multiuser": false,
+        "context": true,
+        "x": 543.1999969482422,
+        "y": 170.19998168945312,
+        "wires": [
+            [
+                "7ace8b90.fb1a34"
+            ]
+        ]
+    },
+    {
+        "id": "7ace8b90.fb1a34",
+        "type": "function",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "Extract info",
+        "func": "var intent;\nvar text;\nvar action;\nvar entity;\n\nif (msg.payload.intents[0])\n{\n    intent = msg.payload.intents[0].intent;\n}\n\nif (msg.payload.entities[0])\n{\n    intent = msg.payload.entities[0].entity;\n}\n\nvar text   = msg.payload.output.text[0];\n\naction = intent;\n\nnode.warn(\"Intent is \" + intent);\nnode.warn(\"Entity is \" + entity);\nnode.warn(\"Action is \" + action);\nnode.warn(\"Text   is \" + text);\n\nflow.set(\"action\", action);\nflow.set(\"intent\", intent);\nflow.set(\"entity\", entity);\nflow.set(\"text\", text);\n\nmsg.payload = {\n  \"selector\": {\n    \"code\": action\n  },\n  \"fields\": [\n  ],\n  \"sort\": [\n    {\n      \"_id\": \"asc\"\n    }\n  ]\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 753.1999969482422,
+        "y": 171.19998168945312,
+        "wires": [
+            [
+                "41eae936.1831"
+            ]
+        ]
+    },
+    {
+        "id": "7413d3d4.105474",
+        "type": "http response",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "",
+        "x": 958.2000579833984,
+        "y": 432.1999969482422,
+        "wires": []
+    },
+    {
+        "id": "427e3931.411798",
+        "type": "function",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "Build Response",
+        "func": "var intent = flow.get(\"intent\");\nvar action = flow.get(\"action\");\nvar text   = flow.get(\"text\");\nvar entity = flow.get(\"entity\")\nvar hasAction = false;\n\nvar response = '{ \"actions\": [ ';\n\nif (entity == \"netflix\") {\n    action = \"netflix\";\n}\n\nif (action)\n{\n    if (action == \"previsaotempo\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"HTTPGET\",\"parameters\":[\"http://localhost:8081/weather\"],\"synchronous\":true }';\n    }\n    if (action == \"netflix\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"HTTPGET\",\"parameters\":[\"http://localhost:8081/braviatv\"],\"synchronous\":true }';\n    }\n    else if (action == \"horas\")\n    {\n        hasAction = true;\n        var d = new Date();\n        var offset = -3;\n        \n        var utc = d.getTime() + (d.getTimezoneOffset() * 60000);\n\n        var date = new Date(utc + (3600000*offset));\n        var minutes = date.getMinutes();\n        var hour = date.getHours();\n        \n        var timeText = \"Sao \" + hour + (hour > 1 ? \" horas\" : \" hora\") + \" e \" + minutes + (minutes > 1 ? \" minutos\" : \" minuto\") + \"!\";\n        \n        response +='{\"code\": \"' + action + '\",\"action\":\"PLAY\",\"parameters\":[\"' + timeText + '\"],\"synchronous\":true } ';\n    }\n}\n\nif (text != \"NONE\")\n{\n    if (hasAction)\n    {\n        response += \",\";\n        \n    }\n    \n    response += '{    \"code\": \"PLAY_TEXT\",\t\"action\": \"PLAY\",\t\"parameters\": [ \"' + text + '\"\t],      \"synchronous\": true  } ';\n}\n\nif (action)\n{\n    if (action == \"STOP\")\n    {\n        hasAction = true;\n        response +=', {\"code\": \"' + action + '\",\"action\":\"STOP\",\"synchronous\":true }';\n    }\n}\n\nresponse += \" ] } \"\n\nmsg.payload = response;\n\nmsg.headers = \n{\n    \"Content-Type\" : \"application/json\"    \n};\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 832.4000244140625,
+        "y": 295.4000244140625,
+        "wires": [
+            [
+                "7413d3d4.105474"
+            ]
+        ]
+    },
+    {
+        "id": "e47fbef9.4362b",
+        "type": "http in",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "POST /jarvisdialog",
+        "url": "/jarvisdialog",
+        "method": "post",
+        "swaggerDoc": "",
+        "x": 156.39999389648438,
+        "y": 209.40000915527344,
+        "wires": [
+            [
+                "b592c44.7abe2b8"
+            ]
+        ]
+    },
+    {
+        "id": "b592c44.7abe2b8",
+        "type": "function",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "Set Payload",
+        "func": "var text = msg.req.body.parameter;\n\nmsg.payload = text;\n\nflow.set(\"question\", text);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 336.6999969482422,
+        "y": 209.99998474121094,
+        "wires": [
+            [
+                "4135238d.e83314"
+            ]
+        ]
+    },
+    {
+        "id": "23801348.e93cc4",
+        "type": "comment",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "JARVIS main dialog flow. Can identify texts and actions.",
+        "info": "",
+        "x": 273.09999084472656,
+        "y": 71.79998779296875,
+        "wires": []
+    },
+    {
+        "id": "41eae936.1831",
+        "type": "switch",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "Do I know about it?",
+        "property": "text",
+        "propertyType": "flow",
+        "rules": [
+            {
+                "t": "neq",
+                "v": "CALL_DISCOVERY",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "false",
+        "outputs": 2,
+        "x": 409.1000213623047,
+        "y": 300.7999725341797,
+        "wires": [
+            [
+                "427e3931.411798"
+            ],
+            [
+                "461d206b.b5b4d"
+            ]
+        ]
+    },
+    {
+        "id": "ee7b2f9f.16b4b8",
+        "type": "subflow:6edd93d3.185104",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "Call wikipedia",
+        "x": 544.1999969482422,
+        "y": 443.1000213623047,
+        "wires": [
+            [
+                "64d807d.94d1978"
+            ]
+        ]
+    },
+    {
+        "id": "461d206b.b5b4d",
+        "type": "change",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "Set question",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "question",
+                "tot": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 451.6999969482422,
+        "y": 364.40000915527344,
+        "wires": [
+            [
+                "ee7b2f9f.16b4b8"
+            ]
+        ]
+    },
+    {
+        "id": "64d807d.94d1978",
+        "type": "function",
+        "z": "c3ce0d31.1bdfa8",
+        "name": "Set Response",
+        "func": "var response = \"Desculpe, nao sei responder.\";\n\nif (msg.payload)\n{\n    if (\n        !msg.payload.match(/may refer to:/) &&\n        !msg.payload.match(/This is a redirect from/)\n    )\n    {\n        response = msg.payload;\n    }\n}\n\nflow.set(\"text\", response);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 654.4000091552734,
+        "y": 364.40000915527344,
+        "wires": [
+            [
+                "427e3931.411798"
+            ]
+        ]
+    }
+]

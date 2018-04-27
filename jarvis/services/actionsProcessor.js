@@ -81,4 +81,21 @@ function buildPlayAction(message) {
     };
 }
 
-module.exports = { process, buildPlayAction, setJarvis }
+/**
+ * Builds a action object for stopping.
+ * 
+ */
+function buildStopAction() {
+    return {
+        "actions": [
+            {
+                "action": "STOP",
+                "parameters": [
+                ],
+                "synchronous": true
+            }
+        ]
+    };
+}
+
+module.exports = { process, buildPlayAction, buildStopAction, setJarvis }

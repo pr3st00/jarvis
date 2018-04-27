@@ -82,6 +82,7 @@ class Jarvis extends EventEmitter {
 
     waitForCommand() {
         this.emit('waiting_for_command');
+        player.stop();
         player.play(config.jarvis.waiting_for_command_wav, 44100);
     }
 
@@ -90,7 +91,7 @@ class Jarvis extends EventEmitter {
         var _jarvis = this;
         processor.process(processor.buildPlayAction(message),
             function () {
-                this.onError("Error speaking.")
+                _jarvis.onError("Error speaking.")
             },
             function () {
             });

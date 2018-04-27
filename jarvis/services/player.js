@@ -4,11 +4,26 @@ const fs = require('fs');
 const Speaker = require('speaker');
 const record2 = require('node-record-lpcm16');
 const wav = require('wav');
+const Player = require('player');
+
+var internalPlayer;
 
 const DEFAULT_SAMPLE_RATE = 22050;
 
 var Logger = require('../logger');
 var logger = new Logger("PLAYER");
+
+function playMp3(fileName) {
+
+    internalPlayer = new Player(fileName);
+    internalPlayer.play();
+}
+
+function stop() {
+    if (internalPlayer) {
+        internalPlayer.stop();
+    }
+}
 
 function recordFile(fileName, callback) {
 
@@ -118,4 +133,4 @@ function createWavFile(buffer, fileName, callback) {
     writer.end();
 }
 
-module.exports = { play, recordFile, appendWavHeader, createWavFile }
+module.exports = { play, playMp3, stop, recordFile, appendWavHeader, createWavFile }

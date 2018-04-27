@@ -67,6 +67,8 @@ class Cache {
     }
 
     getConfig() {
+        logger.log('Loading cache config [ file=' + this.serviceConfig.cacheConfig + ' ]');
+
         try {
             return JSON.parse(fs.readFileSync(this.serviceConfig.cacheConfig, 'utf8'));
         } catch (err) {
