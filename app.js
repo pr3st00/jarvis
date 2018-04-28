@@ -10,6 +10,7 @@ var systemresources = require('./routes/systemresources');
 var weather = require('./routes/weather');
 var braviatv = require('./routes/braviatv');
 var playMusic = require('./routes/playmusic');
+var joke = require('./routes/joke');
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use('/systemresources', systemresources);
 app.use('/weather', weather);
 app.use('/braviatv', braviatv);
 app.use('/playmusic', playMusic);
+app.use('/joke', joke);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

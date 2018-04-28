@@ -34,7 +34,8 @@
             "weather": {
                 "city": "4456",
                 "token": "180c833c29d08f7190aec2e86c41378c",
-                "url": "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/"
+                "url": "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/",
+                "error_message": "Nao consegui checar."
             },
             "braviatv": {
                 "ip": "192.168.1.131",

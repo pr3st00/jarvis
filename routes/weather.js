@@ -18,7 +18,7 @@ router.get('/', function (req, res, next) {
     },
         function (err, httpResponse, body) {
             if (err) {
-                res.send(err);
+                res.send(buildPlayAction(serviceConfig.error_message));
             }
             else {
                 res.send(buildResponse(JSON.parse(body)));

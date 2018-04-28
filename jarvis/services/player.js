@@ -23,9 +23,24 @@ function playMp3(list) {
 
     logger.log("Now playing " + list.length + " item(s).");
 
-    internalPlayer = new Player(list);
-    internalPlayer.play();
-    busy = true;
+    try {
+        internalPlayer = new Player(list);
+
+        internalPlayer.on('error', function (err) {
+            logger.logError(err);
+            stop();
+        });
+
+        internalPlayer.on('playing', function (item) {
+            logger.log('Playing [ item=' + item.src + " ]");
+        });
+
+        internalPlayer.play();
+        busy = true;
+    } catch (err) {
+        logger.logError(err);
+        stop();
+    }
 }
 
 function stop() {

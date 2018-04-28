@@ -24,7 +24,7 @@ var core_config = {
     },
     logging: {
         dumpFlags: true,
-        dumpFlagsInterval: 30000
+        dumpFlagsInterval: 45000
     },
     devices: {
         mic: "hw:1,0"

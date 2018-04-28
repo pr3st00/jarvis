@@ -11,7 +11,7 @@ var serviceConfig = config.jarvis.services.music;
 var musicConfig = require(serviceConfig.config);
 var player = require('../jarvis/services/player');
 
-const GOGGLE_YOUTUBE_API = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=";
+const GOGGLE_YOUTUBE_API = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&q=";
 const MP3_FROMYOUTUBE_URL = "https://www.1010diy.com/mp3?quality=128k&url=";
 const YOUTUBE_BASE_VIDEO_URL = "https://www.youtube.com/watch?v=";
 
@@ -28,13 +28,13 @@ router.get('/', function (req, res, next) {
     _res = res;
 
     if (local) {
-        mp3List = findFile(query.toLowerCase(), function(list) { 
+        mp3List = findFile(query.toLowerCase(), function (list) {
             playList(list);
         });
     }
     else {
-        mp3List = findYouTube(query.toLowerCase(), function(list) { 
-            playList(list); 
+        mp3List = findYouTube(query.toLowerCase(), function (list) {
+            playList(list);
         });
     }
 
@@ -45,7 +45,9 @@ function playList(mp3List) {
         player.playMp3(mp3List);
         _res.send(buildStopAction());
     } else {
-        _res.send(buildPlayAction(serviceConfig.not_found_message));
+        setTimeout(function () {
+            _res.send(buildPlayAction(serviceConfig.not_found_message))
+        }, 2000);
     }
 }
 function findFile(query, callback) {
@@ -71,15 +73,19 @@ function findFile(query, callback) {
 
 function findYouTube(query, callback) {
 
-    var url = GOGGLE_YOUTUBE_API + query + "&key=" + serviceConfig.youtube_key + "&maxResults=" 
+    var url = GOGGLE_YOUTUBE_API + query + "&key=" + serviceConfig.youtube_key + "&maxResults="
         + serviceConfig.max_results;
+
+    //console.log("Calling youtube api [ url=" + url + "] ");
 
     request.get({
         url: url
     },
         function (err, httpResponse, body) {
             if (err) {
-                res.send(buildPlayAction(serviceConfig.not_found_message));
+                setTimeout(function () {
+                    _res.send(buildPlayAction(serviceConfig.not_found_message))
+                }, 2000);
             }
             else {
                 callback(buildResponse(JSON.parse(body)));
