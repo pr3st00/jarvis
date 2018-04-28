@@ -82,8 +82,15 @@ class Jarvis extends EventEmitter {
 
     waitForCommand() {
         this.emit('waiting_for_command');
-        player.stop();
-        player.play(config.jarvis.waiting_for_command_wav, 44100);
+        if (player.isBusy()) {
+            player.stop();
+            setTimeout(function () { 
+                player.play(config.jarvis.waiting_for_command_wav, 44100);
+            }, 2000);
+        }
+        else {
+            player.play(config.jarvis.waiting_for_command_wav, 44100);
+        }
     }
 
     speak(message) {

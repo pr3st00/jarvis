@@ -13,16 +13,26 @@ const DEFAULT_SAMPLE_RATE = 22050;
 var Logger = require('../logger');
 var logger = new Logger("PLAYER");
 
-function playMp3(fileName) {
+var busy = false;
 
-    internalPlayer = new Player(fileName);
+function isBusy() {
+    return busy;
+}
+
+function playMp3(list) {
+
+    logger.log("Now playing " + list.length + " item(s).");
+
+    internalPlayer = new Player(list);
     internalPlayer.play();
+    busy = true;
 }
 
 function stop() {
     if (internalPlayer) {
         internalPlayer.stop();
     }
+    busy = false;
 }
 
 function recordFile(fileName, callback) {
@@ -133,4 +143,4 @@ function createWavFile(buffer, fileName, callback) {
     writer.end();
 }
 
-module.exports = { play, playMp3, stop, recordFile, appendWavHeader, createWavFile }
+module.exports = { play, playMp3, stop, recordFile, appendWavHeader, createWavFile, isBusy }

@@ -11,7 +11,8 @@
             "cache": {
                 "enabled": true,
                 "cacheDir": "/tmp/jarviscache",
-                "cacheConfig": "/tmp/jarviscache/cache.json"
+                "cacheConfig": "/tmp/jarviscache/cache.json",
+                "ttl": "24"
             },
             "text_to_speech": {
                 "username": "89163d74-3d65-41e3-b97e-879bfc240c50",
@@ -44,6 +45,8 @@
             "music": {
                 "folder": "/home/pi/Music",
                 "config": "/home/pi/Music/music.json",
+                "youtube_key": "AIzaSyD44pJZWEADfGe9uj3ZCU8SuaThARkYUA4",
+                "max_results": 50,
                 "not_found_message": "Desculpe, nao achei a musica"
             }
         }

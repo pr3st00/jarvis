@@ -61,9 +61,24 @@ class Cache {
             return undef;
         }
 
+        this.expireValues();
+
         fs.writeFile(this.serviceConfig.cacheConfig, JSON.stringify(this.config), function () {
             logger.log('Cache saved.')
         });
+    }
+
+    expireValues() {
+        var now = new Date().getTime();
+
+        for (var i in this.config.entries) {
+            var entry = this.config.entries[i];
+
+            if (now - entry.date >= (this.serviceConfig.ttl * 3600 * 24 * 1000)) {
+                logger.log("Expiring entry [ value=" + entry.value + " ]");
+                this.config.entries.splice(i,1);
+            }
+        }
     }
 
     getConfig() {
