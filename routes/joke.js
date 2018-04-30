@@ -35,7 +35,7 @@ function buildResponse(body) {
     //"pergunta": "O que é que a televisão foi fazer no dentista?",
     //"resposta": "Tratamento de canal."
     //}
-    var text = body.pergunta + "." + body.resposta;
+    var text = body.pergunta.replace(/[\?]/g, '.') + " " + body.resposta;
 
     return buildPlayAction(text);
 }

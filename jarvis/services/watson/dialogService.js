@@ -9,6 +9,7 @@ var logger = new Logger("DIALOG_SERVICE");
 var Cache = require('../cache');
 var cache = new Cache("DIALOG");
 
+const NOT_CACHEABLE_ACTIONS_CODES = ["horas"];
 
 /**
  * Calls waston assistant and receives an action back
@@ -55,13 +56,33 @@ function process(text, jarvis, callback) {
             }
             else {
                 if (serviceConfig.useCache) {
-                    cache.putCacheValue(text, JSON.stringify(body));
+                    if (!containsNonCacheableCode(body)) {
+                        cache.putCacheValue(text, JSON.stringify(body));
+                    }
                 }
 
                 callback(body);
             }
         });
 
+}
+
+
+function containsNonCacheableCode(body) {
+
+    if (!body) {
+        return false;
+    }
+
+    for (var i in body.actions) {
+        var action = body.actions[i];
+
+        if (NOT_CACHEABLE_ACTIONS_CODES.includes(action.code)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 module.exports = { process }

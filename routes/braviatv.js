@@ -6,7 +6,7 @@ var request = require('request');
 var config = require('../jarvis/services/config').getConfig();
 var buildPlayAction = require('../jarvis/services/actionsProcessor').buildPlayAction;
 
-const commands = { "netflix": "AAAAAgAAABoAAAB8Aw==" }
+const commands = { "netflix": "AAAAAgAAABoAAAB8Aw==", "turnoff" : "AAAAAQAAAAEAAAAvAw==" }
 
 router.get('/', function (req, res, next) {
 

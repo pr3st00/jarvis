@@ -8,12 +8,11 @@ const player = require('./services/player');
 var Logger = require('./logger');
 var Jarvis = require('./jarvis');
 
-const INITIAL_QUESTION = "O que voce pode fazer?";
-
 /**
  * CORE configuration
  */
 var core_config = {
+    initial_question: "O que voce pode fazer?",
     silence: {
         min: 5,
         max: 50
@@ -34,7 +33,7 @@ var core_config = {
     detector: {
         sensitivity: 0.65,
         audio_gain: 8.0,
-        model: 'jarvis/resources/jarvis.umdl'
+        model: 'jarvis/resources/snowboy.umdl'
     }
 };
 
@@ -81,7 +80,7 @@ jarvis.on('processing_command', function (event) {
  * Starts the core.
  */
 function start() {
-    jarvis.processCommandText(INITIAL_QUESTION, function () { });
+    jarvis.processCommandText(core_config.initial_question, function () { });
     startHotWordDetector();
 }
 
@@ -111,15 +110,15 @@ function startHotWordDetector() {
 
     models.add({
         file: core_config.detector.model,
-        sensitivity: [core_config.detector.sensitivity, core_config.detector.sensitivity],
-        hotwords: ['Jarvis', 'Jarvis']
+        sensitivity: core_config.detector.sensitivity,
+        hotwords: 'snowboy'
     });
 
     const detector = new Detector({
         resource: "jarvis/resources/common.res",
         models: models,
         audioGain: core_config.detector.audio_gain,
-        applyFrontend: true
+        applyFrontend: false
     });
 
     detector.on('silence', function () {
