@@ -5,6 +5,10 @@ var config = require('./config');
 
 const WATSON = "WATSON";
 
+/**
+ * Factory which provides the processor to be used 
+ * 
+ */
 var getProcessor = function () {
     var implementation = config.getProcessorImplementation();
 
@@ -13,7 +17,6 @@ var getProcessor = function () {
             return watsonProcessor;
     }
 
-    return undefined;
 }
 
 module.exports = { getProcessor };

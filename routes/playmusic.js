@@ -55,15 +55,13 @@ function findFile(query, callback) {
 
     var fileList = [];
 
-    for (var i in musicConfig.entries) {
-        var entry = musicConfig.entries[i];
-
+    for (const entry of musicConfig.entries) {
         if (query.match(entry.genre.toLowerCase())) {
             fileList.push(serviceConfig.folder + "/" + entry.file);
         }
 
-        for (var j in entry.keys) {
-            if (query.match(entry.keys[j].toLowerCase())) {
+        for (const key of entry.keys) {
+            if (query.match(key.toLowerCase())) {
                 fileList.push(serviceConfig.folder + "/" + entry.file);
             }
         }
@@ -100,9 +98,7 @@ function buildResponse(response) {
     var urlList = [];
 
     if (response.items) {
-        for (var i in response.items) {
-            var item = response.items[i];
-
+        for (var item of response.items) {
             if (item.id.kind == "youtube#video") {
                 urlList.push(buildUrl(item.id.videoId));
             }

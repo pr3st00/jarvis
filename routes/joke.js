@@ -13,10 +13,7 @@ router.get('/', function (req, res, next) {
 
     request.get({
         url: URL,
-        json: true,
-        headers: {
-            'Header': "A"
-        }
+        json: true
     },
         function (err, httpResponse, body) {
             if (err) {

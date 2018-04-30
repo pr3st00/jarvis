@@ -9,7 +9,7 @@ var logger = new Logger("DIALOG_SERVICE");
 var Cache = require('../cache');
 var cache = new Cache("DIALOG");
 
-const NOT_CACHEABLE_ACTIONS_CODES = ["horas"];
+const serviceConfig = config.jarvis.services.dialog;
 
 /**
  * Calls waston assistant and receives an action back
@@ -20,8 +20,6 @@ const NOT_CACHEABLE_ACTIONS_CODES = ["horas"];
  */
 function process(text, jarvis, callback) {
     logger.log("Calling dialog with text [" + text + "]");
-
-    var serviceConfig = config.jarvis.services.dialog;
 
     var ini = new Date().getTime();
     var fromCache;
@@ -67,17 +65,19 @@ function process(text, jarvis, callback) {
 
 }
 
-
+/**
+ * Returns true if any action code is not cacheable
+ * 
+ * @param {*} body 
+ */
 function containsNonCacheableCode(body) {
 
     if (!body) {
         return false;
     }
 
-    for (var i in body.actions) {
-        var action = body.actions[i];
-
-        if (NOT_CACHEABLE_ACTIONS_CODES.includes(action.code)) {
+    for (var action of body.actions) {
+        if (serviceConfig.do_not_cache_action_codes.includes(action.code)) {
             return true;
         }
     }

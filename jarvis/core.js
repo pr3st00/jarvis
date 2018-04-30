@@ -12,7 +12,7 @@ var Jarvis = require('./jarvis');
  * CORE configuration
  */
 var core_config = {
-    initial_question: "O que voce pode fazer?",
+    initial_question: "O que voce sabe fazer?",
     silence: {
         min: 5,
         max: 50

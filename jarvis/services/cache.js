@@ -20,7 +20,7 @@ class Cache {
 
     putFileCacheValue(key, fileName) {
         if (!this.serviceConfig.enabled) {
-            return undef;
+            return undefined;
         }
 
         var cacheFileName = this.serviceConfig.cacheDir + "/" + "cache_" + new Date().getTime();
@@ -33,7 +33,7 @@ class Cache {
 
     putCacheValue(key, value) {
         if (!this.serviceConfig.enabled) {
-            return undef;
+            return undefined;
         }
 
         logger.log('Adding to cache. [key =' + key + ', value=' + value + ']');
@@ -43,22 +43,20 @@ class Cache {
 
     getCacheValue(key) {
         if (!this.serviceConfig.enabled) {
-            return undef;
+            return undefined;
         }
 
-        for (var i in this.config.entries) {
-            if (this.config.entries[i].key == key && this.config.entries[i].service == this.serviceName) {
-                logger.log('Found in cache [value=' + this.config.entries[i].value + ']');
-                return this.config.entries[i].value;
+        for (const entry of this.config.entries) {
+            if (entry.key == key && entry.service == this.serviceName) {
+                logger.log('Found in cache [value=' + entry.value + ']');
+                return entry.value;
             }
         }
-
-        return undefined;
     }
 
     saveConfig() {
         if (!this.serviceConfig.enabled) {
-            return undef;
+            return undefined;
         }
 
         this.expireValues();
@@ -71,12 +69,10 @@ class Cache {
     expireValues() {
         var now = new Date().getTime();
 
-        for (var i in this.config.entries) {
-            var entry = this.config.entries[i];
-
+        for (const entry of this.config.entries) {
             if (now - entry.date >= (this.serviceConfig.ttl * 3600 * 24 * 1000)) {
                 logger.log("Expiring entry [ value=" + entry.value + " ]");
-                this.config.entries.splice(i,1);
+                this.config.entries.splice(i, 1);
             }
         }
     }

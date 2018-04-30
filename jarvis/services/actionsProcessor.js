@@ -44,9 +44,7 @@ function processActions(multipleActions, processor, callback) {
 
     processor.setJarvis(_jarvis);
 
-    for (var i in multipleActions.actions) {
-        var action = processor.process(multipleActions.actions[i]);
-
+    for (const action of multipleActions.actions) {
         if (action) {
             if (action instanceof Promise) {
                 action.then(function(r) {

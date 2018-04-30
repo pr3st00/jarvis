@@ -5,6 +5,7 @@ var Logger = require('../logger');
 var logger = new Logger("DEFAULT_PROCESSOR");
 
 /**
+ * Process a single action
  * 
  * @param {*} singleAction 
  */
@@ -16,13 +17,18 @@ function process(singleAction) {
             return executeScript(singleAction.parameters);
 
         case "HTTPGET":
-            return doGetUrl(singleAction.parameters).then(function(response) {
+            return doGetUrl(singleAction.parameters).then(function (response) {
                 return response;
             });
 
     }
 }
 
+/**
+ * Execute a script
+ * 
+ * @param {*} parameters 
+ */
 function executeScript(parameters) {
     logger.log("[SCRIPT_CALL] Executing script [" + parameters[0] + "]");
 
@@ -36,6 +42,11 @@ function executeScript(parameters) {
 
 }
 
+/**
+ * Executes a HTTPGET call
+ * 
+ * @param {*} parameters 
+ */
 async function doGetUrl(parameters) {
     logger.log("[HTTP_GET_CALL] Calling url [" + parameters[0] + "]");
 

@@ -6,11 +6,15 @@ var request = require('request');
 var config = require('../jarvis/services/config').getConfig();
 var buildPlayAction = require('../jarvis/services/actionsProcessor').buildPlayAction;
 
-const commands = { "netflix": "AAAAAgAAABoAAAB8Aw==", "turnoff" : "AAAAAQAAAAEAAAAvAw==" }
+const commands = {
+    "netflix": "AAAAAgAAABoAAAB8Aw==",
+    "turnoff": "AAAAAQAAAAEAAAAvAw=="
+};
+
+const serviceConfig = config.jarvis.services.braviatv;
 
 router.get('/', function (req, res, next) {
 
-    var serviceConfig = config.jarvis.services.braviatv;
     var url = "http://" + serviceConfig.ip + "/sony/IRCC";
 
     var command = req.query.command;

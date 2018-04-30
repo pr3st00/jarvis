@@ -29,6 +29,9 @@
             },
             "dialog": {
                 "url": "http://pr3st00iot.mybluemix.net/jarvisdialog",
+                "do_not_cache_action_codes": [
+                    "horas"
+                ],
                 "useCache": true
             },
             "weather": {
