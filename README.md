@@ -1,8 +1,9 @@
-# jarvis
 <h1 align="center">Jarvis Home Automation</h1>
 
 <p align="center">
-A voice controlled home automation system, along with plugins for doing cool things. It uses the amazing snowboy product (https://snowboy.kitt.ai/)
+A voice controlled home automation system, along with plugins for doing cool things. 
+
+It uses the amazing snowboy product (https://snowboy.kitt.ai/)
 for waiting for a keyword, and then executes actions based on a pre-determined json format.
 
 Actions can be executed in parallel or sequentially, and can in turn return another actions. This simple framework allows complex actions to be executed with little effort.
