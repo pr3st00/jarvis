@@ -1,6 +1,6 @@
 {
   "name": "jarvis-system",
-  "version": "0.0.0",
+  "version": "0.0.10",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"

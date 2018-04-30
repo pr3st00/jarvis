@@ -73,7 +73,7 @@ jarvis.on('command_received', function (event) {
 });
 
 jarvis.on('processing_command', function (event) {
-    io.emit('waiting_for_command', JSON.stringify({ status: "PROCESSING", text: "Proccesing command..." }));
+    io.emit('waiting_for_command', JSON.stringify({ status: "PROCESSING", text: "Processing command..." }));
 });
 
 /**

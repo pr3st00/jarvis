@@ -47,11 +47,13 @@ function processActions(multipleActions, processor, callback) {
     for (const action of multipleActions.actions) {
         if (action) {
             if (action instanceof Promise) {
+
                 action.then(function(r) {
                     processor.process(r.actions[0]);
-                })
+                });
             }
             else {
+                
                 processor.process(action);
             }
         }
