@@ -1,6 +1,6 @@
 <h1 align="center">Jarvis Home Automation</h1>
 
-<p align="center">
+<p>
 A voice controlled home automation system, along with plugins for doing cool things. 
 
 It uses the amazing snowboy product (https://snowboy.kitt.ai/)

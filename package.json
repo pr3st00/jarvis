@@ -25,12 +25,13 @@
     "socket.io": "^2.1.0",
     "speaker": "^0.4.1",
     "stream-converter": "0.0.1",
-    "systeminformation": "^3.38.0",
-    "watson-developer-cloud": "^3.3.0",
-    "wav": "^1.0.1"
+    "systeminformation": "^3.40.0",
+    "watson-developer-cloud": "^3.4.0",
+    "wav": "^1.0.2"
   },
   "devDependencies": {
+    "eslint": "^4.19.1",
     "eslint-config-google": "^0.9.1",
-    "mocha": "^5.1.0"
+    "mocha": "^5.1.1"
   }
 }

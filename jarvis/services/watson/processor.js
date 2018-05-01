@@ -1,33 +1,34 @@
-'use strict'
+'use strict';
 
-var sttService = require('./speechToTextService');
-var ttsService = require('./textToSpeechService');
-var defaultProcessor = require('../defaultProcessor');
-var _jarvis;
+const ttsService = require('./textToSpeechService');
+const defaultProcessor = require('../defaultProcessor');
+let _jarvis;
 
+/**
+ * Sets jarvis
+ * @param {*} jarvis
+ */
 function setJarvis(jarvis) {
     _jarvis = jarvis;
 }
 
 /**
  * Executes a single action possibly returning new actions.
- * 
- * @param {*} singleAction 
+ *
+ * @param {*} singleAction
+ * @return {*} processor
  */
 function process(singleAction) {
-
     switch (singleAction.action) {
-
-        case "PLAY":
+        case 'PLAY':
             return ttsService.process(singleAction, _jarvis);
 
-        case "EXECUTE":
+        case 'EXECUTE':
             return defaultProcessor.process(singleAction, _jarvis);
 
-        case "HTTPGET":
+        case 'HTTPGET':
             return defaultProcessor.process(singleAction, _jarvis);
-
     }
 }
 
-module.exports = { process, setJarvis };
+module.exports = {process, setJarvis};

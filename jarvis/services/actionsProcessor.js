@@ -1,14 +1,14 @@
-'use strict'
+'use strict';
 
-var exceptions = require('./exceptions');
-var factory = require('./factory');
+const exceptions = require('./exceptions');
+const factory = require('./factory');
 
-const ACTIONS = ["PLAY", "HTTPGET", "HTTPOST", "EXECUTE", "STOP"];
-var _jarvis;
+const ACTIONS = ['PLAY', 'HTTPGET', 'HTTPOST', 'EXECUTE', 'STOP'];
+let _jarvis;
 
 /**
- * 
- * @param {*} jarvis 
+ *
+ * @param {*} jarvis
  */
 function setJarvis(jarvis) {
     _jarvis = jarvis;
@@ -16,8 +16,8 @@ function setJarvis(jarvis) {
 
 /**
  * Process multipleActions executing each action with the processor
- * 
- * @param {*} multipleActions 
+ *
+ * @param {*} multipleActions
  * @param {*} errorCallBack
  * @param {*} successCallBack
  */
@@ -32,14 +32,14 @@ function process(multipleActions, errorCallBack, successCallBack) {
 
 /**
  * Processes all the actions using the processor provided.
- *   
- * @param {*} multipleActions 
- * @param {*} processor 
+ *
+ * @param {*} multipleActions
+ * @param {*} processor
  * @param {*} callback
  */
 function processActions(multipleActions, processor, callback) {
     if (!multipleActions) {
-        throw new exceptions.ActionServiceError("actions cannot be empty!");
+        throw new exceptions.ActionServiceError('actions cannot be empty!');
     }
 
     processor.setJarvis(_jarvis);
@@ -47,55 +47,53 @@ function processActions(multipleActions, processor, callback) {
     for (const action of multipleActions.actions) {
         if (action) {
             if (action instanceof Promise) {
-
                 action.then(function(r) {
                     processor.process(r.actions[0]);
                 });
-            }
-            else {
-                
+            } else {
                 processor.process(action);
             }
         }
     }
 
-    //callback();
+    // callback();
 }
 
 /**
  * Builds a action object for playing the message.
- * 
- * @param {*} message 
+ *
+ * @param {*} message
+ * @return {*} json
  */
 function buildPlayAction(message) {
     return {
-        "actions": [
+        'actions': [
             {
-                "action": "PLAY",
-                "parameters": [
-                    message
+                'action': 'PLAY',
+                'parameters': [
+                    message,
                 ],
-                "synchronous": true
-            }
-        ]
+                'synchronous': true,
+            },
+        ],
     };
 }
 
 /**
  * Builds a action object for stopping.
- * 
+ * @return {*} json
  */
 function buildStopAction() {
     return {
-        "actions": [
+        'actions': [
             {
-                "action": "STOP",
-                "parameters": [
+                'action': 'STOP',
+                'parameters': [
                 ],
-                "synchronous": true
-            }
-        ]
+                'synchronous': true,
+            },
+        ],
     };
 }
 
-module.exports = { process, buildPlayAction, buildStopAction, setJarvis }
+module.exports = {process, buildPlayAction, buildStopAction, setJarvis};

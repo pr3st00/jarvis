@@ -1,110 +1,120 @@
-'use strict'
+'use strict';
 
-var config = require('../config').getConfig();
-var SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
-var streamify = require('stream-converter');
+const config = require('../config').getConfig();
+const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 
-var serviceConfig = config.jarvis.services.speech_to_text;
+const serviceConfig = config.jarvis.services.speech_to_text;
 
-var Logger = require('../../logger');
-var logger = new Logger("SPEECH_TO_TEXT");
+const Logger = require('../../logger');
+const logger = new Logger('SPEECH_TO_TEXT');
 
-var NO_ANSWER_FOUND = "NO_ANSWER_FOUND";
+const NO_ANSWER_FOUND = 'NO_ANSWER_FOUND';
 
-var speech_to_text = new SpeechToTextV1({
+const speechToText = new SpeechToTextV1({
     username: serviceConfig.username,
-    password: serviceConfig.password
+    password: serviceConfig.password,
 });
 
-var webSocketparams = {
+const webSocketparams = {
     content_type: 'audio/wav',
     timestamps: false,
     model: serviceConfig.model,
-    acoustic_customization_id: serviceConfig.acoustic_customization_id
+    acoustic_customization_id: serviceConfig.acoustic_customization_id,
 };
 
-var recognizeStream = speech_to_text.createRecognizeStream(webSocketparams);
+let recognizeStream = speechToText.createRecognizeStream(webSocketparams);
 recognizeStream.setEncoding('utf8');
 
+/**
+ * Process the request on data
+ * @param {*} data
+ * @param {*} callback
+ * @param {*} errorCallBack
+ */
 function process(data, callback, errorCallBack) {
-    logger.log("[SERVICE_CALL] Calling stt.");
+    logger.log('[SERVICE_CALL] Calling stt.');
 
     if (serviceConfig.use_websockets) {
         processWithSockets(data, callback, errorCallBack);
-    }
-    else {
+    } else {
         processWithRest(data, callback, errorCallBack);
     }
-
 }
 
+/**
+ * Process request using REST service
+ *
+ * @param {*} buffer
+ * @param {*} callback
+ * @param {*} errorCallBack
+ */
 function processWithRest(buffer, callback, errorCallBack) {
-    var wav = require('wav');
-    var writer = new wav.Writer();
+    let wav = require('wav');
+    let writer = new wav.Writer();
 
     writer.write(buffer);
     writer.end();
 
-    var params = {
-        audio: writer,
-        content_type: 'audio/wav',
-        timestamps: false,
+    let params = {
+        'audio': writer,
+        'content_type': 'audio/wav',
+        'timestamps': false,
         'interim_results': false,
-        model: serviceConfig.model,
-        acoustic_customization_id: serviceConfig.acoustic_customization_id
+        'model': serviceConfig.model,
+        'acoustic_customization_id': serviceConfig.acoustic_customization_id,
     };
 
-    var ini = new Date().getTime();
+    let ini = new Date().getTime();
 
-    speech_to_text.recognize(params, function (error, transcript) {
+    speechToText.recognize(params, function(error, transcript) {
+        let timeTaken = new Date().getTime() - ini;
+        logger.log('Took: (' + timeTaken + ') ms.');
 
-        var timeTaken = new Date().getTime() - ini;
-        logger.log("Took: (" + timeTaken + ") ms.")
-
-        if (error)
+        if (error) {
             errorCallBack(error);
-        else {
-            //No answer found   = {"results":[],"result_index":0}
-            //Sucessfully found = {"results":[{"alternatives":[{"confidence":0.191,"transcript":"fã "}],"final":true}],"result_index":0}
+        } else {
             logger.log(JSON.stringify(transcript));
             if (transcript.results[0] &&
                 transcript.results[0].alternatives[0]) {
                 callback(transcript.results[0].alternatives[0].transcript);
-            }
-            else {
+            } else {
                 errorCallBack(NO_ANSWER_FOUND);
             }
         }
     });
 }
 
+/**
+ * Process the request using websockets
+ * @param {*} buffer
+ * @param {*} callback
+ * @param {*} errorCallBack
+ */
 function processWithSockets(buffer, callback, errorCallBack) {
+    let wav = require('wav');
+    let writer = new wav.Writer();
+    let hasResult = false;
 
-    var wav = require('wav');
-    var writer = new wav.Writer();
-    var hasResult = false;
-
-    //streamify(buffer).pipe(recognizeStream);
-    var ini = new Date().getTime();
+    // streamify(buffer).pipe(recognizeStream);
+    let ini = new Date().getTime();
 
     writer.pipe(recognizeStream);
 
-    recognizeStream.on('data', function (text) {
+    recognizeStream.on('data', function(text) {
         hasResult = true;
 
-        var timeTaken = new Date().getTime() - ini;
-        logger.log("Took: (" + timeTaken + ") ms.")
+        let timeTaken = new Date().getTime() - ini;
+        logger.log('Took: (' + timeTaken + ') ms.');
 
-        logger.log("Response = [" + text + "]");
+        logger.log('Response = [' + text + ']');
         callback(text);
-
     });
 
-    recognizeStream.on('error', function (event) {
+    recognizeStream.on('error', function(event) {
         errorCallBack(NO_ANSWER_FOUND);
     });
 
-    recognizeStream.on('end', function () {
+    recognizeStream.on('end', function() {
         if (!hasResult) {
             errorCallBack(NO_ANSWER_FOUND);
         }
@@ -112,7 +122,6 @@ function processWithSockets(buffer, callback, errorCallBack) {
 
     writer.write(buffer);
     writer.end();
-
 }
 
-module.exports = { process };
+module.exports = {process};

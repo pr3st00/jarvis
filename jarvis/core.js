@@ -3,97 +3,101 @@
 const record = require('node-record-lpcm16');
 const Detector = require('snowboy').Detector;
 const Models = require('snowboy').Models;
-const player = require('./services/player');
 
-var Logger = require('./logger');
-var Jarvis = require('./jarvis');
+let Logger = require('./logger');
+let Jarvis = require('./jarvis');
 
 /**
  * CORE configuration
  */
-var core_config = {
-    initial_question: "O que voce sabe fazer?",
+const coreConfig = {
+    initial_question: 'O que voce sabe fazer?',
     silence: {
         min: 5,
-        max: 50
+        max: 50,
     },
     command: {
         min: 10,
-        max: 25
+        max: 25,
     },
     logging: {
         dumpFlags: true,
-        dumpFlagsInterval: 45000
+        dumpFlagsInterval: 45000,
     },
     devices: {
-        mic: "hw:1,0"
+        mic: 'hw:1,0',
     },
     skip_first_chunk: false,
     wait_for_javis_time: 5000,
     detector: {
         sensitivity: 0.65,
         audio_gain: 8.0,
-        model: 'jarvis/resources/snowboy.umdl'
-    }
+        model: 'jarvis/resources/snowboy.umdl',
+    },
 };
 
-var waiting_for_command = false;
-var processing_command = false;
-var silence_events = 0;
-var command_events = 0;
+let waitingForCommand = false;
+let processingCommand = false;
+let silenceEvents = 0;
+let commandEvents = 0;
 
-var FINALBUFFER = new Buffer('');
-var io;
-var processCommandIniTime;
+let FINALBUFFER = new Buffer('');
+let io;
+let processCommandIniTime;
 
-var jarvis = new Jarvis();
-var logger = new Logger("CORE");
+let jarvis = new Jarvis();
+let logger = new Logger('CORE');
 
+/**
+ * Sets an io to jarvis
+ * @param {*} _io
+ */
 function setIO(_io) {
     io = _io;
 }
 
-jarvis.on('error', function (err) {
+jarvis.on('error', function(err) {
     logger.logError(err.message);
-    io.emit('error', JSON.stringify({ status: "ERROR", text: err.message }));
+    io.emit('error', JSON.stringify({status: 'ERROR', text: err.message}));
     resetFlags();
-
 });
 
-jarvis.on('speaking', function (event) {
+jarvis.on('speaking', function(event) {
     io.emit('speaking', JSON.stringify(event));
 });
 
-jarvis.on('waiting_for_command', function (event) {
-    io.emit('waiting_for_command', JSON.stringify({ status: "WAITING", text: "Waiting for command..." }));
+jarvis.on('waiting_for_command', function(event) {
+    io.emit('waiting_for_command', JSON.stringify(
+        {status: 'WAITING', text: 'Waiting for command...'}));
 });
 
-jarvis.on('command_received', function (event) {
-    io.emit('command_received', JSON.stringify({ status: "GOT_COMMAND", text: event }));
+jarvis.on('command_received', function(event) {
+    io.emit('command_received', JSON.stringify(
+        {status: 'GOT_COMMAND', text: event}));
 });
 
-jarvis.on('processing_command', function (event) {
-    io.emit('waiting_for_command', JSON.stringify({ status: "PROCESSING", text: "Processing command..." }));
+jarvis.on('processing_command', function(event) {
+    io.emit('waiting_for_command', JSON.stringify(
+        {status: 'PROCESSING', text: 'Processing command...'}));
 });
 
 /**
  * Starts the core.
  */
 function start() {
-    jarvis.processCommandText(core_config.initial_question, function () { });
+    jarvis.processCommandText(coreConfig.initial_question, function() { });
     startHotWordDetector();
 }
 
 /**
  * Saves buffer to FINALLBUFFER
- * 
- * @param {*} buffer 
+ * @param {*} buffer
  */
 function saveCommandBuffer(buffer) {
     /**
      * Skips the very first chunk after the keyword. Usually it's the beep!
      */
-    if (command_events === 0 && core_config.skip_first_chunk) {
+    if (commandEvents === 0 && coreConfig.skip_first_chunk) {
         return;
     }
 
@@ -105,25 +109,24 @@ function saveCommandBuffer(buffer) {
  * Uses snowboy for hotwork detection and calls jarvis when needed
  */
 function startHotWordDetector() {
-
     const models = new Models();
 
     models.add({
-        file: core_config.detector.model,
-        sensitivity: core_config.detector.sensitivity,
-        hotwords: 'snowboy'
+        file: coreConfig.detector.model,
+        sensitivity: coreConfig.detector.sensitivity,
+        hotwords: 'snowboy',
     });
 
     const detector = new Detector({
-        resource: "jarvis/resources/common.res",
+        resource: 'jarvis/resources/common.res',
         models: models,
-        audioGain: core_config.detector.audio_gain,
-        applyFrontend: false
+        audioGain: coreConfig.detector.audio_gain,
+        applyFrontend: false,
     });
 
-    detector.on('silence', function () {
-        if (waiting_for_command && processing_command) {
-            silence_events++;
+    detector.on('silence', function() {
+        if (waitingForCommand && processingCommand) {
+            silenceEvents++;
 
             if (stillNotReadyForCommand()) {
                 return;
@@ -135,126 +138,143 @@ function startHotWordDetector() {
         logger.log('Silence.');
     });
 
-    detector.on('sound', function (buffer) {
-        silence_events = 0;
+    detector.on('sound', function(buffer) {
+        silenceEvents = 0;
 
-        if (waiting_for_command) {
-            command_events++;
-            processing_command = true;
+        if (waitingForCommand) {
+            commandEvents++;
+            processingCommand = true;
 
             if (stillNotReadyForCommand()) {
                 saveCommandBuffer(buffer);
-            }
-            else {
+            } else {
                 processCommand();
             }
-        }
-        else {
+        } else {
             logger.logRestricted('Sound.');
         }
     });
 
-    detector.on('error', function () {
+    detector.on('error', function() {
         logger.logError('error');
     });
 
-    detector.on('hotword', function (index, hotword, buffer) {
-        silence_events = 0;
+    detector.on('hotword', function(index, hotword, buffer) {
+        silenceEvents = 0;
 
-        logger.log('Hotword [' + hotword + "] received at index [" + index + "]");
+        logger.log('Hotword [' + hotword + '] received at index ['
+        + index + ']');
 
-        if (waiting_for_command) {
+        if (waitingForCommand) {
             saveCommandBuffer(buffer);
             return;
         }
 
-        if (jarvis.busy || processing_command) {
+        if (jarvis.busy || processingCommand) {
             return;
         }
 
         jarvis.waitForCommand();
 
-        waiting_for_command = true;
+        waitingForCommand = true;
     });
 
     const mic = record.start({
         threshold: 0,
         channels: 1,
         sampleRate: 16000,
-        device: core_config.devices.mic,
-        verbose: false
+        device: coreConfig.devices.mic,
+        verbose: false,
     });
 
     mic.pipe(detector);
 
     logger.log('STARTED');
 
-    if (core_config.logging.dumpFlags) {
+    if (coreConfig.logging.dumpFlags) {
         dumpFlags();
     }
 }
 
+/**
+ * Saves the intermediate buffer
+ * @param {*} buffer
+ * @param {*} finalBuffer
+ * @return {*} newBuffer
+ */
 function saveBuffer(buffer, finalBuffer) {
-    var newBuffer = Buffer.concat([finalBuffer, buffer]);
+    let newBuffer = Buffer.concat([finalBuffer, buffer]);
     return newBuffer;
 }
 
+/**
+ * Process command
+ */
 function processCommand() {
-    command_events = 0;
-    waiting_for_command = false;
+    commandEvents = 0;
+    waitingForCommand = false;
 
-    logger.log("Processing command.");
+    logger.log('Processing command.');
 
     processCommandIniTime = new Date().getTime();
 
-    jarvis.processCommandData(FINALBUFFER, function () {
-
+    jarvis.processCommandData(FINALBUFFER, function() {
         /**
          * Total time spent for procesing a command.
          */
-        var totalTime = new Date().getTime() - processCommandIniTime;
-        logger.log("TOTAL COMMAND PROCESSING TIME = [" + totalTime + "] ms");
+        let totalTime = new Date().getTime() - processCommandIniTime;
+        logger.log('TOTAL COMMAND PROCESSING TIME = [' + totalTime + '] ms');
 
         /**
          * Give it sometime for JARVIS to talk.
          * Avoid Jarvis responding to itself :-)
          */
-        setTimeout(function () {
-            processing_command = false;
+        setTimeout(function() {
+            processingCommand = false;
             FINALBUFFER = new Buffer('');
-        }, core_config.wait_for_javis_time);
+        }, coreConfig.wait_for_javis_time);
     });
-
 }
 
+/**
+ * Verifies if the command is ready to be processed
+ * @return {*} boolean
+ */
 function stillNotReadyForCommand() {
-    if (command_events >= core_config.command.max) {
+    if (commandEvents >= coreConfig.command.max) {
         return false;
     }
 
-    if (silence_events <= core_config.silence.min) {
+    if (silenceEvents <= coreConfig.silence.min) {
         return true;
     }
 
-    if (command_events < core_config.command.min &&
-        silence_events <= core_config.silence.max
+    if (commandEvents < coreConfig.command.min &&
+        silenceEvents <= coreConfig.silence.max
     ) {
         return true;
     }
-
 }
 
+/**
+ * Dump the current flags to the console
+ */
 function dumpFlags() {
-    logger.log('STATUS [waiting_for_comand=' + waiting_for_command + ', processing_command=' + processing_command + ']');
-    logger.log('EVENTS [silence=' + silence_events + ', command=' + command_events + ']');
-    setTimeout(dumpFlags, core_config.logging.dumpFlagsInterval);
+    logger.log('STATUS [waiting_for_comand=' + waitingForCommand +
+        ', processing_command=' + processingCommand + ']');
+    logger.log('EVENTS [silence=' + silenceEvents + ', command=' +
+        commandEvents + ']');
+    setTimeout(dumpFlags, coreConfig.logging.dumpFlagsInterval);
 }
 
+/**
+ * Resets all internal flags
+ */
 function resetFlags() {
-    waiting_for_command = false;
-    processing_command = false;
-    silence_events = 0;
-    command_events = 0;
+    waitingForCommand = false;
+    processingCommand = false;
+    silenceEvents = 0;
+    commandEvents = 0;
 }
 
-exports = module.exports = { start, setIO };
+exports = module.exports = {start, setIO};

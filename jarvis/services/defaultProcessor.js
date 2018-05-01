@@ -1,8 +1,8 @@
-'use strict'
+'use strict';
 
-var request = require('request-promise');
-var Logger = require('../logger');
-var logger = new Logger("DEFAULT_PROCESSOR");
+const request = require('request-promise');
+const Logger = require('../logger');
+const logger = new Logger("DEFAULT_PROCESSOR");
 
 /**
  * Process a single action
@@ -44,7 +44,6 @@ function executeScript(parameters) {
 
 /**
  * Executes a HTTPGET call
- * 
  * @param {*} parameters 
  */
 async function doGetUrl(parameters) {

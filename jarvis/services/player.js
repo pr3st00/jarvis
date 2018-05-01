@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const fs = require('fs');
 const Speaker = require('speaker');
@@ -6,33 +6,40 @@ const record2 = require('node-record-lpcm16');
 const wav = require('wav');
 const Player = require('player');
 
-var internalPlayer;
+let internalPlayer;
 
 const DEFAULT_SAMPLE_RATE = 22050;
 
-var Logger = require('../logger');
-var logger = new Logger("PLAYER");
+const Logger = require('../logger');
+const logger = new Logger('PLAYER');
 
-var busy = false;
+let busy = false;
 
+/**
+ * Returns if the player is busy
+ * @return {*} boolean
+ */
 function isBusy() {
     return busy;
 }
 
+/**
+ * Plays a mp3
+ * @param {*} list
+ */
 function playMp3(list) {
-
-    logger.log("Now playing " + list.length + " item(s).");
+    logger.log('Now playing ' + list.length + ' item(s).');
 
     try {
         internalPlayer = new Player(list);
 
-        internalPlayer.on('error', function (err) {
+        internalPlayer.on('error', function(err) {
             logger.logError(err);
             stop();
         });
 
-        internalPlayer.on('playing', function (item) {
-            logger.log('Playing [ item=' + item.src + " ]");
+        internalPlayer.on('playing', function(item) {
+            logger.log('Playing [ item=' + item.src + ' ]');
         });
 
         internalPlayer.play();
@@ -43,6 +50,9 @@ function playMp3(list) {
     }
 }
 
+/**
+ * Stops the player
+ */
 function stop() {
     if (internalPlayer) {
         internalPlayer.stop();
@@ -50,112 +60,134 @@ function stop() {
     busy = false;
 }
 
+/**
+ * Records a file
+ * @param {*} fileName
+ * @param {*} callback
+ */
 function recordFile(fileName, callback) {
-
     if (fs.existsSync(fileName)) {
         fs.unlinkSync(fileName);
     }
 
-    var file = fs.createWriteStream(fileName, { encoding: 'binary' })
+    let file = fs.createWriteStream(fileName, {encoding: 'binary'});
 
     const mic = record2.start({
         threshold: 5,
         silence: 2,
-        device: "hw:1,0",
-        recordProgram: "rec",
-        verbose: true
+        device: 'hw:1,0',
+        recordProgram: 'rec',
+        verbose: true,
     });
 
-    var stream = mic.pipe(file);
+    let stream = mic.pipe(file);
 
     mic.on('finish', callback);
-    //stream.on('end', callback);
-    //stream.on('close', callback);
-
+    // stream.on('end', callback);
+    // stream.on('close', callback);
 }
 
+/**
+ * Plays file using the rate provided.
+ * @param {*} file
+ * @param {*} sampleRate
+ */
 function play(file, sampleRate) {
+    let rate = sampleRate || DEFAULT_SAMPLE_RATE;
 
-    var rate = sampleRate || DEFAULT_SAMPLE_RATE;
-
-    var speaker = new Speaker({
+    let speaker = new Speaker({
         channels: 1,
         bitDepth: 16,
         sampleRate: rate,
-        //device: "hw:0,0",
-        verbose: true
+        // device: "hw:0,0",
+        verbose: true,
     });
 
-    speaker.on('error', function (err) {
+    speaker.on('error', function(err) {
         logger.logError('Speaker error : %s', err);
     });
 
     fs.createReadStream(file).pipe(speaker);
 }
 
+/**
+ * Appends a wav header to the buffer
+ * @param {*} buffer
+ * @param {*} detector
+ * @return {*} newbuffer
+ */
 function appendWavHeader(buffer, detector) {
+    let audioCommandBuffer = new Buffer(5000);
 
-    var audioCommandBuffer = new Buffer(5000);
+    let samplesLength = 10000;
 
-    var samplesLength = 10000;
-
-    var header = new Buffer(1024);
+    let header = new Buffer(1024);
     header.write('RIFF', 0);
 
-    //file length
+    // file length
     header.writeUInt32LE(32 + samplesLength * 2, 4);
     header.write('WAVE', 8);
 
-    //format chunk idnetifier
+    // format chunk idnetifier
     header.write('fmt ', 12);
 
-    //format chunk length
+    // format chunk length
     header.writeUInt32LE(16, 16);
 
-    //sample format (raw)
+    // sample format (raw)
     header.writeUInt16LE(1, 20);
 
-    //Channel Count
+    // Channel Count
     header.writeUInt16LE(detector.numChannels(), 22);
 
-    //sample rate
+    // sample rate
     header.writeUInt32LE(detector.sampleRate(), 24);
 
-    //byte rate
-    //header.writeUInt32LE(detector.sampleRate() * 4,28);
+    // byte rate
+    // header.writeUInt32LE(detector.sampleRate() * 4,28);
     header.writeUInt32LE(32000, 28);
 
-    //block align (channel count * bytes per sample)
+    // block align (channel count * bytes per sample)
     header.writeUInt16LE(2, 32);
 
-    //bits per sample
+    // bits per sample
     header.writeUInt16LE(16, 34);
 
-    //data chunk identifier
+    // data chunk identifier
     header.write('data', 36);
 
-    //data chunk length
+    // data chunk length
     header.writeUInt32LE(15728640, 40);
 
     audioCommandBuffer = header.slice(0, 50);
 
-    //Comment this out to omit the hotword chunk of audio
+    // Comment this out to omit the hotword chunk of audio
     audioCommandBuffer = Buffer.concat([audioCommandBuffer, buffer]);
 
     return audioCommandBuffer;
-
 }
 
+/**
+ * Creates a wav file using buffer
+ * @param {*} buffer
+ * @param {*} fileName
+ * @param {*} callback
+ */
 function createWavFile(buffer, fileName, callback) {
-    logger.log("Creating command file. [filename=" + fileName + ']')
+    logger.log('Creating command file. [filename=' + fileName + ']');
 
-    var writer = new wav.FileWriter(fileName);
+    let writer = new wav.FileWriter(fileName);
 
-    writer.on('done', function () { setTimeout(callback, 1000) });
-    writer.on('error', function (err) { console.error(err); });
+    writer.on('done', function() {
+setTimeout(callback, 1000);
+});
+    writer.on('error', function(err) {
+console.error(err);
+});
 
     writer.write(buffer);
     writer.end();
 }
 
-module.exports = { play, playMp3, stop, recordFile, appendWavHeader, createWavFile, isBusy }
+module.exports = {play, playMp3, stop, recordFile,
+    appendWavHeader, createWavFile, isBusy};
