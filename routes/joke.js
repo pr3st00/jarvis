@@ -1,38 +1,35 @@
-'use strict'
+'use strict';
 
-var express = require('express');
-var router = express.Router();
-var request = require('request');
-var config = require('../jarvis/services/config').getConfig();
-var buildPlayAction = require('../jarvis/services/actionsProcessor').buildPlayAction;
+const express = require('express');
+const router = express.Router();
+const request = require('request');
+const buildPlayAction =
+ require('../jarvis/services/actionsProcessor').buildPlayAction;
 
-const URL = "https://us-central1-kivson.cloudfunctions.net/charada-aleatoria";
-const ERROR_MESSAGE = "Nao consegui achar uma boa.";
+const URL = 'https://us-central1-kivson.cloudfunctions.net/charada-aleatoria';
+const ERROR_MESSAGE = 'Nao consegui achar uma boa.';
 
-router.get('/', function (req, res, next) {
-
+router.get('/', function(req, res, next) {
     request.get({
         url: URL,
-        json: true
+        json: true,
     },
-        function (err, httpResponse, body) {
+        function(err, httpResponse, body) {
             if (err) {
                 res.send(buildPlayAction(ERROR_MESSAGE));
-            }
-            else {
+            } else {
                 res.send(buildResponse(body));
             }
         });
-
 });
 
+/**
+ * Builds the response
+ * @param {*} body
+ * @return {*} string
+ */
 function buildResponse(body) {
-    //{
-    //"id": 637,
-    //"pergunta": "O que é que a televisão foi fazer no dentista?",
-    //"resposta": "Tratamento de canal."
-    //}
-    var text = body.pergunta.replace(/[\?]/g, '.') + " " + body.resposta;
+    let text = body.pergunta.replace(/[\?]/g, '.') + ' ' + body.resposta;
 
     return buildPlayAction(text);
 }
