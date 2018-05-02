@@ -6,6 +6,7 @@ let _jarvis;
 
 /**
  * Sets jarvis
+ *
  * @param {*} jarvis
  */
 function setJarvis(jarvis) {
@@ -13,7 +14,7 @@ function setJarvis(jarvis) {
 }
 
 /**
- * Executes a single action possibly returning new actions.
+ * Executes a single action possibly returning new actions
  *
  * @param {*} singleAction
  * @return {*} processor

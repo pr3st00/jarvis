@@ -87,6 +87,7 @@ function processWithRest(buffer, callback, errorCallBack) {
 
 /**
  * Process the request using websockets
+ *
  * @param {*} buffer
  * @param {*} callback
  * @param {*} errorCallBack

@@ -48,7 +48,8 @@ router.get('/', function(req, res, next) {
 });
 
 /**
- * Builds a soap request for controlling the tv.
+ * Builds a soap request for controlling the tv
+ *
  * @param {*} ircc
  * @return {*} string
  */

@@ -10,31 +10,7 @@ let Jarvis = require('./jarvis');
 /**
  * CORE configuration
  */
-const coreConfig = {
-    initial_question: 'O que voce sabe fazer?',
-    silence: {
-        min: 5,
-        max: 50,
-    },
-    command: {
-        min: 10,
-        max: 25,
-    },
-    logging: {
-        dumpFlags: true,
-        dumpFlagsInterval: 45000,
-    },
-    devices: {
-        mic: 'hw:1,0',
-    },
-    skip_first_chunk: false,
-    wait_for_javis_time: 5000,
-    detector: {
-        sensitivity: 0.65,
-        audio_gain: 8.0,
-        model: 'jarvis/resources/snowboy.umdl',
-    },
-};
+const coreConfig = require('./config/core.json');
 
 let waitingForCommand = false;
 let processingCommand = false;
@@ -114,14 +90,14 @@ function startHotWordDetector() {
     models.add({
         file: coreConfig.detector.model,
         sensitivity: coreConfig.detector.sensitivity,
-        hotwords: 'snowboy',
+        hotwords: coreConfig.detector.hotwords,
     });
 
     const detector = new Detector({
-        resource: 'jarvis/resources/common.res',
+        resource: coreConfig.detector.resource,
         models: models,
         audioGain: coreConfig.detector.audio_gain,
-        applyFrontend: false,
+        applyFrontend: coreConfig.detector.applyFrontend,
     });
 
     detector.on('silence', function() {

@@ -1,0 +1,28 @@
+{
+    "initial_question": "O que voce sabe fazer?",
+    "silence": {
+        "min": 5,
+        "max": 50
+    },
+    "command": {
+        "min": 10,
+        "max": 20
+    },
+    "logging": {
+        "dumpFlags": true,
+        "dumpFlagsInterval": 45000
+    },
+    "devices": {
+        "mic": "hw:1,0"
+    },
+    "skip_first_chunk": false,
+    "wait_for_javis_time": 5000,
+    "detector": {
+        "sensitivity": 0.65,
+        "audio_gain": 8.0,
+        "resource" : "jarvis/resources/snowboy/common.res",
+        "hotwords" : "snowboy",
+        "applyFrontend" : false,
+        "model": "jarvis/resources/snowboy/models/snowboy.umdl"
+    }
+}

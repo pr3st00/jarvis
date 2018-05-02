@@ -25,6 +25,7 @@ router.get('/', function(req, res, next) {
 
 /**
  * Builds the response
+ *
  * @param {*} body
  * @return {*} string
  */

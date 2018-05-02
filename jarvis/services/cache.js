@@ -8,10 +8,12 @@ const logger = new Logger('CACHE');
 
 /**
  * Caches files and json responses.
+ *
  */
 class Cache {
     /**
      * Constructor
+     *
      * @param {*} serviceName
      */
     constructor(serviceName) {
@@ -22,6 +24,7 @@ class Cache {
 
     /**
      * Puts a file into the cache
+     *
      * @param {*} key
      * @param {*} fileName
      */
@@ -42,6 +45,7 @@ class Cache {
 
     /**
      * Puts a value into the cache
+     *
      * @param {*} key
      * @param {*} value
      */
@@ -60,6 +64,7 @@ class Cache {
 
     /**
      * Retrieves a value from the cache
+     *
      * @param {*} key
      * @return {*} value
      */
@@ -78,6 +83,7 @@ class Cache {
 
     /**
      * Saves the config file
+     *
      */
     saveConfig() {
         if (!this.serviceConfig.enabled) {
@@ -110,6 +116,7 @@ class Cache {
 
     /**
      * Load the config from the file
+     *
      * @return {*} json
      */
     getConfig() {

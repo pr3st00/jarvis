@@ -17,6 +17,7 @@ let busy = false;
 
 /**
  * Returns if the player is busy
+ *
  * @return {*} boolean
  */
 function isBusy() {
@@ -25,6 +26,7 @@ function isBusy() {
 
 /**
  * Plays a mp3
+ *
  * @param {*} list
  */
 function playMp3(list) {
@@ -52,6 +54,7 @@ function playMp3(list) {
 
 /**
  * Stops the player
+ *
  */
 function stop() {
     if (internalPlayer) {
@@ -62,6 +65,7 @@ function stop() {
 
 /**
  * Records a file
+ *
  * @param {*} fileName
  * @param {*} callback
  */
@@ -89,6 +93,7 @@ function recordFile(fileName, callback) {
 
 /**
  * Plays file using the rate provided.
+ *
  * @param {*} file
  * @param {*} sampleRate
  */
@@ -100,7 +105,7 @@ function play(file, sampleRate) {
         bitDepth: 16,
         sampleRate: rate,
         // device: "hw:0,0",
-        verbose: true,
+        verbose: false,
     });
 
     speaker.on('error', function(err) {
@@ -112,6 +117,7 @@ function play(file, sampleRate) {
 
 /**
  * Appends a wav header to the buffer
+ *
  * @param {*} buffer
  * @param {*} detector
  * @return {*} newbuffer
@@ -169,6 +175,7 @@ function appendWavHeader(buffer, detector) {
 
 /**
  * Creates a wav file using buffer
+ *
  * @param {*} buffer
  * @param {*} fileName
  * @param {*} callback
@@ -179,11 +186,12 @@ function createWavFile(buffer, fileName, callback) {
     let writer = new wav.FileWriter(fileName);
 
     writer.on('done', function() {
-setTimeout(callback, 1000);
-});
+        setTimeout(callback, 1000);
+    });
+
     writer.on('error', function(err) {
-console.error(err);
-});
+        console.error(err);
+    });
 
     writer.write(buffer);
     writer.end();

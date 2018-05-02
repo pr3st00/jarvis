@@ -7,6 +7,7 @@ const WATSON = 'WATSON';
 
 /**
  * Factory which provides the processor to be used
+ *
  * @return {*} processor
  */
 let getProcessor = function() {

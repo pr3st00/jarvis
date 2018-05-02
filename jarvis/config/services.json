@@ -1,7 +1,7 @@
 {
     "jarvis": {
         "processor": "WATSON",
-        "waiting_for_command_wav": "./jarvis/resources/ding.wav",
+        "waiting_for_command_wav": "./jarvis/resources/sounds/ding.wav",
         "dialogs": {
             "speak_when_not_recognized": true,
             "not_recognized_message": "Desculpe, nao entendi.",

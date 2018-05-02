@@ -3,7 +3,7 @@
 const exceptions = require('./exceptions');
 const factory = require('./factory');
 
-const ACTIONS = ['PLAY', 'HTTPGET', 'HTTPOST', 'EXECUTE', 'STOP'];
+// const ACTIONS = ['PLAY', 'HTTPGET', 'HTTPOST', 'EXECUTE', 'STOP'];
 let _jarvis;
 
 /**
@@ -82,7 +82,8 @@ function buildPlayAction(message) {
 }
 
 /**
- * Builds a action object for stopping.
+ * Builds a action object for stopping
+ *
  * @return {*} json
  */
 function buildStopAction() {

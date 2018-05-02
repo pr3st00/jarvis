@@ -6,6 +6,7 @@
 class Logger {
     /**
      * Constructor
+     *
      * @param {*} module
      */
     constructor(module) {
@@ -14,6 +15,7 @@ class Logger {
 
     /**
      * Logs at regular times
+     *
      * @param {*} mesg
      */
     logRestricted(mesg) {
@@ -24,6 +26,7 @@ class Logger {
 
     /**
      * Logs a message
+     *
      * @param {*} mesg
      */
     log(mesg) {
@@ -33,6 +36,7 @@ class Logger {
 
     /**
      * Logs an error message
+     *
      * @param {*} mesg
      */
     logError(mesg) {
@@ -41,6 +45,7 @@ class Logger {
 
     /**
      * Gets the current date
+     *
      * @return {*} string
      */
     getDate() {

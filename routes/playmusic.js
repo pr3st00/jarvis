@@ -40,6 +40,7 @@ router.get('/', function(req, res, next) {
 
 /**
  * Plays all files inside mp3List
+ *
  * @param {*} mp3List
  */
 function playList(mp3List) {
@@ -55,6 +56,7 @@ function playList(mp3List) {
 
 /**
  * Finds music on local filesystem matching query
+ *
  * @param {*} query
  * @param {*} callback
  */
@@ -78,6 +80,7 @@ function findFile(query, callback) {
 
 /**
  * Finds music on youtube matching query
+ *
  * @param {*} query
  * @param {*} callback
  */
@@ -104,6 +107,7 @@ function findYouTube(query, callback) {
 
 /**
  * Builds a response
+ *
  * @param {*} response
  * @return {*} response
  */
@@ -123,6 +127,7 @@ function buildResponse(response) {
 
 /**
  * Builds the url to download the mp3 from
+ *
  * @param {*} id
  * @return {*} string
  */
