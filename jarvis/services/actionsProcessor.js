@@ -44,14 +44,16 @@ function processActions(multipleActions, processor, callback) {
 
     processor.setJarvis(_jarvis);
 
-    for (const action of multipleActions.actions) {
-        if (action) {
-            if (action instanceof Promise) {
-                action.then(function(r) {
+    for (const originalAction of multipleActions.actions) {
+        let resultingAction = processor.process(originalAction);
+
+        if (resultingAction) {
+            if (resultingAction instanceof Promise) {
+                resultingAction.then(function(r) {
                     processor.process(r.actions[0]);
                 });
             } else {
-                processor.process(action);
+                processor.process(resultingAction);
             }
         }
     }

@@ -28,6 +28,7 @@ class Jarvis extends EventEmitter {
 
     /**
      * Procces a command buffer.
+     *
      * @param {*} buffer
      * @param {*} callback
      */
@@ -64,6 +65,7 @@ class Jarvis extends EventEmitter {
 
     /**
      * Process a command included on text.
+     *
      * @param {*} text
      * @param {*} callback
      */
@@ -89,6 +91,7 @@ class Jarvis extends EventEmitter {
 
     /**
      * Starts jarvis.
+     *
      */
     start() {
         this.init();
@@ -97,6 +100,7 @@ class Jarvis extends EventEmitter {
 
     /**
      * Plays the bip wav sound and starts waiting for a command.
+     *
      */
     waitForCommand() {
         this.emit('waiting_for_command');
@@ -111,7 +115,8 @@ class Jarvis extends EventEmitter {
     }
 
     /**
-     * Speaks the message.
+     * Speaks the message
+     *
      * @param {*} message
      */
     speak(message) {
@@ -127,6 +132,7 @@ class Jarvis extends EventEmitter {
 
     /**
      * Error handler
+     *
      * @param {*} message
      */
     onError(message) {

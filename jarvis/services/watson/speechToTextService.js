@@ -27,6 +27,7 @@ recognizeStream.setEncoding('utf8');
 
 /**
  * Process the request on data
+ *
  * @param {*} data
  * @param {*} callback
  * @param {*} errorCallBack

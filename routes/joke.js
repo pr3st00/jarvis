@@ -29,7 +29,11 @@ router.get('/', function(req, res, next) {
  * @return {*} string
  */
 function buildResponse(body) {
-    let text = body.pergunta.replace(/[\?]/g, '.') + ' ' + body.resposta;
+    let text = ERROR_MESSAGE;
+
+    if (body && body.pergunta && body.resposta) {
+         text = body.pergunta.replace(/[\?]/g, '.') + ' ' + body.resposta;
+    }
 
     return buildPlayAction(text);
 }
