@@ -16,7 +16,6 @@ function process(parameters) {
         + '/current?token=' + serviceConfig.token;
 
     return new Promise((resolve, reject) => {
-
         request.get({
             url: url,
         },
@@ -44,4 +43,4 @@ function buildResponse(body) {
     return buildPlayAction(text);
 }
 
-module.exports = { process };
+module.exports = {process};

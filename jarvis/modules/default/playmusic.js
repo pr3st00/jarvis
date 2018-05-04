@@ -16,7 +16,6 @@ const MP3_FROMYOUTUBE_URL = 'https://www.1010diy.com/mp3?quality=128k&url=';
 const YOUTUBE_BASE_VIDEO_URL = 'https://www.youtube.com/watch?v=';
 
 let local = false;
-let _res;
 
 // https://www.1010diy.com/mp3?url=<youtubeurl>&quality=128k
 // https://www.googleapis.com/youtube/v3/search?part=snippet&q=capital&key=AIzaSyD44pJZWEADfGe9uj3ZCU8SuaThARkYUA4
@@ -99,7 +98,7 @@ function findYouTube(query, callback) {
         function(err, httpResponse, body) {
             if (err) {
                 setTimeout(function() {
-                    _res.send(buildPlayAction(serviceConfig.not_found_message));
+                    callback(buildPlayAction(serviceConfig.not_found_message));
                 }, 2000);
             } else {
                 callback(buildResponse(JSON.parse(body)));

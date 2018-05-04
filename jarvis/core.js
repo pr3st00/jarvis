@@ -26,6 +26,7 @@ let logger = new Logger('CORE');
 
 /**
  * Sets an io to jarvis
+ *
  * @param {*} _io
  */
 function setIO(_io) {
@@ -67,6 +68,7 @@ function start() {
 
 /**
  * Saves buffer to FINALLBUFFER
+ *
  * @param {*} buffer
  */
 function saveCommandBuffer(buffer) {
@@ -110,8 +112,6 @@ function startHotWordDetector() {
 
             processCommand();
         }
-
-        logger.log('Silence.');
     });
 
     detector.on('sound', function(buffer) {
@@ -174,6 +174,7 @@ function startHotWordDetector() {
 
 /**
  * Saves the intermediate buffer
+ *
  * @param {*} buffer
  * @param {*} finalBuffer
  * @return {*} newBuffer
@@ -214,6 +215,7 @@ function processCommand() {
 
 /**
  * Verifies if the command is ready to be processed
+ *
  * @return {*} boolean
  */
 function stillNotReadyForCommand() {

@@ -4,6 +4,7 @@ const request = require('request-promise');
 const Logger = require('../logger');
 const exceptions = require('./exceptions');
 const logger = new Logger("DEFAULT_PROCESSOR");
+const cmd = require('node-cmd');
 
 const ModuleFactory = require('../modules/moduleFactory');
 const moduleFactory = new ModuleFactory();
@@ -38,14 +39,18 @@ function process(singleAction) {
 function executeScript(parameters) {
     logger.log("[SCRIPT_CALL] Executing script [" + parameters[0] + "]");
 
-    cmd.get(
-        parameters[0],
-        function (err, data, stderr) {
-            logger.log(err, data, stderr);
-            callback(data);
-        }
-    );
-
+    return new Promise((resolve, reject) => {
+        cmd.get(
+            parameters[0],
+            function (err, data, stderr) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(JSON.parse(data));
+                }
+            }
+        );
+    });
 }
 
 /**
@@ -76,7 +81,7 @@ function callModule(parameters) {
     logger.log('[MODULE_CALL] Calling module [' + parameters[0] + ']');
 
     module = moduleFactory.getModule(parameters[0]);
-    
+
     if (!module) {
         throw new exceptions.ActionServiceError('Module [' + parameters[0] + '] not found.');
     }
