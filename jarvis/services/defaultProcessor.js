@@ -2,7 +2,11 @@
 
 const request = require('request-promise');
 const Logger = require('../logger');
+const exceptions = require('./exceptions');
 const logger = new Logger("DEFAULT_PROCESSOR");
+
+const ModuleFactory = require('../modules/moduleFactory');
+const moduleFactory = new ModuleFactory();
 
 /**
  * Process a single action
@@ -21,6 +25,8 @@ function process(singleAction) {
                 return response;
             });
 
+        case "MODULE":
+            return callModule(singleAction.parameters);
     }
 }
 
@@ -60,6 +66,22 @@ async function doGetUrl(parameters) {
 
     return response;
 
+}
+
+/**
+ * 
+ * @param {*} parameters 
+ */
+function callModule(parameters) {
+    logger.log('[MODULE_CALL] Calling module [' + parameters[0] + ']');
+
+    module = moduleFactory.getModule(parameters[0]);
+    
+    if (!module) {
+        throw new exceptions.ActionServiceError('Module [' + parameters[0] + '] not found.');
+    }
+
+    return module.process(parameters);
 }
 
 module.exports = { process };

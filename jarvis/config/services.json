@@ -7,6 +7,24 @@
             "not_recognized_message": "Desculpe, nao entendi.",
             "greeting": "Oi Manu"
         },
+        "modules": [
+            {
+                "name": "joke",
+                "resource": "default/joke"
+            },
+            {
+                "name": "music",
+                "resource": "default/playmusic"
+            },
+            {
+                "name": "tv",
+                "resource": "default/braviatv"
+            },
+            {
+                "name": "weather",
+                "resource": "default/weather"
+            }
+        ],
         "services": {
             "cache": {
                 "enabled": true,

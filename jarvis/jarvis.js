@@ -78,9 +78,9 @@ class Jarvis extends EventEmitter {
         dialogService.process(text, _jarvis,
             function(actions) {
                 processor.process(actions,
-                    function() {
+                    function(err) {
                         callback();
-                        _jarvis.onError('Error in dialog service');
+                        _jarvis.onError('Error in dialog service: ' + err);
                     },
                     function() {
                         callback();

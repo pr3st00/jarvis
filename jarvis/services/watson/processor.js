@@ -24,10 +24,7 @@ function process(singleAction) {
         case 'PLAY':
             return ttsService.process(singleAction, _jarvis);
 
-        case 'EXECUTE':
-            return defaultProcessor.process(singleAction, _jarvis);
-
-        case 'HTTPGET':
+        default:
             return defaultProcessor.process(singleAction, _jarvis);
     }
 }

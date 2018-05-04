@@ -15,4 +15,4 @@ class ActionServiceError extends Error {
     }
 }
 
-module.exports = ActionServiceError;
+module.exports = {ActionServiceError};

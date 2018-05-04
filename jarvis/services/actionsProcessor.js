@@ -3,7 +3,6 @@
 const exceptions = require('./exceptions');
 const factory = require('./factory');
 
-// const ACTIONS = ['PLAY', 'HTTPGET', 'HTTPOST', 'EXECUTE', 'STOP'];
 let _jarvis;
 
 /**
@@ -51,7 +50,7 @@ function processActions(multipleActions, processor, callback) {
             if (resultingAction instanceof Promise) {
                 resultingAction.then(function(r) {
                     processor.process(r.actions[0]);
-                });
+                }).catch((err) => console.log(err));
             } else {
                 processor.process(resultingAction);
             }
@@ -100,3 +99,4 @@ function buildStopAction() {
 }
 
 module.exports = {process, buildPlayAction, buildStopAction, setJarvis};
+
