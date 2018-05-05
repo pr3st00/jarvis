@@ -1,55 +1,69 @@
 'use strict';
 
 const request = require('request');
-const buildPlayAction =
-    require('../services/actionsProcessor').buildPlayAction;
-
-const config = require('../../services/config').getConfig();
 
 const commands = {
     'netflix': 'AAAAAgAAABoAAAB8Aw==',
     'turnoff': 'AAAAAQAAAAEAAAAvAw==',
 };
 
-const serviceConfig = config.jarvis.services.braviatv;
+const JarvisModule = require('../jarvisModule');
+let instance;
 
 /**
- *
- * @param {*} parameters
- * @return {*} promise
+ * Module for controlling TV
  */
-function process(parameters) {
-    let url = 'http://' + serviceConfig.ip + '/sony/IRCC';
-
-    let command = parameters[1];
-
-    if (!command) {
-        return buildPlayAction(serviceConfig.error_message);
+class BraviaTvModule extends JarvisModule {
+    /**
+     * Constructor
+     *
+     * @param {*} name
+     */
+    constructor(name) {
+        super(name);
     }
 
-    let ircc = commands[command];
+    /**
+     *
+     * @param {*} parameters
+     * @return {*} promise
+     */
+    process(parameters) {
+        let url = 'http://' + this.config.ip + '/sony/IRCC';
 
-    if (!ircc) {
-        return buildPlayAction(serviceConfig.error_message);
-    }
+        let command = parameters[1];
 
-    return new Promise((resolve, reject) => {
-        request.post({
-            url: url,
-            body: buildRequest(ircc),
-            headers: {
-                'X-Auth-PSK': serviceConfig.key,
+        if (!command) {
+            return buildPlayAction(this.config.error_message);
+        }
+
+        let ircc = commands[command];
+
+        if (!ircc) {
+            return buildPlayAction(this.config.error_message);
+        }
+
+        let module = this;
+
+        return new Promise((resolve, reject) => {
+            request.post({
+                url: url,
+                body: buildRequest(ircc),
+                headers: {
+                    'X-Auth-PSK': module.config.key,
+                },
             },
-        },
-            function(err, httpResponse, body) {
-                if (err) {
-                    resolve(buildPlayAction(serviceConfig.error_message));
-                } else {
-                    resolve(buildPlayAction(serviceConfig.success_message));
-                }
-            });
-    });
-};
+                function(err, httpResponse, body) {
+                    if (err) {
+                        resolve(module.buildPlayAction(module.config.error_message));
+                    } else {
+                        resolve(module.buildPlayAction(module.config.success_message));
+                    }
+                });
+        });
+    };
+}
+
 
 /**
  * Builds a soap request for controlling the tv
@@ -70,4 +84,17 @@ function buildRequest(ircc) {
     return string;
 }
 
-module.exports = {process};
+/**
+ * Returns an instance of this class
+ *
+ * @param{*} moduleName
+ * @return {*} instance
+ */
+function getInstance(moduleName) {
+    if (!instance) {
+        instance = new BraviaTvModule(moduleName);
+    }
+    return instance;
+}
+
+module.exports = {getInstance};

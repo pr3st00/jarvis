@@ -11,7 +11,24 @@ Actions can be executed in parallel or sequentially, and can in turn return anot
 
 ## Current Release: v0.0.10
 
-## Current available plugins
+## Modules
+Jarvis uses a module system, where you can extend its capabilities by implementing new individual classes.
+
+A plugin consits of:
+
+1. A class which inherits from JarvisModule and implements a method called process with an array as an argument;
+2. An entry on jarvis.json with at least a name and the location of the resource js file. Any other related config can be placed here and it will be automatically available during module runtime: 
+
+            "modules": [
+            {
+                "name": "joke",
+                "resource": "default/joke",
+                "config": "value"
+            },
+
+3. module.exports should export a single function called getInstance which returns a new instance of the plugin, usually a singleton.
+
+## Current available modules
 1. Jokes    = tells a random joke
 2. Weather  = tells the current weather condition
 3. TV       = controls a bravia tv (turn off, open netflix, etc)

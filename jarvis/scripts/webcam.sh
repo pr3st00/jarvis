@@ -1,16 +1,15 @@
 #!/bin/bash
 
+. $(dirname $0)/functions/actions.sh 
+
 DATE=$(date +"%Y-%m-%d_%H%M")
 PATH=/home/pi/jarvis/public/images/photos
+DONE_MESSAGE="Feito!"
+SLEEP_TIME=10
 
 /usr/bin/fswebcam -r 1280x720 --no-banner $PATH/photo.jpg > /dev/null 2>&1
-sleep 10
+/bin/sleep $SLEEP_TIME
 
-echo '{"actions": [{
-   "code": "PLAY_TEXT",
-   "action": "PLAY",
-   "parameters": ["Feito!"],
-   "synchronous": true
-}]}';
+buildPlayAction "$DONE_MESSAGE";
 
 # EOF

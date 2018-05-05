@@ -1,46 +1,76 @@
 'use strict';
 
 const request = require('request');
-const config = require('../../services/config').getConfig();
-const buildPlayAction =
-    require('../../services/actionsProcessor').buildPlayAction;
-const serviceConfig = config.jarvis.services.weather;
+
+const JarvisModule = require('../jarvisModule');
+let instance;
 
 /**
- *
- * @param {*} parameters
- * @return {*} promise
+ * Tells a joke
  */
-function process(parameters) {
-    let url = serviceConfig.url + serviceConfig.city
-        + '/current?token=' + serviceConfig.token;
+class WeatherModule extends JarvisModule {
+    /**
+     * Constructor
+     *
+     * @param {*} name
+     */
+    constructor(name) {
+        super(name);
+    }
 
-    return new Promise((resolve, reject) => {
-        request.get({
-            url: url,
-        },
-            function(err, httpResponse, body) {
-                if (err) {
-                    resolve(buildPlayAction(serviceConfig.error_message));
-                } else {
-                    resolve(buildResponse(JSON.parse(body)));
-                }
-            });
-    });
-};
+    /**
+     *
+     * @param {*} parameters
+     * @return {*} promise
+     */
+    process(parameters) {
+        let module = this;
 
-/**
- * Builds the response json
- *
- * @param {*} body
- * @return {*} json
- */
-function buildResponse(body) {
-    let text = 'Hoje em ' + body.name + ', temperatura de ' +
-        body.data.temperature + ' graus e '
-        + body.data.condition;
+        let url = this.config.url + this.config.city
+            + '/current?token=' + this.config.token;
 
-    return buildPlayAction(text);
+        return new Promise((resolve, reject) => {
+            request.get({
+                url: url,
+            },
+                function(err, httpResponse, body) {
+                    if (err) {
+                        resolve(module.buildPlayAction(module.config.error_message));
+                    } else {
+                        resolve(module.buildResponse(JSON.parse(body)));
+                    }
+                });
+        });
+    };
+
+    /**
+     * Builds the response json
+     *
+     * @param {*} body
+     * @return {*} json
+     */
+    buildResponse(body) {
+        let text = 'Hoje em ' + body.name + ', temperatura de ' +
+            body.data.temperature + ' graus e '
+            + body.data.condition;
+
+        return this.buildPlayAction(text);
+    }
 }
 
-module.exports = {process};
+
+/**
+ * Returns an instance of this class
+ *
+ * @param{*} moduleName
+ * @return {*} instance
+ */
+function getInstance(moduleName) {
+    if (!instance) {
+        instance = new WeatherModule(moduleName);
+    }
+    return instance;
+}
+
+
+module.exports = {getInstance};

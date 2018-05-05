@@ -1,6 +1,6 @@
 'use strict';
 
-const config = require('../config/services.json');
+const config = require('../config/jarvis.json');
 
 const Logger = require('../logger');
 const logger = new Logger('MODULE_FACTORY');
@@ -29,7 +29,8 @@ class ModuleFactory {
         if (this.modules) {
             for (const thisModule of this.modules) {
                 if (thisModule.name == moduleName) {
-                    return require(thisModule.module);
+                    let module = require(thisModule.module);
+                    return module.getInstance(thisModule.name);
                 }
             }
         }

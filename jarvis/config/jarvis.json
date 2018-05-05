@@ -10,19 +10,33 @@
         "modules": [
             {
                 "name": "joke",
-                "resource": "default/joke"
+                "resource": "default/joke",
+                "error_meesage": "Nao consegui achar uma boa."
             },
             {
                 "name": "music",
-                "resource": "default/playmusic"
+                "resource": "default/playmusic",
+                "folder": "/home/pi/Music",
+                "config": "/home/pi/Music/music.json",
+                "youtube_key": "AIzaSyD44pJZWEADfGe9uj3ZCU8SuaThARkYUA4",
+                "max_results": 50,
+                "not_found_message": "Desculpe, nao achei a musica"
             },
             {
                 "name": "tv",
-                "resource": "default/braviatv"
+                "resource": "default/braviatv",
+                "ip": "192.168.1.131",
+                "success_message": "Feito!",
+                "error_message": "A tv nao respondeu",
+                "key": "05trunks"
             },
             {
                 "name": "weather",
-                "resource": "default/weather"
+                "resource": "default/weather",
+                "city": "4456",
+                "token": "180c833c29d08f7190aec2e86c41378c",
+                "url": "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/",
+                "error_message": "Nao consegui checar."
             }
         ],
         "services": {
@@ -51,25 +65,6 @@
                     "horas"
                 ],
                 "useCache": true
-            },
-            "weather": {
-                "city": "4456",
-                "token": "180c833c29d08f7190aec2e86c41378c",
-                "url": "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/",
-                "error_message": "Nao consegui checar."
-            },
-            "braviatv": {
-                "ip": "192.168.1.131",
-                "success_message": "Feito!",
-                "error_message": "A tv nao respondeu",
-                "key": "05trunks"
-            },
-            "music": {
-                "folder": "/home/pi/Music",
-                "config": "/home/pi/Music/music.json",
-                "youtube_key": "AIzaSyD44pJZWEADfGe9uj3ZCU8SuaThARkYUA4",
-                "max_results": 50,
-                "not_found_message": "Desculpe, nao achei a musica"
             }
         }
     }

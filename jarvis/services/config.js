@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-const SERVICES_CONFIG_FILE = 'jarvis/config/services.json';
+const SERVICES_CONFIG_FILE = 'jarvis/config/jarvis.json';
 
 /**
  * Gets the processor implementation to be used
