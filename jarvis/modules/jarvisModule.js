@@ -7,9 +7,8 @@ const buildStopAction =
     require('../services/actionsProcessor').buildStopAction;
 const Logger = require('../logger');
 
-
 /**
- *
+ * Jarvis module base class
  */
 class JarvisModule {
     /**
@@ -45,6 +44,7 @@ class JarvisModule {
 }
 
 /**
+ * Finds the config related to this particular module
  *
  * @param {*} moduleName
  * @return {*} moduleConfig

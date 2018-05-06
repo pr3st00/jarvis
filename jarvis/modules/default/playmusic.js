@@ -16,7 +16,7 @@ let instance;
 // https://www.googleapis.com/youtube/v3/search?part=snippet&q=capital&key=AIzaSyD44pJZWEADfGe9uj3ZCU8SuaThARkYUA4
 
 /**
- *
+ * Plays musics based on the request
  */
 class Musicmodule extends JarvisModule {
     /**
@@ -29,6 +29,7 @@ class Musicmodule extends JarvisModule {
     }
 
     /**
+     * Process a request to play something
      *
      * @param {*} parameters
      */
@@ -62,7 +63,7 @@ class Musicmodule extends JarvisModule {
             return module.buildStopAction();
         } else {
             setTimeout(function() {
-                return buildPlayAction(module.config.not_found_message);
+                return module.buildPlayAction(module.config.not_found_message);
             }, 2000);
         }
     }

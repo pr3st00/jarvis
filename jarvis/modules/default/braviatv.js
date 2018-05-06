@@ -24,6 +24,7 @@ class BraviaTvModule extends JarvisModule {
     }
 
     /**
+     * Process tv commands
      *
      * @param {*} parameters
      * @return {*} promise
@@ -53,13 +54,13 @@ class BraviaTvModule extends JarvisModule {
                     'X-Auth-PSK': module.config.key,
                 },
             },
-                function(err, httpResponse, body) {
-                    if (err) {
-                        resolve(module.buildPlayAction(module.config.error_message));
-                    } else {
-                        resolve(module.buildPlayAction(module.config.success_message));
-                    }
-                });
+            function(err, httpResponse, body) {
+                if (err) {
+                    resolve(module.buildPlayAction(module.config.error_message));
+                } else {
+                    resolve(module.buildPlayAction(module.config.success_message));
+                }
+            });
         });
     };
 }

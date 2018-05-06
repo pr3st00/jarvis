@@ -11,6 +11,42 @@ Actions can be executed in parallel or sequentially, and can in turn return anot
 
 ## Current Release: v0.0.10
 
+## Message format
+
+The messages will contain a list of actions, with a code which is mostly informative, an action which is one of the actions recognized by the framework (PLAY, HTTPGET, HTTPPOST, SCRIPT and MODULE) and a list of parameters which meaning will vary between modules. The messages will be executed sequentially or in parallel depending on the synchronous parameter.
+
+Sample message for the music module:
+
+{
+  "actions": [
+    {
+      "code": "playmusic",
+      "action": "PLAY",
+      "parameters": [
+        "ok, searching..."
+      ],
+      "synchronous": true
+    },
+    {
+      "code": "playmusic",
+      "action": "MODULE",
+      "parameters": [
+        "music",
+        "ramones"
+      ],
+      "synchronous": true
+    }
+  ]
+}
+
+## Supported actions:
+1. PLAY     = Says a phrase             - One parameter only with the phrase itself
+2. HTTPGET  = Do a HTTP GET             - First parameter is the url, Any remaining ones will be passed as parameters in the url 
+3. HTTPPOST = Do a HTTP POST            - First parameter is the url, Second parameter is the body
+4. SCRIPT   = Executes a shell script   - First parameter is the script location. Any remaining ones will be passed as parameters to the same
+5. MODULE   = Calls a module            - First parameter is the module name. Any remaining ones will be passed as parameters to the same
+
+
 ## Modules
 Jarvis uses a module system, where you can extend its capabilities by implementing new individual classes.
 

@@ -6,7 +6,7 @@ const JarvisModule = require('../jarvisModule');
 let instance;
 
 /**
- * Tells a joke
+ * Tells the current weather conditions
  */
 class WeatherModule extends JarvisModule {
     /**
@@ -19,6 +19,7 @@ class WeatherModule extends JarvisModule {
     }
 
     /**
+     * Process a request to tell the weather
      *
      * @param {*} parameters
      * @return {*} promise
@@ -33,13 +34,13 @@ class WeatherModule extends JarvisModule {
             request.get({
                 url: url,
             },
-                function(err, httpResponse, body) {
-                    if (err) {
-                        resolve(module.buildPlayAction(module.config.error_message));
-                    } else {
-                        resolve(module.buildResponse(JSON.parse(body)));
-                    }
-                });
+            function(err, httpResponse, body) {
+                if (err) {
+                    resolve(module.buildPlayAction(module.config.error_message));
+                } else {
+                    resolve(module.buildResponse(JSON.parse(body)));
+                }
+            });
         });
     };
 
