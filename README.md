@@ -44,7 +44,7 @@ Sample message for the music module:
 ## Supported actions:
 
 | Action        | Description             | Parameters                                                                                          |
-| ------------- |:-----------------------:| ---------------------------------------------------------------------------------------------------:|
+| ------------- | ------------------------| ----------------------------------------------------------------------------------------------------|
 | PLAY          | Says a phrase           | One parameter only with the phrase itself                                                           |
 | HTTPGET       | Do a HTTP GET           | First parameter is the url, Any remaining ones will be passed as parameters in the url              |
 | HTTPPOST      | Do a HTTP POST          | First parameter is the url, Second parameter is the body                                            |
@@ -73,7 +73,7 @@ A plugin consits of:
 ## Current available modules
 
 | Name          | Description                          | Parameters                       |
-| ------------- |:------------------------------------:| --------------------------------:|
+| ------------- | ------------------------------------ | -------------------------------- |
 | Jokes         | tells a random joke                  | -NONE-                           |
 | Weather       | tells the current weather condition  | -NONE-                           |
 | TV            | controls a bravia tv                 | Action (netflix or turnoff)      |
