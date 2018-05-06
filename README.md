@@ -17,6 +17,7 @@ The messages will contain a list of actions, with a code which is mostly informa
 
 Sample message for the music module:
 
+```json
 {
   "actions": [
     {
@@ -38,14 +39,17 @@ Sample message for the music module:
     }
   ]
 }
+```
 
 ## Supported actions:
-1. PLAY     = Says a phrase             - One parameter only with the phrase itself
-2. HTTPGET  = Do a HTTP GET             - First parameter is the url, Any remaining ones will be passed as parameters in the url 
-3. HTTPPOST = Do a HTTP POST            - First parameter is the url, Second parameter is the body
-4. SCRIPT   = Executes a shell script   - First parameter is the script location. Any remaining ones will be passed as parameters to the same
-5. MODULE   = Calls a module            - First parameter is the module name. Any remaining ones will be passed as parameters to the same
 
+| Action        | Description             | Parameters                                                                                          |
+| ------------- |:-----------------------:| ---------------------------------------------------------------------------------------------------:|
+| PLAY          | Says a phrase           | One parameter only with the phrase itself                                                           |
+| HTTPGET       | Do a HTTP GET           | First parameter is the url, Any remaining ones will be passed as parameters in the url              |
+| HTTPPOST      | Do a HTTP POST          | First parameter is the url, Second parameter is the body                                            |
+| SCRIPT        | Executes a shell script | First parameter is the script location. Any remaining ones will be passed as parameters to the same |
+| MODULE        | Calls a module          | First parameter is the module name. Any remaining ones will be passed as parameters to the same     |
 
 ## Modules
 Jarvis uses a module system, where you can extend its capabilities by implementing new individual classes.
@@ -55,21 +59,26 @@ A plugin consits of:
 1. A class which inherits from JarvisModule and implements a method called process with an array as an argument;
 2. An entry on jarvis.json with at least a name and the location of the resource js file. Any other related config can be placed here and it will be automatically available during module runtime: 
 
-            "modules": [
-            {
-                "name": "joke",
-                "resource": "default/joke",
-                "config": "value"
-            },
+```json
+      "modules": [
+      {
+          "name": "joke",
+          "resource": "default/joke",
+          "config": "value"
+      },
+```
 
 3. module.exports should export a single function called getInstance which returns a new instance of the plugin, usually a singleton.
 
 ## Current available modules
-1. Jokes    = tells a random joke
-2. Weather  = tells the current weather condition
-3. TV       = controls a bravia tv (turn off, open netflix, etc)
-4. Music    = search for musics on youtube, plays all of them until it's called again.
-5. Define   = looks for a term on wikipedia, tells the definition.
+
+| Name          | Description                          | Parameters                       |
+| ------------- |:------------------------------------:| --------------------------------:|
+| Jokes         | tells a random joke                  | -NONE-                           |
+| Weather       | tells the current weather condition  | -NONE-                           |
+| TV            | controls a bravia tv                 | Action (netflix or turnoff)      |
+| Music         | searchs  for musics on youtube,      | music/artist                     |
+| Wikipedia     | looks for a term on wikipedia        | term                             |
 
 ## Web interface
 It currently has a web interface, which displays real time events and also plays messages. In the future it will allow some level of interaction too.
