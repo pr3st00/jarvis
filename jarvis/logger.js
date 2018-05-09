@@ -1,5 +1,7 @@
 'use strict';
 
+const TAB = '\t';
+
 /**
  * Logging stuff
  */
@@ -31,7 +33,7 @@ class Logger {
      */
     log(mesg) {
         console.log('[' + this.getDate() + ']' + '['
-            + this._module + '] ' + mesg);
+            + this._module + ']' + TAB.repeat(7/this._module.length + 1) + mesg);
     }
 
     /**

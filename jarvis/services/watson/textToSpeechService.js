@@ -22,7 +22,7 @@ const cache = new Cache('TEXT_TO_SPEECH');
 function process(singleAction, jarvis) {
     let parameters = singleAction.parameters;
 
-    logger.log('[SERVICE_CALL] Caling tts with text [' + parameters[0] + ']');
+    logger.log('Caling tts with text [' + parameters[0] + ']');
 
     let serviceConfig = config.jarvis.services.text_to_speech;
 

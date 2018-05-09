@@ -62,7 +62,7 @@ jarvis.on('processing_command', function(event) {
  * Starts the core.
  */
 function start() {
-    jarvis.processCommandText(coreConfig.initial_question, function() { });
+    jarvis.processCommandText(coreConfig.initial_question, () => { });
     startHotWordDetector();
 }
 
@@ -115,8 +115,6 @@ function startHotWordDetector() {
     });
 
     detector.on('sound', function(buffer) {
-        silenceEvents = 0;
-
         if (waitingForCommand) {
             commandEvents++;
             processingCommand = true;
@@ -126,8 +124,6 @@ function startHotWordDetector() {
             } else {
                 processCommand();
             }
-        } else {
-            logger.logRestricted('Sound.');
         }
     });
 
@@ -139,7 +135,7 @@ function startHotWordDetector() {
         silenceEvents = 0;
 
         logger.log('Hotword [' + hotword + '] received at index ['
-        + index + ']');
+            + index + ']');
 
         if (waitingForCommand) {
             saveCommandBuffer(buffer);
@@ -188,16 +184,16 @@ function saveBuffer(buffer, finalBuffer) {
  * Process command
  */
 function processCommand() {
-    commandEvents = 0;
-    waitingForCommand = false;
+    logger.log('Processing command. [ commandEvents=' + commandEvents +
+        ', silenceEvents=' + silenceEvents + ' ]');
 
-    logger.log('Processing command.');
+    resetFlags();
 
     processCommandIniTime = new Date().getTime();
 
-    jarvis.processCommandData(FINALBUFFER, function() {
+    jarvis.processCommandData(FINALBUFFER, () => {
         /**
-         * Total time spent for procesing a command.
+         * Total time spent for processing a command.
          */
         let totalTime = new Date().getTime() - processCommandIniTime;
         logger.log('TOTAL COMMAND PROCESSING TIME = [' + totalTime + '] ms');
@@ -235,7 +231,7 @@ function stillNotReadyForCommand() {
 }
 
 /**
- * Dump the current flags to the console
+ * Dumps the current flags to the console
  */
 function dumpFlags() {
     logger.log('STATUS [waiting_for_comand=' + waitingForCommand +

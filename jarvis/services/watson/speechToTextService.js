@@ -33,7 +33,7 @@ recognizeStream.setEncoding('utf8');
  * @param {*} errorCallBack
  */
 function process(data, callback, errorCallBack) {
-    logger.log('[SERVICE_CALL] Calling stt.');
+    logger.log('Calling stt.');
 
     if (serviceConfig.use_websockets) {
         processWithSockets(data, callback, errorCallBack);

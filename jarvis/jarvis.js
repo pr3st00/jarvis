@@ -27,7 +27,7 @@ class Jarvis extends EventEmitter {
     }
 
     /**
-     * Procces a command buffer.
+     * Process a command buffer.
      *
      * @param {*} buffer
      * @param {*} callback
