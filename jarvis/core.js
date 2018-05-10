@@ -191,7 +191,7 @@ function processCommand() {
 
     processCommandIniTime = new Date().getTime();
 
-    jarvis.processCommandData(FINALBUFFER, () => {
+    jarvis.processCommandBuffer(FINALBUFFER, () => {
         /**
          * Total time spent for processing a command.
          */

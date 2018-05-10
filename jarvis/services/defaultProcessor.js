@@ -1,10 +1,11 @@
 'use strict';
 
 const request = require('request-promise');
-const Logger = require('../logger');
 const exceptions = require('./exceptions');
-const logger = new Logger("DEFAULT_PROCESSOR");
 const cmd = require('node-cmd');
+
+const Logger = require('../logger');
+const logger = new Logger("DEF_PROCESSOR");
 
 const ModuleFactory = require('../modules/moduleFactory');
 const moduleFactory = new ModuleFactory();

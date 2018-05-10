@@ -17,7 +17,7 @@
                 "name": "reminder",
                 "resource": "default/reminder",
                 "error_message": "Desculpe, tente de novo",
-                "event_added_message" : "Ok, evento adicionado"
+                "event_added_message": "Ok, evento adicionado"
             },
             {
                 "name": "music",
@@ -27,6 +27,13 @@
                 "youtube_key": "AIzaSyD44pJZWEADfGe9uj3ZCU8SuaThARkYUA4",
                 "max_results": 50,
                 "not_found_message": "Desculpe, nao achei a musica"
+            },
+            {
+                "name": "video",
+                "resource": "default/playvideo",
+                "youtube_key": "AIzaSyD44pJZWEADfGe9uj3ZCU8SuaThARkYUA4",
+                "not_found_message": "Desculpe, nao achei a musica",
+                "sucessfull_message": "Feito!"
             },
             {
                 "name": "tv",

@@ -32,7 +32,7 @@ class Jarvis extends EventEmitter {
      * @param {*} buffer
      * @param {*} callback
      */
-    processCommandData(buffer, callback) {
+    processCommandBuffer(buffer, callback) {
         this.busy = true;
         this.emit('processing_command');
 

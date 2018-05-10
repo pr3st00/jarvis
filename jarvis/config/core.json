@@ -6,7 +6,7 @@
     },
     "command": {
         "min": 5,
-        "max": 15
+        "max": 20
     },
     "logging": {
         "dumpFlags": true,

@@ -74,11 +74,12 @@ A plugin consits of:
 
 | Name          | Description                          | Parameters                       |
 | ------------- | ------------------------------------ | -------------------------------- |
-| Jokes         | tells a random joke                  | -NONE-                           |
-| Weather       | tells the current weather condition  | -NONE-                           |
-| TV            | controls a bravia tv                 | Action (netflix or turnoff)      |
-| Music         | searchs  for musics on youtube,      | music/artist                     |
-| Wikipedia     | looks for a term on wikipedia        | term                             |
+| joke          | tells a random joke                  | -NONE-                           |
+| weather       | tells the current weather condition  | -NONE-                           |
+| tv            | controls a bravia tv                 | Action (netflix or turnoff)      |
+| music         | searchs  for musics on youtube,      | music/artist                     |
+| video         | searchs  for videos on youtube,      | video                            |
+| wikipedia     | looks for a term on wikipedia        | term                             |
 
 ## Web interface
 It currently has a web interface, which displays real time events and also plays messages. In the future it will allow some level of interaction too.
