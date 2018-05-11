@@ -88,6 +88,8 @@ It currently has a web interface, which displays real time events and also plays
 Quick installation for the Raspberry Pi 2+
 ```
 git clone https://github.com/pr3st00/jarvis.git
+rename the sample config jarvis/config/jarvis_sample.json to jarvis/config/jarvis.json
+edit the file and provide your details
 cd jarvis
 npm install
 npm start
