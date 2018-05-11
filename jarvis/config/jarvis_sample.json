@@ -4,52 +4,52 @@
         "waiting_for_command_wav": "./jarvis/resources/sounds/ding.wav",
         "dialogs": {
             "speak_when_not_recognized": true,
-            "not_recognized_message": "Desculpe, nao entendi.",
-            "greeting": "Oi Manu"
+            "not_recognized_message": "Sorry, I didnt get it.",
+            "greeting": "Hey there"
         },
         "modules": [
             {
                 "name": "joke",
                 "resource": "default/joke",
-                "error_meesage": "Nao consegui achar uma boa."
+                "error_meesage": "Couldn't find any"
             },
             {
                 "name": "reminder",
                 "resource": "default/reminder",
-                "error_message": "Desculpe, tente de novo",
-                "event_added_message": "Ok, evento adicionado"
+                "error_message": "Sorry, try again",
+                "event_added_message": "Event added"
             },
             {
                 "name": "music",
                 "resource": "default/playmusic",
                 "folder": "/home/pi/Music",
                 "config": "/home/pi/Music/music.json",
-                "youtube_key": "AIzaSyD44pJZWEADfGe9uj3ZCU8SuaThARkYUA4",
+                "youtube_key": "<your_youtube_key>",
                 "max_results": 50,
-                "not_found_message": "Desculpe, nao achei a musica"
+                "not_found_message": "Sorry, no music found."
             },
             {
                 "name": "video",
                 "resource": "default/playvideo",
-                "youtube_key": "AIzaSyD44pJZWEADfGe9uj3ZCU8SuaThARkYUA4",
-                "not_found_message": "Desculpe, nao achei a musica",
-                "sucessfull_message": "Feito!"
+                "youtube_key": "<your_youtube_key>",
+                "not_found_message": "Sorry, no video found.",
+                "sucessfull_message": "Done!"
             },
             {
                 "name": "tv",
                 "resource": "default/braviatv",
                 "ip": "192.168.1.131",
-                "success_message": "Feito!",
-                "error_message": "A tv nao respondeu",
-                "key": "05trunks"
+                "success_message": "Done!",
+                "error_message": "No response from TV",
+                "key": "<your_bravia_key>"
             },
             {
                 "name": "weather",
                 "resource": "default/weather",
-                "city": "4456",
-                "token": "180c833c29d08f7190aec2e86c41378c",
+                "city": "<your_city_id>",
+                "token": "<your_token>",
                 "url": "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/",
-                "error_message": "Nao consegui checar."
+                "error_message": "Sorry, it didnt work"
             }
         ],
         "services": {
@@ -60,20 +60,20 @@
                 "ttl": "24"
             },
             "text_to_speech": {
-                "username": "89163d74-3d65-41e3-b97e-879bfc240c50",
-                "password": "Kq4aGlRIcErq",
+                "username": "<username>",
+                "password": "<pass>",
                 "voice": "pt-BR_IsabelaVoice",
                 "useCache": true
             },
             "speech_to_text": {
-                "password": "OOH6Z1dQhnpw",
-                "username": "24c3e489-c30c-465a-88c7-f8874ea072c6",
+                "username": "<username>",
+                "password": "<password>",
                 "model": "pt-BR_BroadbandModel",
-                "acoustic_customization_id": "5a38b07e-219f-4d1e-bc9a-a9bb62ab7fcd",
+                "acoustic_customization_id": "<acoustic_custom_id>",
                 "use_websockets": false
             },
             "dialog": {
-                "url": "http://pr3st00iot.mybluemix.net/jarvisdialog",
+                "url": "<service_url>",
                 "do_not_cache_action_codes": [
                     "horas"
                 ],
