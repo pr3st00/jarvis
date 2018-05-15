@@ -75,7 +75,8 @@ async function doGetUrl(parameters) {
 }
 
 /**
- * 
+ * Calls a module
+ *
  * @param {*} parameters 
  */
 function callModule(parameters) {

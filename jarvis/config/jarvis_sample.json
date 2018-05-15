@@ -11,7 +11,15 @@
             {
                 "name": "joke",
                 "resource": "default/joke",
-                "error_meesage": "Couldn't find any"
+                "error_message": "Couldn't find any"
+            },
+            {
+                "name": "news",
+                "resource": "default/news",
+                "url": "https://newsapi.org/v2/top-headlines?country=br",
+                "key": "<your_key>",
+                "max_results": 5,
+                "error_message": "Sorry, no news."
             },
             {
                 "name": "reminder",

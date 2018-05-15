@@ -33,13 +33,16 @@ class JokeModule extends JarvisModule {
                 url: URL,
                 json: true,
             },
-                function(err, httpResponse, body) {
-                    if (err) {
-                        return resolve(module.buildPlayAction(module.config.error_message));
-                    } else {
-                        return resolve(module.buildPlayAction(buildResponse(body, module.config.error_message)));
-                    }
-                });
+            function(err, httpResponse, body) {
+                if (err) {
+                    return resolve(
+                        module.buildPlayAction(module.config.error_message));
+                } else {
+                    return resolve(
+                        module.buildPlayAction(
+                            buildResponse(body, module.config.error_message)));
+                }
+            });
         });
     }
 }

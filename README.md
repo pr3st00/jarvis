@@ -79,6 +79,7 @@ A plugin consits of:
 | tv            | controls a bravia tv                 | Action (netflix or turnoff)      |
 | music         | searchs  for musics on youtube,      | music/artist                     |
 | video         | searchs  for videos on youtube,      | video                            |
+| news          | displays current news                | -NONE-                           |
 | wikipedia     | looks for a term on wikipedia        | term                             |
 
 ## Web interface
