@@ -95,6 +95,16 @@ cd jarvis
 npm install
 npm start
 ```
+A small tweak is needed on the wav module, since it has all options hardcoded. Please edit the file writer.js under 
+node_modules/wav/lib and modify the parameters as seen below:
+
+```javascript
+  // TODO: allow/properly handle other WAVE audio formats
+  this.endianness = 'LE';
+  this.format = 1; // raw PCM
+  this.channels = 1;
+  this.sampleRate = 16000;
+```
 
 ## Current Feature Requests/Suggestions
 Pending..
