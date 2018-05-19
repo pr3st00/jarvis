@@ -34,6 +34,7 @@
                 "config": "/home/pi/Music/music.json",
                 "youtube_key": "<your_youtube_key>",
                 "max_results": 50,
+                "local" : false,
                 "not_found_message": "Sorry, no music found."
             },
             {

@@ -7,8 +7,6 @@ const GOGGLE_YOUTUBE_API = 'https://www.googleapis.com/youtube/v3/search?part=sn
 const MP3_FROMYOUTUBE_URL = 'https://www.1010diy.com/mp3?quality=128k&url=';
 const YOUTUBE_BASE_VIDEO_URL = 'https://www.youtube.com/watch?v=';
 
-const local = false;
-
 const JarvisModule = require('../jarvisModule');
 let instance;
 
@@ -35,10 +33,11 @@ class Musicmodule extends JarvisModule {
      */
     process(parameters) {
         let query = parameters[1];
-        const musicConfig = require(this.config.config);
         let module = this;
 
-        if (local) {
+        if (this.config.local) {
+            const musicConfig = require(this.config.config);
+
             this.findFile(query.toLowerCase(), musicConfig, function(list) {
                 module.playList(list);
             });
