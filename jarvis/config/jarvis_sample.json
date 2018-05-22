@@ -34,7 +34,7 @@
                 "config": "/home/pi/Music/music.json",
                 "youtube_key": "<your_youtube_key>",
                 "max_results": 50,
-                "local" : false,
+                "local": false,
                 "not_found_message": "Sorry, no music found."
             },
             {
@@ -79,7 +79,8 @@
                 "password": "<password>",
                 "model": "pt-BR_BroadbandModel",
                 "acoustic_customization_id": "<acoustic_custom_id>",
-                "use_websockets": false
+                "use_websockets": false,
+                "audio_format": "wav"
             },
             "dialog": {
                 "url": "<service_url>",

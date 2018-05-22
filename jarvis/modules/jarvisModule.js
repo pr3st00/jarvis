@@ -1,10 +1,13 @@
 'use strict';
 
 const config = require('../services/config').getConfig();
+const Processor = require('../services/actionsProcessor');
+const processor = new Processor();
+
 const buildPlayAction =
-    require('../services/actionsProcessor').buildPlayAction;
+    processor.buildPlayAction;
 const buildStopAction =
-    require('../services/actionsProcessor').buildStopAction;
+    processor.buildStopAction;
 const Logger = require('../logger');
 
 /**

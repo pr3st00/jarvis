@@ -1,7 +1,16 @@
 'use strict';
 
+const DefaultProcessor = require('../defaultProcessor');
+const defaultProcessor = new DefaultProcessor();
+
+const ActionsProcessor = require('../actionsProcessor');
+const actionsProcessor = new ActionsProcessor();
+
+// services
 const ttsService = require('./textToSpeechService');
-const defaultProcessor = require('../defaultProcessor');
+const sttService = require('./speechToTextService');
+const dialogService = require('./dialogService');
+
 let _jarvis;
 
 /**
@@ -29,4 +38,34 @@ function process(singleAction) {
     }
 }
 
-module.exports = {process, setJarvis};
+/**
+ * Process a command buffer.
+ *
+ * @param {*} buffer
+ * @param {*} callback
+ * @param {*} errorCallBack
+ */
+function processCommandBuffer(buffer, callback, errorCallBack) {
+    sttService.process(
+        buffer,
+        callback,
+        errorCallBack
+    );
+}
+
+/**
+ * Process a text command
+ *
+ * @param {*} text
+ * @param {*} callback
+ * @param {*} errorCallBack
+ */
+function processCommandText(text, callback, errorCallBack) {
+    dialogService.process(text,
+        (actions) => {
+            actionsProcessor.setJarvis(_jarvis);
+            actionsProcessor.process(actions, errorCallBack, callback);
+        });
+}
+
+module.exports = {process, setJarvis, processCommandBuffer, processCommandText};

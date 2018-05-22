@@ -1,9 +1,9 @@
 'use strict';
 
-const watsonProcessor = require('./watson/processor');
 const config = require('./config');
 
 const WATSON = 'WATSON';
+const implementation = config.getProcessorImplementation();
 
 /**
  * Factory which provides the processor to be used
@@ -11,10 +11,9 @@ const WATSON = 'WATSON';
  * @return {*} processor
  */
 let getProcessor = function() {
-    let implementation = config.getProcessorImplementation();
-
     switch (implementation) {
         case WATSON:
+            const watsonProcessor = require('./watson/processor');
             return watsonProcessor;
     }
 };

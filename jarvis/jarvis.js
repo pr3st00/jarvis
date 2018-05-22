@@ -3,15 +3,14 @@
 const EventEmitter = require('events');
 const player = require('./services/player');
 
-const processor = require('./services/actionsProcessor');
+const Processor = require('./services/actionsProcessor');
+const processor = new Processor();
+
 const config = require('./services/config').getConfig();
 
 const Logger = require('./logger');
 const logger = new Logger('JARVIS');
 
-// TODO: Make platform agnostic
-const sttService = require('./services/watson/speechToTextService');
-const dialogService = require('./services/watson/dialogService');
 const NO_ANSWER_FOUND = 'NO_ANSWER_FOUND';
 
 /**
@@ -56,11 +55,7 @@ class Jarvis extends EventEmitter {
             _jarvis.processCommandText(text, callback);
         };
 
-        sttService.process(
-            buffer,
-            sucessCallback,
-            errorCallback
-        );
+        processor.processCommandBuffer(buffer, sucessCallback, errorCallback);
     }
 
     /**
@@ -75,17 +70,14 @@ class Jarvis extends EventEmitter {
         let _jarvis = this;
         processor.setJarvis(this);
 
-        dialogService.process(text, _jarvis,
-            function(actions) {
-                processor.process(actions,
-                    function(err) {
-                        callback();
-                        _jarvis.onError('Error in dialog service: ' + err);
-                    },
-                    function() {
-                        callback();
-                        _jarvis.busy = false;
-                    });
+        processor.processCommandText(text,
+            () => {
+                callback();
+                _jarvis.busy = false;
+            },
+            (err) => {
+                callback();
+                _jarvis.onError('Error processing text command: ' + err);
             });
     }
 
@@ -123,10 +115,10 @@ class Jarvis extends EventEmitter {
         this.emit('speaking', {status: 'SPEAKING', text: message});
         let _jarvis = this;
         processor.process(processor.buildPlayAction(message),
-            function() {
+            () => {
                 _jarvis.onError('Error speaking.');
             },
-            function() {
+            () => {
             });
     }
 

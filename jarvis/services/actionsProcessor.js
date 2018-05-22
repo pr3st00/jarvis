@@ -1,102 +1,146 @@
 'use strict';
 
 const exceptions = require('./exceptions');
-const factory = require('./factory');
-
-let _jarvis;
 
 /**
- *
- * @param {*} jarvis
+ * Actions processor
  */
-function setJarvis(jarvis) {
-    _jarvis = jarvis;
-}
-
-/**
- * Process multipleActions executing each action with the processor
- *
- * @param {*} multipleActions
- * @param {*} errorCallBack
- * @param {*} successCallBack
- */
-function process(multipleActions, errorCallBack, successCallBack) {
-    try {
-        processActions(multipleActions, factory.getProcessor());
-        successCallBack();
-    } catch (err) {
-        errorCallBack(err.message);
-    }
-}
-
-/**
- * Processes all the actions using the processor provided.
- *
- * @param {*} multipleActions
- * @param {*} processor
- * @param {*} callback
- */
-function processActions(multipleActions, processor, callback) {
-    if (!multipleActions) {
-        throw new exceptions.ActionServiceError('actions cannot be empty!');
+class ActionsProcessor {
+    /**
+     * Default constructor
+     */
+    constructor() {
+        this.factory = require('./factory');
     }
 
-    processor.setJarvis(_jarvis);
+    /**
+     * Sets jarvis instance
+     *
+     * @param {*} jarvis
+     */
+    setJarvis(jarvis) {
+        this._jarvis = jarvis;
+    }
 
-    for (const originalAction of multipleActions.actions) {
-        let resultingAction = processor.process(originalAction);
-
-        if (resultingAction) {
-            if (resultingAction instanceof Promise) {
-                resultingAction.then(function(r) {
-                    processor.process(r.actions[0]);
-                }).catch((err) => console.log(err));
-            } else {
-                processor.process(resultingAction);
-            }
+    /**
+     * Process multipleActions executing each action with the processor
+     *
+     * @param {*} multipleActions
+     * @param {*} errorCallBack
+     * @param {*} successCallBack
+     */
+    process(multipleActions, errorCallBack, successCallBack) {
+        try {
+            this.processActions(multipleActions, this.factory.getProcessor());
+            successCallBack();
+        } catch (err) {
+            errorCallBack(err.message);
         }
     }
 
-    // callback();
+    /**
+     * Processes all the actions using the processor provided.
+     *
+     * @param {*} multipleActions
+     * @param {*} processor
+     * @param {*} callback
+     */
+    processActions(multipleActions, processor, callback) {
+        if (!multipleActions) {
+            throw new exceptions.ActionServiceError('actions cannot be empty!');
+        }
+
+        processor.setJarvis(this._jarvis);
+
+        for (const originalAction of multipleActions.actions) {
+            let resultingAction = processor.process(originalAction);
+
+            if (resultingAction) {
+                if (resultingAction instanceof Promise) {
+                    resultingAction.then(function(r) {
+                        processor.process(r.actions[0]);
+                    }).catch((err) => console.log(err));
+                } else {
+                    processor.process(resultingAction);
+                }
+            }
+        }
+
+        // callback();
+    }
+
+    /**
+     * Builds a action object for playing the message.
+     *
+     * @param {*} message
+     * @return {*} json
+     */
+    buildPlayAction(message) {
+        return {
+            'actions': [
+                {
+                    'action': 'PLAY',
+                    'parameters': [
+                        message,
+                    ],
+                    'synchronous': true,
+                },
+            ],
+        };
+    }
+
+    /**
+     * Builds a action object for stopping
+     *
+     * @return {*} json
+     */
+    buildStopAction() {
+        return {
+            'actions': [
+                {
+                    'action': 'STOP',
+                    'parameters': [
+                    ],
+                    'synchronous': true,
+                },
+            ],
+        };
+    }
+
+    /**
+     * Process a command buffer.
+     *
+     * @param {*} buffer
+     * @param {*} callback
+     * @param {*} errorCallBack
+     */
+    processCommandBuffer(buffer, callback, errorCallBack) {
+        this.getProcessor().processCommandBuffer(
+            buffer, callback, errorCallBack);
+    }
+
+    /**
+     * Process a text command
+     *
+     * @param {*} text
+     * @param {*} callback
+     * @param {*} errorCallBack
+     */
+    processCommandText(text, callback, errorCallBack) {
+        this.getProcessor().processCommandText(
+            text, callback, errorCallBack);
+    }
+
+    /**
+     * Gets processor
+     *
+     * @return {*} processor
+     */
+    getProcessor() {
+        let processor = this.factory.getProcessor();
+        processor.setJarvis(this._jarvis);
+        return processor;
+    }
 }
 
-/**
- * Builds a action object for playing the message.
- *
- * @param {*} message
- * @return {*} json
- */
-function buildPlayAction(message) {
-    return {
-        'actions': [
-            {
-                'action': 'PLAY',
-                'parameters': [
-                    message,
-                ],
-                'synchronous': true,
-            },
-        ],
-    };
-}
-
-/**
- * Builds a action object for stopping
- *
- * @return {*} json
- */
-function buildStopAction() {
-    return {
-        'actions': [
-            {
-                'action': 'STOP',
-                'parameters': [
-                ],
-                'synchronous': true,
-            },
-        ],
-    };
-}
-
-module.exports = {process, buildPlayAction, buildStopAction, setJarvis};
-
+exports = module.exports = ActionsProcessor;

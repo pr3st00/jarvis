@@ -14,10 +14,9 @@ const serviceConfig = config.jarvis.services.dialog;
  * Calls waston assistant and receives an action back
  *
  * @param {*} text
- * @param {*} jarvis
  * @param {*} callback
  */
-function process(text, jarvis, callback) {
+function process(text, callback) {
     logger.log('Calling dialog with text [' + text + ']');
 
     let ini = new Date().getTime();
