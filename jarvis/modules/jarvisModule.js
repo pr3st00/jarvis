@@ -1,13 +1,10 @@
 'use strict';
 
 const config = require('../services/config').getConfig();
-const Processor = require('../services/actionsProcessor');
-const processor = new Processor();
 
-const buildPlayAction =
-    processor.buildPlayAction;
-const buildStopAction =
-    processor.buildStopAction;
+const Actions = require('../services/actions');
+const actions = new Actions();
+
 const Logger = require('../logger');
 
 /**
@@ -32,7 +29,7 @@ class JarvisModule {
      * @return {*} json
      */
     buildPlayAction(message) {
-        return buildPlayAction(message);
+        return actions.buildPlayAction(message);
     }
 
     /**
@@ -42,7 +39,7 @@ class JarvisModule {
      * @return {*} json
      */
     buildStopAction(message) {
-        return buildStopAction();
+        return actions.buildStopAction();
     }
 }
 

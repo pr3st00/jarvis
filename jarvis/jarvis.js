@@ -3,6 +3,9 @@
 const EventEmitter = require('events');
 const player = require('./services/player');
 
+const Actions = require('./services/actions');
+const actions = new Actions();
+
 const Processor = require('./services/actionsProcessor');
 const processor = new Processor();
 
@@ -114,7 +117,7 @@ class Jarvis extends EventEmitter {
     speak(message) {
         this.emit('speaking', {status: 'SPEAKING', text: message});
         let _jarvis = this;
-        processor.process(processor.buildPlayAction(message),
+        processor.process(actions.buildPlayAction(message),
             () => {
                 _jarvis.onError('Error speaking.');
             },
