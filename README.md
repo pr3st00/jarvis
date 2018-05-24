@@ -9,7 +9,20 @@ for waiting for a keyword, and then executes actions based on a pre-determined j
 Actions can be executed in parallel or sequentially, and can in turn return another actions. This simple framework allows complex actions to be executed with little effort.
 </p>
 
-## Current Release: v0.0.10
+## Services backend
+<p>
+It currently supports two backend systems: WATSON and WIT (in progress).
+
+The implementation can be selected by modifying the processor config on jarvis.json config file:
+
+```json
+{
+    "jarvis": {
+        "processor": "WATSON",
+```
+</p>
+
+## Current Release: v0.0.12
 
 ## Message format
 
