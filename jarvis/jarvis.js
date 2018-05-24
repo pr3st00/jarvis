@@ -54,7 +54,12 @@ class Jarvis extends EventEmitter {
             _jarvis.onError(message);
         };
 
-        this.processor.processCommandBuffer(buffer, callback, errorCallback);
+        this.processor.processCommandBuffer(buffer,
+        () => {
+            callback();
+            _jarvis.busy = false;
+        },
+        errorCallback);
     }
 
     /**
