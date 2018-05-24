@@ -4,7 +4,7 @@ const config = require('../config').getConfig();
 const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 const Lame = require('node-lame').Lame;
 
-const serviceConfig = config.jarvis.services.speech_to_text;
+const serviceConfig = config.jarvis.services.watson.speech_to_text;
 
 const Logger = require('../../logger');
 const logger = new Logger('SPEECH_TO_TEXT');

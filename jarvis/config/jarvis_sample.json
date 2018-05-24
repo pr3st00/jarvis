@@ -68,26 +68,28 @@
                 "cacheConfig": "/tmp/jarviscache/cache.json",
                 "ttl": "24"
             },
-            "text_to_speech": {
-                "username": "<username>",
-                "password": "<pass>",
-                "voice": "pt-BR_IsabelaVoice",
-                "useCache": true
-            },
-            "speech_to_text": {
-                "username": "<username>",
-                "password": "<password>",
-                "model": "pt-BR_BroadbandModel",
-                "acoustic_customization_id": "<acoustic_custom_id>",
-                "use_websockets": false,
-                "audio_format": "wav"
-            },
-            "dialog": {
-                "url": "<service_url>",
-                "do_not_cache_action_codes": [
-                    "horas"
-                ],
-                "useCache": true
+            "watson": {
+                "text_to_speech": {
+                    "username": "<username>",
+                    "password": "<pass>",
+                    "voice": "pt-BR_IsabelaVoice",
+                    "useCache": true
+                },
+                "speech_to_text": {
+                    "username": "<username>",
+                    "password": "<password>",
+                    "model": "pt-BR_BroadbandModel",
+                    "acoustic_customization_id": "<acoustic_custom_id>",
+                    "use_websockets": false,
+                    "audio_format": "wav"
+                },
+                "dialog": {
+                    "url": "<service_url>",
+                    "do_not_cache_action_codes": [
+                        "horas"
+                    ],
+                    "useCache": true
+                }
             }
         }
     }

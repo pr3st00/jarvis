@@ -7,7 +7,6 @@ const Actions = require('./services/actions');
 const actions = new Actions();
 
 const Processor = require('./services/actionsProcessor');
-const processor = new Processor();
 
 const config = require('./services/config').getConfig();
 
@@ -26,6 +25,8 @@ class Jarvis extends EventEmitter {
     constructor() {
         super();
         this.busy = false;
+        this.processor = new Processor();
+        this.processor.setJarvis(this);
     }
 
     /**
@@ -41,7 +42,6 @@ class Jarvis extends EventEmitter {
         logger.log('Processing buffer of size: [' + buffer.byteLength + ']');
 
         let _jarvis = this;
-        processor.setJarvis(this);
 
         let errorCallback = function(message) {
             callback();
@@ -54,11 +54,7 @@ class Jarvis extends EventEmitter {
             _jarvis.onError(message);
         };
 
-        let sucessCallback = function(text) {
-            _jarvis.processCommandText(text, callback);
-        };
-
-        processor.processCommandBuffer(buffer, sucessCallback, errorCallback);
+        this.processor.processCommandBuffer(buffer, callback, errorCallback);
     }
 
     /**
@@ -71,9 +67,8 @@ class Jarvis extends EventEmitter {
         this.emit('command_received', text);
 
         let _jarvis = this;
-        processor.setJarvis(this);
 
-        processor.processCommandText(text,
+        this.processor.processCommandText(text,
             () => {
                 callback();
                 _jarvis.busy = false;
@@ -89,8 +84,9 @@ class Jarvis extends EventEmitter {
      *
      */
     start() {
-        this.init();
         this.emit('running');
+        logger.log('Using implementation: [' +
+            config.jarvis.processor + ']');
     }
 
     /**
@@ -117,9 +113,9 @@ class Jarvis extends EventEmitter {
     speak(message) {
         this.emit('speaking', {status: 'SPEAKING', text: message});
         let _jarvis = this;
-        processor.process(actions.buildPlayAction(message),
-            () => {
-                _jarvis.onError('Error speaking.');
+        this.processor.process(actions.buildPlayAction(message),
+            (err) => {
+                _jarvis.onError('Error speaking: ' + err);
             },
             () => {
             });

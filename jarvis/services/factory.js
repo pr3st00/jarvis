@@ -2,7 +2,11 @@
 
 const config = require('./config');
 
-const WATSON = 'WATSON';
+const PROVIDERS = {
+    'WATSON': 'WATSON',
+    'WIT': 'WIT',
+};
+
 const implementation = config.getProcessorImplementation();
 
 /**
@@ -12,9 +16,12 @@ const implementation = config.getProcessorImplementation();
  */
 let getProcessor = function() {
     switch (implementation) {
-        case WATSON:
+        case PROVIDERS.WATSON:
             const watsonProcessor = require('./watson/processor');
             return watsonProcessor;
+        case PROVIDERS.WIT:
+            const witProcessor = require('./wit/processor');
+            return witProcessor;
     }
 };
 

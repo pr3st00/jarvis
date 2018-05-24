@@ -8,7 +8,7 @@ const logger = new Logger('DIALOG_SERVICE');
 const Cache = require('../cache');
 const cache = new Cache('DIALOG');
 
-const serviceConfig = config.jarvis.services.dialog;
+const serviceConfig = config.jarvis.services.watson.dialog;
 
 /**
  * Calls waston assistant and receives an action back

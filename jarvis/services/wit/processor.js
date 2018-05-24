@@ -7,9 +7,7 @@ const ActionsProcessor = require('../actionsProcessor');
 const actionsProcessor = new ActionsProcessor();
 
 // services
-const ttsService = require('./textToSpeechService');
-const sttService = require('./speechToTextService');
-const dialogService = require('./dialogService');
+const witService = require('./witService');
 
 let _jarvis;
 
@@ -46,13 +44,7 @@ function process(singleAction) {
  * @param {*} errorCallBack
  */
 function processCommandBuffer(buffer, callback, errorCallBack) {
-    sttService.process(
-        buffer,
-        (text) => {
-            processCommandText(text, callback, errorCallBack);
-        },
-        errorCallBack
-    );
+    witService.speech(buffer, callback, errorCallBack);
 }
 
 /**
@@ -63,11 +55,7 @@ function processCommandBuffer(buffer, callback, errorCallBack) {
  * @param {*} errorCallBack
  */
 function processCommandText(text, callback, errorCallBack) {
-    dialogService.process(text,
-        (actions) => {
-            actionsProcessor.setJarvis(_jarvis);
-            actionsProcessor.process(actions, errorCallBack, callback);
-        });
+    witService.text(text, callback, errorCallBack);
 }
 
 module.exports = {process, setJarvis, processCommandBuffer, processCommandText};

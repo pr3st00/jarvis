@@ -13,6 +13,8 @@ const logger = new Logger('TEXT_TO_SPEECH');
 const Cache = require('../cache');
 const cache = new Cache('TEXT_TO_SPEECH');
 
+const serviceConfig = config.jarvis.services.watson.text_to_speech;
+
 /**
  * Process the request
  *
@@ -23,8 +25,6 @@ function process(singleAction, jarvis) {
     let parameters = singleAction.parameters;
 
     logger.log('Caling tts with text [' + parameters[0] + ']');
-
-    let serviceConfig = config.jarvis.services.text_to_speech;
 
     let textToSpeech = new TextToSpeechV1({
         username: serviceConfig.username,

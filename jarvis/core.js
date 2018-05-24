@@ -62,6 +62,7 @@ jarvis.on('processing_command', function(event) {
  * Starts the core.
  */
 function start() {
+    jarvis.start();
     jarvis.processCommandText(coreConfig.initial_question, () => { });
     startHotWordDetector();
 }
