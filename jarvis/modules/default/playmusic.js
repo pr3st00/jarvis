@@ -3,7 +3,7 @@
 const request = require('request');
 let player = require('../../services/player');
 
-const GOGGLE_YOUTUBE_API = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&q=';
+const GOOGLE_YOUTUBE_API = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&q=';
 const MP3_FROMYOUTUBE_URL = 'https://www.1010diy.com/mp3?quality=128k&url=';
 const YOUTUBE_BASE_VIDEO_URL = 'https://www.youtube.com/watch?v=';
 
@@ -100,7 +100,7 @@ class Musicmodule extends JarvisModule {
      * @param {*} callback
      */
     findYouTube(query, callback) {
-        let url = GOGGLE_YOUTUBE_API + query + '&key=' +
+        let url = GOOGLE_YOUTUBE_API + query + '&key=' +
             this.config.youtube_key + '&maxResults='
             + this.config.max_results;
 

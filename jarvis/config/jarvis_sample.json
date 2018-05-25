@@ -68,6 +68,12 @@
                 "cacheConfig": "/tmp/jarviscache/cache.json",
                 "ttl": "24"
             },
+            "wit": {
+                "token": "<wit_token>",
+                "speech": {
+                    "url": "https://api.wit.ai/speech"
+                }
+            },
             "watson": {
                 "text_to_speech": {
                     "username": "<username>",
