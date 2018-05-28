@@ -30,14 +30,17 @@ function isBusy() {
  * @param {*} list
  */
 function playMp3(list) {
-    logger.log('Now playing ' + list.length + ' item(s).');
+    logger.log('Now playing ' +
+        (list instanceof Array ? list.length : 1) + ' item(s).');
 
     try {
         internalPlayer = new Player(list);
 
         internalPlayer.on('error', function(err) {
-            logger.logError(err);
-            stop();
+            if (!err.match(/No next song was found/i)) {
+                logger.logError(err);
+                stop();
+            }
         });
 
         internalPlayer.on('playing', function(item) {
@@ -197,5 +200,7 @@ function createWavFile(buffer, fileName, callback) {
     writer.end();
 }
 
-module.exports = {play, playMp3, stop, recordFile,
-    appendWavHeader, createWavFile, isBusy};
+module.exports = {
+    play, playMp3, stop, recordFile,
+    appendWavHeader, createWavFile, isBusy,
+};

@@ -6,9 +6,13 @@ const config = require('../config').getConfig();
 const Logger = require('../../logger');
 const logger = new Logger('WIT_SERVICE');
 
+const dialogService = require('./dialogService');
+const ActionsProcessor = require('../actionsProcessor');
+const actionsProcessor = new ActionsProcessor();
+
 const serviceConfig = config.jarvis.services.wit;
 
-const VERSION = '20170307';
+let _jarvis;
 
 const requestOptions = {
     url: serviceConfig.speech.url,
@@ -17,25 +21,9 @@ const requestOptions = {
     headers: {
         'Authorization': 'Bearer ' + serviceConfig.token,
         'Content-Type': 'audio/wav',
-        'Accept': 'application/vnd.wit.' + VERSION,
+        'Accept': 'application/vnd.wit.' + serviceConfig.speech.version,
     },
 };
-
-
-/**
-*
-*{
-*  "_text" : "hoje em Campinas temperatura de 16 graus e alguma nebulosidade",
-*  "entities" : {
-*    "intent" : [ {
-*
-*       "confidence" : 0.80811285073324,
-*      "value" : "horas"
-*    } ]
-*  },
-*  "msg_id" : "0xk2I0dNbz5zKvcwp"
-*}
-**/
 
 /**
  *
@@ -52,7 +40,14 @@ function speech(buffer, callback, errorCallBack) {
 
     let sucessCallback = (error, response, body) => {
         logger.log('Wit response is: ' + JSON.stringify(body));
-        callback();
+
+        dialogService.processWitResponse(body,
+            (actions) => {
+                actionsProcessor.setJarvis(_jarvis);
+                actionsProcessor.process(actions, errorCallBack, callback);
+            }
+        );
+
         if (error) {
             errorCallBack(error);
         }
@@ -70,11 +65,8 @@ function speech(buffer, callback, errorCallBack) {
 function text(text, callback, errorCallBack) {
     dialogService.process(text,
         (actions) => {
-            actionsProcessor.setJarvis(_jarvis);
             actionsProcessor.process(actions, errorCallBack, callback);
         });
-
-
 }
 
-module.exports = { speech, text };
+module.exports = {speech, text};

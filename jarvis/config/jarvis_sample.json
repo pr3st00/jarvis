@@ -71,7 +71,18 @@
             "wit": {
                 "token": "<wit_token>",
                 "speech": {
-                    "url": "https://api.wit.ai/speech"
+                    "url": "https://api.wit.ai/speech",
+                    "version": "20170307"
+                },
+                "dialog": {
+                    "url": "https://api.wit.ai/message",
+                    "version": "20170307"
+                },
+                "text_to_speech": {
+                    "url": "https://api.voicerss.org",
+                    "key": "<your_key>",
+                    "language": "pt-br",
+                    "useCache": true
                 }
             },
             "watson": {

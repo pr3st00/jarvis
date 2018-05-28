@@ -3,11 +3,9 @@
 const DefaultProcessor = require('../defaultProcessor');
 const defaultProcessor = new DefaultProcessor();
 
-const ActionsProcessor = require('../actionsProcessor');
-const actionsProcessor = new ActionsProcessor();
-
 // services
 const witService = require('./witService');
+const ttsService = require('./textToSpeechService');
 
 let _jarvis;
 
