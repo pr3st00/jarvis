@@ -11,6 +11,8 @@ const cache = new Cache('WIT_DIALOG');
 const Actions = require('../actions');
 const actions = new Actions();
 
+const ActionMapper = require('../actionMapper');
+
 const serviceConfig = config.jarvis.services.wit;
 
 let requestOptions = {
@@ -23,22 +25,6 @@ let requestOptions = {
     },
 };
 
-
-/**
-*
-*{
-*  "_text" : "hoje em Campinas temperatura de 16 graus e alguma nebulosidade",
-*  "entities" : {
-*    "intent" : [ {
-*       "confidence" : 0.80811285073324,
-*      "value" : "horas"
-*    } ]
-*  },
-*  "msg_id" : "0xk2I0dNbz5zKvcwp"
-*}
-**/
-
-
 /**
  * Process a wit response into actions
  *
@@ -47,12 +33,35 @@ let requestOptions = {
  */
 function processWitResponse(body, callback) {
     if (!body || body.error) {
-        callback(actions.buildPlayAction('Nao entendi nada'));
+        if (config.jarvis.speak_when_not_recognized) {
+            callback(
+                actions.buildPlayAction(config.jarvis.not_recognized_message));
+        }
     } else {
-        callback(actions.buildPlayAction('Teste'));
+        callback(retrieveActionsFromResponse(body));
     }
 }
 
+/**
+ * Transforms a wit response into actions.
+ *
+ * @param {*} body
+ * @return {*} actions
+ */
+function retrieveActionsFromResponse(body) {
+    let intents = [];
+    let entities = [];
+
+   if (body.entities.intent) {
+        for (let intent of body.entities.intent) {
+            intents.push(intent.value);
+        }
+    }
+
+    let actionsMapper = new ActionMapper(intents, entities);
+
+    return actionsMapper.buildActions();
+}
 
 /**
  * Calls wit and returns actions
@@ -83,7 +92,7 @@ function process(text, callback) {
 
     request.get(requestOptions,
         function(err, httpResponse, body) {
-            logger.log('Response: ' + body);
+            logger.log('Response: ' + JSON.stringify(body));
             let timeTaken = new Date().getTime() - ini;
             logger.log('Took: (' + timeTaken + ') ms.');
 

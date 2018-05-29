@@ -1,9 +1,23 @@
 'use strict';
 
 /**
- * Actions
+ * Actions Builder
  */
 class Actions {
+    /**
+     *
+     * @param {*} action
+     * @param {*} parameters
+     * @return {*} action
+     */
+    buildAction(action, parameters) {
+        return {
+            'action': action,
+            'parameters': parameters,
+            'synchronous': true,
+        };
+    }
+
     /**
      * Builds a action object for playing the message.
      *
@@ -11,17 +25,12 @@ class Actions {
      * @return {*} json
      */
     buildPlayAction(message) {
-        return {
-            'actions': [
-                {
-                    'action': 'PLAY',
-                    'parameters': [
-                        message,
-                    ],
-                    'synchronous': true,
-                },
-            ],
-        };
+        let actionsList = this.buildActionsList();
+
+        actionsList.actions.push(
+            this.buildAction('PLAY', [message]));
+
+        return actionsList;
     }
 
     /**
@@ -30,18 +39,24 @@ class Actions {
      * @return {*} json
      */
     buildStopAction() {
+        let actionsList = this.buildActionsList();
+
+        actionsList.actions.push(
+            this.buildAction('STOP', []));
+
+        return actionsList;
+    }
+
+    /**
+     *
+     * @return {*} actions
+     */
+    buildActionsList() {
         return {
             'actions': [
-                {
-                    'action': 'STOP',
-                    'parameters': [
-                    ],
-                    'synchronous': true,
-                },
             ],
         };
     }
-
 }
 
 exports = module.exports = Actions;
