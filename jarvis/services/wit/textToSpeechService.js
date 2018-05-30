@@ -45,7 +45,7 @@ function process(singleAction, jarvis) {
             let timeTaken = new Date().getTime() - ini;
             logger.log('Took: (' + timeTaken + ') ms.');
 
-            player.play(fromCache);
+            player.playMp3(fromCache);
             return;
         }
     }

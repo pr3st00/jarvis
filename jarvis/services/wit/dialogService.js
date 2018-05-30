@@ -15,6 +15,8 @@ const ActionMapper = require('../actionMapper');
 
 const serviceConfig = config.jarvis.services.wit;
 
+let ini;
+
 let requestOptions = {
     url: serviceConfig.dialog.url,
     method: 'POST',
@@ -38,7 +40,12 @@ function processWitResponse(body, callback) {
                 actions.buildPlayAction(config.jarvis.not_recognized_message));
         }
     } else {
-        callback(retrieveActionsFromResponse(body));
+        let actionsList = retrieveActionsFromResponse(body);
+        logger.log('Response: ' + JSON.stringify(actionsList));
+        let timeTaken = new Date().getTime() - ini;
+        logger.log('Took: (' + timeTaken + ') ms.');
+
+        callback(actionsList);
     }
 }
 
@@ -52,13 +59,13 @@ function retrieveActionsFromResponse(body) {
     let intents = [];
     let entities = [];
 
-   if (body.entities.intent) {
+    if (body.entities.intent) {
         for (let intent of body.entities.intent) {
             intents.push(intent.value);
         }
     }
 
-    let actionsMapper = new ActionMapper(intents, entities);
+    let actionsMapper = new ActionMapper(body._text, intents, entities);
 
     return actionsMapper.buildActions();
 }
@@ -72,7 +79,7 @@ function retrieveActionsFromResponse(body) {
 function process(text, callback) {
     logger.log('Calling dialog with text [' + text + ']');
 
-    let ini = new Date().getTime();
+    ini = new Date().getTime();
     let fromCache;
 
     if (serviceConfig.useCache) {
@@ -92,10 +99,6 @@ function process(text, callback) {
 
     request.get(requestOptions,
         function(err, httpResponse, body) {
-            logger.log('Response: ' + JSON.stringify(body));
-            let timeTaken = new Date().getTime() - ini;
-            logger.log('Took: (' + timeTaken + ') ms.');
-
             if (err) {
                 callback(err);
             } else {

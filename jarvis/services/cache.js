@@ -109,7 +109,7 @@ class Cache {
             if (now - entry.date >=
                 (this.serviceConfig.ttl * 3600 * 24 * 1000)) {
                 logger.log('Expiring entry [ value=' + entry.value + ' ]');
-                this.config.entries.splice(i, 1);
+                // this.config.entries.splice(i, 1);
             }
         }
     }

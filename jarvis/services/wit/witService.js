@@ -48,6 +48,8 @@ function speech(buffer, callback, errorCallBack) {
             }
         );
 
+        callback();
+
         if (error) {
             errorCallBack(error);
         }
