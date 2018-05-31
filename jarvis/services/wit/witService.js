@@ -12,7 +12,7 @@ const actionsProcessor = new ActionsProcessor();
 
 const serviceConfig = config.jarvis.services.wit;
 
-let _jarvis;
+// let _jarvis;
 
 const requestOptions = {
     url: serviceConfig.speech.url,
@@ -43,7 +43,7 @@ function speech(buffer, callback, errorCallBack) {
 
         dialogService.processWitResponse(body,
             (actions) => {
-                actionsProcessor.setJarvis(_jarvis);
+                // actionsProcessor.setJarvis(_jarvis);
                 actionsProcessor.process(actions, errorCallBack, callback);
             }
         );

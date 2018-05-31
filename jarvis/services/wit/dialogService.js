@@ -35,9 +35,10 @@ let requestOptions = {
  */
 function processWitResponse(body, callback) {
     if (!body || body.error) {
-        if (config.jarvis.speak_when_not_recognized) {
+        if (config.jarvis.dialogs.speak_when_not_recognized) {
             callback(
-                actions.buildPlayAction(config.jarvis.not_recognized_message));
+                actions.buildPlayAction(
+                    config.jarvis.dialogs.not_recognized_message));
         }
     } else {
         let actionsList = retrieveActionsFromResponse(body);
