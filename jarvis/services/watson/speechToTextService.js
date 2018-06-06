@@ -95,8 +95,12 @@ function doTranslation(audioBuffer, contentType, callback, errorCallBack) {
         'timestamps': false,
         'interim_results': false,
         'model': serviceConfig.model,
-        'acoustic_customization_id': serviceConfig.acoustic_customization_id,
     };
+
+    if (serviceConfig.acoustic_customization_id) {
+        params['acoustic_customization_id'] =
+            serviceConfig.acoustic_customization_id;
+    }
 
     let ini = new Date().getTime();
 

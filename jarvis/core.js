@@ -33,6 +33,15 @@ function setIO(_io) {
     io = _io;
 }
 
+/**
+ * Retrieves the jarvis
+ *
+ * @return {*} jarvis
+ */
+function getJarvis() {
+    return jarvis;
+}
+
 jarvis.on('error', function(err) {
     logger.logError(err.message);
     io.emit('error', JSON.stringify({status: 'ERROR', text: err.message}));
@@ -252,4 +261,4 @@ function resetFlags() {
     commandEvents = 0;
 }
 
-exports = module.exports = {start, setIO};
+exports = module.exports = {start, setIO, getJarvis};
