@@ -3,10 +3,10 @@
 const express = require('express');
 const router = express.Router();
 
-const ActionsProcessor = require('../jarvis/services/actionsProcessor');
+const ActionsProcessor = require('../../jarvis/services/actionsProcessor');
 const actionsProcessor = new ActionsProcessor();
 
-const core = require('../jarvis/core');
+const core = require('../../jarvis/core');
 
 router.post('/', function(req, res, next) {
     let jarvis = core.getJarvis();
