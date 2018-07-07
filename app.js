@@ -9,8 +9,7 @@ const index = require('./routes/index');
 const systemresources = require('./routes/systemresources');
 
 // apis
-const actions = require('./routes/api/actions');
-const command = require('./routes/api/command');
+const apis = require('./routes/api/apis');
 
 let app = express();
 
@@ -28,8 +27,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/systemresources', systemresources);
-app.use('/api/actions', actions);
-app.use('/api/command', command);
+
+app.use('/api', apis);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
