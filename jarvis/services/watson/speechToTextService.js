@@ -1,6 +1,7 @@
 'use strict';
 
 const config = require('../config').getConfig();
+const streamifier = require('streamifier');
 const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 const Lame = require('node-lame').Lame;
 
@@ -69,13 +70,7 @@ function processWithRest(buffer, callback, errorCallBack) {
             break;
 
         default:
-            let wav = require('wav');
-            let writer = new wav.Writer();
-
-            writer.write(buffer);
-            writer.end();
-
-            doTranslation(writer, 'audio/wav', callback, errorCallBack);
+            doTranslation(buffer, 'audio/wav', callback, errorCallBack);
             break;
     }
 }
@@ -90,7 +85,7 @@ function processWithRest(buffer, callback, errorCallBack) {
  */
 function doTranslation(audioBuffer, contentType, callback, errorCallBack) {
     let params = {
-        'audio': audioBuffer,
+        'audio': streamifier.createReadStream(audioBuffer),
         'content_type': contentType,
         'timestamps': false,
         'interim_results': false,

@@ -1,6 +1,7 @@
 'use strict';
 
 const request = require('request');
+const streamifier = require('streamifier');
 const config = require('../config').getConfig();
 
 const Logger = require('../../logger');
@@ -32,12 +33,6 @@ const requestOptions = {
  * @param {*} errorCallBack
  */
 function speech(buffer, callback, errorCallBack) {
-    let wav = require('wav');
-    let writer = new wav.Writer();
-
-    writer.write(buffer);
-    writer.end();
-
     let sucessCallback = (error, response, body) => {
         logger.log('Wit response is: ' + JSON.stringify(body));
 
@@ -55,7 +50,8 @@ function speech(buffer, callback, errorCallBack) {
         }
     };
 
-    writer.pipe(request(requestOptions, sucessCallback));
+    streamifier.createReadStream(buffer).pipe(
+        request(requestOptions, sucessCallback));
 }
 
 /**

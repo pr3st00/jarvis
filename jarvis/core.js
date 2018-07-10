@@ -191,6 +191,22 @@ function saveBuffer(buffer, finalBuffer) {
 }
 
 /**
+ * Adds a wav header to the buffer
+ *
+ * @param {*} buffer
+ * @return {*} newBuffer
+ */
+function writeWavHeader(buffer) {
+    let wav = require('wav');
+    let writer = new wav.Writer();
+
+    writer.write(buffer);
+    writer.end();
+
+    return Buffer.concat([writer._header, buffer]);
+}
+
+/**
  * Process command
  */
 function processCommand() {
@@ -201,7 +217,7 @@ function processCommand() {
 
     processCommandIniTime = new Date().getTime();
 
-    jarvis.processCommandBuffer(FINALBUFFER, () => {
+    jarvis.processCommandBuffer(writeWavHeader(FINALBUFFER), () => {
         /**
          * Total time spent for processing a command.
          */

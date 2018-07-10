@@ -27,7 +27,7 @@ router.post('/actions', function(req, res, next) {
 
     actionsProcessor.process(req.body,
         (err) => {
-            res.json(busyStatus);
+            res.json({'status': err});
         },
         () => {
             res.json(successStatus);
@@ -44,12 +44,9 @@ router.post('/command', upload.single('command'), function(req, res, next) {
         return;
     }
 
-    actionsProcessor.processCommandBuffer(req.file.buffer,
+    jarvis.processCommandBuffer(req.file.buffer,
         () => {
             res.json(successStatus);
-        },
-        (err) => {
-            res.json({'status': err});
         }
     );
 });

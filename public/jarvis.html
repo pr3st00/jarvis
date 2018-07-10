@@ -114,6 +114,11 @@
       socket.on('waiting_for_command', function (mesg) { updateStatus(mesg, false) });
       socket.on('error', function (mesg) { updateStatus(mesg, false) });
 
+
+      $("#micimage").click(function toggleRecording() {
+        alert('toggle');
+      });
+
     });
   </script>
 
@@ -167,7 +172,7 @@
     <!-- Talk form -->
     <div style="font-size: 30px; margin-left: 50px; margin-top: 20px;">
 
-        <img src='/images/microphone.png' width="30" height="30" onclick="toggleRecording(this)"/>
+        <img id="micimage" src='/images/microphone.png' width="30" height="30" />
 
     </div>
 

@@ -22,7 +22,7 @@ The implementation can be selected by modifying the processor config on jarvis.j
 ```
 </p>
 
-## Current Release: v0.0.12
+## Current Release: v0.0.15
 
 ## Message format
 
@@ -97,6 +97,24 @@ A plugin consits of:
 
 ## Web interface
 It currently has a web interface, which displays real time events and also plays messages. In the future it will allow some level of interaction too.
+
+## Web services layer
+Jarvis also exposes some RESTFull webservices in order for other systems to interact to it. This facilitates home automation allowing, for example, 
+to trigger jarvis through a mobile application.
+
+All services will reply with a json message in the following format:
+
+```json
+{ status : code }
+```
+
+where code can be one of the following: "success", "an error message" or "busy"
+
+| Endpoint      | Method   | Description              |  Parameters                                                                          |
+| ------------- | -------- | ------------------------ | ------------------------------------------------------------------------------------ |
+| /api/actions  |  POST    | Process all actions      |  JSON list of actions (see format above in Message format section)                   |
+| /api/command  |  POST    | Process a wav file       |  A wav file attached in a multipart/form-data with "command" as the contentId        |
+| /api/text     |  POST    | Process a command text   |  A text for jarvis to proces in json format. Sample: { "text" : "What time is it?" } |
 
 ## Installation
 Quick installation for the Raspberry Pi 2+

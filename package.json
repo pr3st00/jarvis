@@ -1,6 +1,6 @@
 {
   "name": "jarvis-system",
-  "version": "0.0.12",
+  "version": "0.0.15",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -27,6 +27,7 @@
     "socket.io": "^2.1.1",
     "speaker": "^0.4.1",
     "stream-converter": "0.0.1",
+    "streamifier": "^0.1.1",
     "systeminformation": "^3.42.2",
     "watson-developer-cloud": "^3.5.3",
     "wav": "^1.0.2"
