@@ -49,8 +49,8 @@ class Cache {
     /**
      * Puts a STRING value into the cache
      *
-     * @param {*} key 
-     * @param {*} value 
+     * @param {*} key
+     * @param {*} value
      */
     putStringCacheValue(key, value) {
         this.putCacheValue(key, STRING_TYPE, value);
@@ -122,7 +122,7 @@ class Cache {
      */
     expireValues() {
         let now = new Date().getTime();
-        
+
         let newConfig = {
             'entries': [
             ],
@@ -133,12 +133,11 @@ class Cache {
 
             if (now - entry.date >= ttl) {
                 logger.log('Expiring entry [ value=' + entry.value + ' ]');
-                
+
                 if (FILE_TYPE == entry.type) {
                     fs.unlinkSync(entry.value);
                 }
-            }
-            else {
+            } else {
                 newConfig.entries.push(entry);
             }
         }
