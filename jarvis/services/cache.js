@@ -6,6 +6,9 @@ const cacheConfig = require('./config').getConfig();
 const Logger = require('../logger');
 const logger = new Logger('CACHE');
 
+const FILE_TYPE = 'FILE';
+const STRING_TYPE = 'STRING';
+
 /**
  * Caches files and json responses.
  *
@@ -23,7 +26,7 @@ class Cache {
     }
 
     /**
-     * Puts a file into the cache
+     * Puts a FILE into the cache
      *
      * @param {*} key
      * @param {*} fileName
@@ -39,26 +42,41 @@ class Cache {
         let _cache = this;
 
         fs.copyFile(fileName, cacheFileName, function() {
-            _cache.putCacheValue(key, cacheFileName);
+            _cache.putCacheValue(key, FILE_TYPE, cacheFileName);
         });
+    }
+
+    /**
+     * Puts a STRING value into the cache
+     *
+     * @param {*} key 
+     * @param {*} value 
+     */
+    putStringCacheValue(key, value) {
+        this.putCacheValue(key, STRING_TYPE, value);
     }
 
     /**
      * Puts a value into the cache
      *
      * @param {*} key
+     * @param {*} type
      * @param {*} value
      */
-    putCacheValue(key, value) {
+    putCacheValue(key, type, value) {
         if (!this.serviceConfig.enabled) {
             return;
         }
 
-        logger.log('Adding to cache. [key =' + key + ', value=' + value + ']');
+        logger.log('Adding to cache. [key =' + key + ', type=' + type
+            + ', value=' + value + ']');
+
         this.config.entries.push({key: key,
+            type: type,
             value: value,
             service: this.serviceName,
             date: new Date().getTime()});
+
         this.saveConfig();
     }
 

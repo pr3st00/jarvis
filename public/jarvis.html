@@ -6,13 +6,12 @@
   <title>J.A.R.V.I.S.</title>
 
   <link rel='stylesheet prefetch' href='stylesheets/jarvis.css'>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
-  <script src="https://code.jquery.com/jquery-1.9.1.min.js">
-
-  </script>
-  <script src="/socket.io/socket.io.js">
-
-  </script>
+  <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"> </script>
+  <script src="/javascripts/recorder.js"></script>
+  <script src="/javascripts/main.js"></script>
 
 </head>
 
@@ -115,9 +114,9 @@
       socket.on('error', function (mesg) { updateStatus(mesg, false) });
 
 
-      $("#micimage").click(function toggleRecording() {
-        alert('toggle');
-      });
+      //$("#micimage").click(function toggleRecording() {
+      //  alert('toggle');
+      //});
 
     });
   </script>
@@ -172,7 +171,7 @@
     <!-- Talk form -->
     <div style="font-size: 30px; margin-left: 50px; margin-top: 20px;">
 
-        <img id="micimage" src='/images/microphone.png' width="30" height="30" />
+        <img id="record" src='/images/microphone.png' width="30" height="30" onclick="toggleRecording(this);" />
 
     </div>
 

@@ -105,7 +105,7 @@ function process(text, callback) {
             } else {
                 if (serviceConfig.useCache) {
                     if (!containsNonCacheableCode(body)) {
-                        cache.putCacheValue(text, JSON.stringify(body));
+                        cache.putStringCacheValue(text, JSON.stringify(body));
                     }
                 }
 
