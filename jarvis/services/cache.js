@@ -122,14 +122,28 @@ class Cache {
      */
     expireValues() {
         let now = new Date().getTime();
+        
+        let newConfig = {
+            'entries': [
+            ],
+        };
 
         for (const entry of this.config.entries) {
-            if (now - entry.date >=
-                (this.serviceConfig.ttl * 3600 * 24 * 1000)) {
+            let ttl = this.serviceConfig.ttl * 3600 * 24 * 1000;
+
+            if (now - entry.date >= ttl) {
                 logger.log('Expiring entry [ value=' + entry.value + ' ]');
-                // this.config.entries.splice(i, 1);
+                
+                if (FILE_TYPE == entry.type) {
+                    fs.unlinkSync(entry.value);
+                }
+            }
+            else {
+                newConfig.entries.push(entry);
             }
         }
+
+        this.config = newConfig;
     }
 
     /**
