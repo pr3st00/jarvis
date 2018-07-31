@@ -10,8 +10,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
   <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
   <script src="/socket.io/socket.io.js"> </script>
-  <script src="/javascripts/recorder.js"></script>
-  <script src="/javascripts/main.js"></script>
+  <script src="/javascripts/recorderjs/dist/recorder.js"></script>
+  <<!-- script src="/javascripts/main.js"></script> -->
 
 </head>
 
@@ -21,6 +21,83 @@
     $(document).ready(function () {
 
       var socket = io();
+      var audio_context;
+      var recorder;
+      var recording = false;
+
+      function __log(e, data) {
+        let msg = e + " " + (data || '');
+        let json = '{"status":"AUDIO","text":"' + msg + '"}';
+        updateStatus(json, false, false);
+      }
+
+      try {
+        // webkit shim
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+        window.URL = window.URL || window.webkitURL;
+        
+        audio_context = new AudioContext;
+        __log('Audio context set up.');
+        __log('navigator.mediaDevices.getUserMedia ' + (navigator.mediaDevices.getUserMedia ? 'available.' : 'not present!'));
+      } catch (e) {
+        alert('No web audio support in this browser!');
+      }
+
+      navigator.mediaDevices.getUserMedia({audio: true}).then( (stream) => { startUserMedia(stream); } );
+
+      function startUserMedia(stream) {
+        var input = audio_context.createMediaStreamSource(stream);
+        __log('Media stream created.');
+
+        // Uncomment if you want the audio to feedback directly
+        //input.connect(audio_context.destination);
+        //__log('Input connected to audio context destination.');
+        
+        recorder = new Recorder(input);
+        __log('Recorder initialised.');
+      }
+
+      function startRecording(button) {
+        recorder && recorder.record();
+        recording = true;
+
+        __log('Recording...');
+      }
+
+      function stopRecording(button) {
+        recorder && recorder.stop();
+        recording = false;
+
+        __log('Stopped recording.');
+        
+        // create WAV download link using audio data blob
+        createDownloadLink();
+        
+        recorder.clear();
+      }
+
+      function createDownloadLink() {
+        recorder && recorder.exportWAV(function(blob) {
+
+        var data = new FormData();
+
+        data.append('command', blob);
+
+        $.ajax({
+          url: '/api/command',
+          data: data,
+          cache: false,
+          contentType: false,
+          processData: false,
+          type: 'POST',
+          success: function(data){
+            __log(JSON.stringify(data));
+          }
+        });
+
+        });
+      }
 
       function say(text) {
         var url = 'https://api.voicerss.org/?key=f716f782b498444c95b14a63fe05a917&hl=pt-br&r=2&src=' + encodeURIComponent(text);
@@ -114,9 +191,15 @@
       socket.on('error', function (mesg) { updateStatus(mesg, false) });
 
 
-      //$("#micimage").click(function toggleRecording() {
-      //  alert('toggle');
-      //});
+      $("#recordImg").click(() => {
+          if (recording) {
+            stopRecording();
+          }
+          else {
+            startRecording();
+          }
+        }
+      );
 
     });
   </script>
@@ -171,7 +254,7 @@
     <!-- Talk form -->
     <div style="font-size: 30px; margin-left: 50px; margin-top: 20px;">
 
-        <img id="record" src='/images/microphone.png' width="30" height="30" onclick="toggleRecording(this);" />
+        <img id="recordImg" src='/images/microphone.png' width="30" height="30" />
 
     </div>
 
