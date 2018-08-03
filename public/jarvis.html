@@ -18,6 +18,7 @@
 <body>
 
   <script>
+
     $(document).ready(function () {
 
       var socket = io();
@@ -50,39 +51,67 @@
         var input = audio_context.createMediaStreamSource(stream);
         __log('Media stream created.');
 
-        // Uncomment if you want the audio to feedback directly
-        //input.connect(audio_context.destination);
-        //__log('Input connected to audio context destination.');
-        
         recorder = new Recorder(input);
         __log('Recorder initialised.');
       }
 
-      function startRecording(button) {
+      function startRecording(element) {
+
+        if (recording) {
+          return;
+        }
+
         recorder && recorder.record();
         recording = true;
 
         __log('Recording...');
+
+        $("#recordImg").prop("onclick", false);
+        
+        $("#recordImg").attr({
+          src:      '/images/stop.png'
+        });
+
       }
 
-      function stopRecording(button) {
-        recorder && recorder.stop();
-        recording = false;
+      function stopRecording(element) {
 
+        if (!recording) {
+          return;
+        }
+
+        recorder && recorder.stop();
+ 
         __log('Stopped recording.');
         
-        // create WAV download link using audio data blob
-        createDownloadLink();
+        // submit audio file to JARVIS
+        sendAudioToJarvis(element);
         
         recorder.clear();
       }
 
-      function createDownloadLink() {
+      function sendTextToJarvis(text) {
+
+        var data = { "text" : text };
+
+        $.ajax({
+          url: '/api/text',
+          data: data,
+          cache: false,
+          type: 'POST',
+          success: function(data) {
+          }
+        });
+
+      }
+
+      function sendAudioToJarvis(element) {
         recorder && recorder.exportWAV(function(blob) {
 
         var data = new FormData();
-
         data.append('command', blob);
+
+        var e = element;
 
         $.ajax({
           url: '/api/command',
@@ -91,8 +120,14 @@
           contentType: false,
           processData: false,
           type: 'POST',
-          success: function(data){
-            __log(JSON.stringify(data));
+          success: function(data) {
+            
+            recording = false;
+
+            $("#recordImg").attr({
+              src:      '/images/microphone.png'
+            });
+
           }
         });
 
@@ -193,13 +228,26 @@
 
       $("#recordImg").click(() => {
           if (recording) {
-            stopRecording();
+            stopRecording(this);
           }
           else {
-            startRecording();
+            startRecording(this);
           }
         }
       );
+
+      $("#typeImg").click(() => {
+          $('#typeForm').toggle();
+          $('#textToJarvis').focus();
+        }
+      );
+
+      $("#textToJarvis").on("keydown",function search(e) {
+          if(e.keyCode == 13) {
+              sendTextToJarvis($(this).val());
+              $('#textToJarvis').val('');
+          }
+      });
 
     });
   </script>
@@ -243,20 +291,34 @@
 
     <div class="menu">
       <button class="menuitem"> <span class="entypo-right-open"/> <p id="jarvis_status" class="caption">Running</p> </button>
+      
+      <hr style="border-color: transparent; margin: 0;" />
+      
+      <div class="hline" style="margin-top: 5px; margin-bottom: 5px;"></div>
 
       <hr style="border-color: transparent; margin: 0;" />
-      <div class="hline" style="margin-top: 5px; margin-bottom: 5px;"></div>
+
+      <br/>
+      <br/>
+      
+      <!-- Talk form -->
+      <div style="font-size: 30px; margin-left: 40px; margin-top: 20px;">
+        <img id="recordImg" src='/images/microphone.png' width="50" height="50" />
+        <img id="typeImg"   src='/images/keyboard.png'   width="50" height="50" />
+
+        <!-- Dialog Box-->
+        <div class="dialog" id="typeForm" style='display: none'>
+            <label id="tellme">
+                Tell me!
+            </label>
+            <input type="text" id="textToJarvis" size="30" maxlength="40" />
+        </div>
+
+      </div>
 
     </div>
 
     <div class="hline title_underline"></div>
-
-    <!-- Talk form -->
-    <div style="font-size: 30px; margin-left: 50px; margin-top: 20px;">
-
-        <img id="recordImg" src='/images/microphone.png' width="30" height="30" />
-
-    </div>
 
     <!--
     <div class="app_icon entypo-facebook-squared"></div>
