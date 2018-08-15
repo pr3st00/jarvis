@@ -129,7 +129,7 @@ class Cache {
         };
 
         for (const entry of this.config.entries) {
-            let ttl = this.serviceConfig.ttl * 3600 * 24 * 1000;
+            let ttl = this.serviceConfig.ttl * 3600 * 1000;
 
             if (now - entry.date >= ttl) {
                 logger.log('Expiring entry [ value=' + entry.value + ' ]');

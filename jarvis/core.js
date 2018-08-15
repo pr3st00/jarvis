@@ -17,7 +17,7 @@ let processingCommand = false;
 let silenceEvents = 0;
 let commandEvents = 0;
 
-let FINALBUFFER = new Buffer('');
+let FINALBUFFER = Buffer.from('');
 let io;
 let processCommandIniTime;
 
@@ -230,7 +230,7 @@ function processCommand() {
          */
         setTimeout(function() {
             processingCommand = false;
-            FINALBUFFER = new Buffer('');
+            FINALBUFFER = Buffer.from('');
         }, coreConfig.wait_for_javis_time);
     });
 }

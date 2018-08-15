@@ -68,6 +68,9 @@
                 "cacheConfig": "/tmp/jarviscache/cache.json",
                 "ttl": "24"
             },
+            "youtube": {
+                "key": "<youtube_key>"
+            },
             "wit": {
                 "token": "<wit_token>",
                 "speech": {

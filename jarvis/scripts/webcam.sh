@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#
+# Takes a picture and saves it to the folder provided in PATH variable.
+#
+# Author: Fernando Costa de Almeida
+#
+
 . $(dirname $0)/functions/actions.sh 
 
 DATE=$(date +"%Y-%m-%d_%H%M")

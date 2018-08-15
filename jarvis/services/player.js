@@ -37,7 +37,7 @@ function playMp3(list) {
         internalPlayer = new Player(list);
 
         internalPlayer.on('error', function(err) {
-            if (!err.match(/No next song was found/i)) {
+            if (err && err.match && !err.match(/No next song was found/i)) {
                 logger.logError(err);
                 stop();
             }
