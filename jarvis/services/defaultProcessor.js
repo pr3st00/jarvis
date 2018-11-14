@@ -33,6 +33,9 @@ class DefaultProcessor {
 
             case 'MODULE':
                 return this.callModule(singleAction.parameters);
+
+            case 'STOP':
+                return;
         }
     }
 
@@ -47,7 +50,7 @@ class DefaultProcessor {
 
         return new Promise((resolve, reject) => {
             cmd.get(
-                parameters[0],
+                parameters.join(' '),
                 (err, data, stderr) => {
                     if (err) {
                         reject(err);

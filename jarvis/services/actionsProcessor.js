@@ -2,6 +2,9 @@
 
 const exceptions = require('./exceptions');
 
+const Logger = require('../logger');
+const logger = new Logger('APROCESSOR');
+
 /**
  * Actions processor
  */

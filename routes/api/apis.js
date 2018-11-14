@@ -14,6 +14,7 @@ let jarvis = core.getJarvis();
 actionsProcessor.setJarvis(jarvis);
 
 const busyStatus = {'status': 'busy'};
+const availableStatus = {'status': 'available'};
 const successStatus = {'status': 'success'};
 
 /**
@@ -70,6 +71,14 @@ router.post('/text', function(req, res, next) {
             res.json(successStatus);
         }
     );
+});
+
+router.get('/status', function(req, res, next) {
+    if (jarvis.busy) {
+        res.json(busyStatus);
+    } else {
+        res.json(availableStatus);
+    }
 });
 
 module.exports = router;

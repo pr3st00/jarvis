@@ -98,9 +98,17 @@ function recordFile(fileName, callback) {
  * Plays file using the rate provided.
  *
  * @param {*} file
+ * @param {*} callback
  * @param {*} sampleRate
  */
-function play(file, sampleRate) {
+function play(file, callback, sampleRate) {
+    if (isBusy()) {
+            logger.logError('Player is currently busy!');
+            return;
+        }
+
+    busy = true;
+
     let rate = sampleRate || DEFAULT_SAMPLE_RATE;
 
     let speaker = new Speaker({
@@ -113,6 +121,13 @@ function play(file, sampleRate) {
 
     speaker.on('error', function(err) {
         logger.logError('Speaker error : %s', err);
+        busy = false;
+        callback(err);
+    });
+
+    speaker.on('close', () => {
+        busy = false;
+        callback();
     });
 
     fs.createReadStream(file).pipe(speaker);

@@ -38,6 +38,7 @@ function process(singleAction, jarvis) {
     };
 
     jarvis.emit('speaking', {status: 'SPEAKING', text: params.text});
+    jarvis.busy = true;
 
     let ini = new Date().getTime();
     let fromCache;
@@ -49,7 +50,7 @@ function process(singleAction, jarvis) {
             let timeTaken = new Date().getTime() - ini;
             logger.log('Took: (' + timeTaken + ') ms.');
 
-            player.play(fromCache);
+            player.play(fromCache, () => jarvis.busy = false);
             return;
         }
     }
@@ -60,7 +61,7 @@ function process(singleAction, jarvis) {
             let timeTaken = new Date().getTime() - ini;
             logger.log('Took: (' + timeTaken + ') ms.');
 
-            player.play(AUDIO_FILE);
+            player.play(AUDIO_FILE, () => jarvis.busy = false);
 
             if (serviceConfig.useCache) {
                 cache.putFileCacheValue(params.text, AUDIO_FILE);

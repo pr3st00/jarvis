@@ -11,3 +11,13 @@ function buildPlayAction() {
 		"synchronous": true }]}'; 
 
 }
+
+function buildStopAction() {
+
+	echo '{"actions": [{ 
+		"code": "STOP", 
+		"action": "STOP", 
+		"parameters": ["'none'"], 
+		"synchronous": true }]}'; 
+
+}

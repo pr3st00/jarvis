@@ -4,6 +4,7 @@ const JarvisModule = require('../jarvisModule');
 let instance;
 
 const ADD_EVENT = 'ADD';
+const LIST_EVENTS = 'LIST';
 
 /**
  * Reminders module
@@ -28,16 +29,23 @@ class ReminderModule extends JarvisModule {
         let action = parameters[1];
 
         if (!action) {
-            return this.buildPlayAction(this.config.error_message);
+            return new Promise((resolve, reject) => {
+                resolve(this.buildPlayAction(this.config.error_message));
+            });
         }
 
         switch (action) {
             case ADD_EVENT:
                 saveEvent(parameters[2]);
-                return this.buildPlayAction(this.config.event_added_message);
+                return new Promise((resolve, reject) => {
+                    resolve(this.buildPlayAction(
+                        this.config.event_added_message));
+                });
                 break;
             case LIST_EVENTS:
-                return this.buildPlayAction(listEvents());
+                return new Promise((resolve, reject) => {
+                    resolve(this.buildPlayAction(listEvents()));
+                });
                 break;
         }
     }

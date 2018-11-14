@@ -153,6 +153,7 @@ function startHotWordDetector() {
         }
 
         if (jarvis.busy || processingCommand) {
+            logger.log('Hotword received but Jarvis is currently busy. Ignoring...');
             return;
         }
 
