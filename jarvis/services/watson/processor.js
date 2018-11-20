@@ -63,6 +63,7 @@ function processCommandBuffer(buffer, callback, errorCallBack) {
  * @param {*} errorCallBack
  */
 function processCommandText(text, callback, errorCallBack) {
+    _jarvis.emit('understood_command', {status: 'UNDERSTOOD', text: text});
     dialogService.process(text,
         (actions) => {
             actionsProcessor.setJarvis(_jarvis);

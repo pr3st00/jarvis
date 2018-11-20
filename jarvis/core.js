@@ -67,6 +67,11 @@ jarvis.on('processing_command', function(event) {
         {status: 'PROCESSING', text: 'Processing command...'}));
 });
 
+jarvis.on('understood_command', function(event) {
+    io.emit('understood_command', JSON.stringify(event));
+});
+
+
 /**
  * Starts the core.
  */

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>TJ BOT</title>
+
+  <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/javascripts/recorderjs/dist/recorder.js"></script>
+  <script src="/javascripts/common.js"></script>
+
+  <!-- TJBot -->
+  <link rel="stylesheet" href="/stylesheets/tjbot.css">
+
+</head>
+
+<body background="/images/clouds.jpg">
+
+  <script>
+    $(document).ready(function () {
+
+      var socket = io();
+      var audio_context;
+      var recorder;
+      var recording = false;
+
+      initializeAudio();
+
+      function showError(msg) {
+        console.log("Received :" + msg);
+
+        var event = JSON.parse(msg);
+
+        $("#question").text('"Whoot?"');
+
+        if (event.text) {
+          alert(event.text);
+        }
+
+      }
+
+      function updateStatus(msg, play, append, question) {
+        console.log("Received :" + msg);
+
+        var event = JSON.parse(msg);
+
+        if (event.text) {
+          var text = append ? $("#note_input").val()
+            + "\n" + event.text
+            : event.text;
+
+          if (text.length > 230) {
+            text = text.substr(0, 225) + "...";
+          }
+
+          if (question) {
+            $("#question").text('   "' + text.trim() + '"');
+          }
+          else {
+            $("#note_input").text(text);
+          }
+
+          if (play) {
+            say(event.text);
+          }
+
+        }
+
+        if (event.status) {
+          $("#jarvis_status").text(event.status);
+        }
+
+      }
+
+      socket.on('speaking', function (mesg) { updateStatus(mesg, true, true) });
+      socket.on('processing_command', function (mesg) { updateStatus(mesg, false) });
+      //socket.on('command_received', function (mesg) { updateStatus(mesg, false, false, true) });
+      socket.on('waiting_for_command', function (mesg) { updateStatus(mesg, false) });
+      socket.on('error', function (mesg) { showError(mesg); });
+      socket.on('understood_command', function (mesg) { updateStatus(mesg, false, false, true) });
+
+      $("#recordImg").click(() => {
+        if (recording) {
+          recording = false;
+          stopRecording(this);
+        }
+        else {
+          recording = true;
+          startRecording(this);
+        }
+      }
+      );
+
+      $("#typeImg").click(() => {
+        $('#typeForm').toggle();
+        $('#textToJarvis').focus();
+      }
+      );
+
+      $("#textToJarvis").on("keydown", function search(e) {
+        if (e.keyCode == 13) {
+          sendTextToJarvis($(this).val());
+          $('#textToJarvis').val('');
+        }
+      });
+
+    });
+
+  </script>
+
+  <!-- Main div -->
+  <div id="main">
+
+    <!-- TJBot questions -->
+    <div id="question_image" class="question_image">
+      <img src="/images/question_mark.png" width="200" height="200">
+    </div>
+
+    <div id="question" class="question">
+      <label disabled></label>
+    </div>
+
+    <!-- TJBot image -->
+    <div id="tjbot" class="tjbot">
+      <br/><br/>
+      <img src="images/tjbot.png" width="500" height="400" />
+    </div>
+
+    <!-- TJBot baloon -->
+    <div id="tjbot_baloon" class="tjbot_baloon">
+      <p class="bubble thought" id="note_input"></p>
+    </div>
+
+  </div>
+
+  <br/><br/>
+
+
+  <!-- Talk form -->
+  <div style="display: table-row;font-size: 30px; margin-left: 40px; margin-top: 20px;">
+
+    <img id="recordImg" src='/images/microphone.png' width="50" height="50" />
+    <img id="typeImg" src='/images/keyboard.png' width="50" height="50" />
+
+    <!-- Dialog Box-->
+    <div class="dialog" id="typeForm" style='display: none'>
+      <label id="tellme">
+                Tell me!
+          </label>
+      <input type="text" id="textToJarvis" size="40" maxlength="25" />
+    </div>
+
+  </div>
+
+</body>
+
+</html>
