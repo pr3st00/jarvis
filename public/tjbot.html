@@ -25,6 +25,9 @@
       var recorder;
       var recording = false;
 
+      thinking(false);
+      listening(false);
+	
       initializeAudio();
 
       function showError(msg) {
@@ -32,10 +35,13 @@
 
         var event = JSON.parse(msg);
 
+      	thinking(false);
+        listening(false);
+
         $("#question").text('"Whoot?"');
 
         if (event.text) {
-          alert(event.text);
+          console.log(event.text);
         }
 
       }
@@ -44,7 +50,7 @@
         console.log("Received :" + msg);
 
         var event = JSON.parse(msg);
-
+	
         if (event.text) {
           var text = append ? $("#note_input").val()
             + "\n" + event.text
@@ -73,20 +79,44 @@
 
       }
 
-      socket.on('speaking', function (mesg) { updateStatus(mesg, true, true) });
-      socket.on('processing_command', function (mesg) { updateStatus(mesg, false) });
-      //socket.on('command_received', function (mesg) { updateStatus(mesg, false, false, true) });
-      socket.on('waiting_for_command', function (mesg) { updateStatus(mesg, false) });
-      socket.on('error', function (mesg) { showError(mesg); });
-      socket.on('understood_command', function (mesg) { updateStatus(mesg, false, false, true) });
+      function thinking(status) {
+	if (status) {
+		console.log("Thinking...");
+		$("#thinking").css("visibility", "");
+	}
+	else {
+		console.log("Done thinking!");
+		$("#thinking").css("visibility", "hidden");
+	}
+      }
+
+      function listening(status) {
+        if (status) {
+                console.log("Listening...");
+                $("#listening").css("visibility", "");
+        }
+        else {
+                console.log("Done listening!");
+                $("#listening").css("visibility", "hidden");
+        }
+      }
+
+
+      socket.on('speaking', 		function (mesg) { updateStatus(mesg, true, true) });
+      socket.on('processing_command',	function (mesg) { thinking(true);  updateStatus(mesg, false) });
+      socket.on('waiting_for_command',	function (mesg) { thinking(true);  updateStatus(mesg, false) });
+      socket.on('error', 		function (mesg) { thinking(false); showError(mesg); });
+      socket.on('understood_command',	function (mesg) { thinking(false); updateStatus(mesg, false, false, true) });
 
       $("#recordImg").click(() => {
         if (recording) {
           recording = false;
+	  listening(false);
           stopRecording(this);
         }
         else {
           recording = true;
+	  listening(true);
           startRecording(this);
         }
       }
@@ -121,10 +151,16 @@
       <label disabled></label>
     </div>
 
+    <div id="animated_stuff" class="animated_stuff">
+	<iframe src="https://giphy.com/embed/l1J9wbrQEZBEChVTO" width="120" height="120" frameBorder="0" class="giphy-embed" allowFullScreen allowTransparency="true" id="thinking"></iframe>
+      	<img src="/images/ear.png" width="85" height="120" id="listening">
+    </div>
+
     <!-- TJBot image -->
     <div id="tjbot" class="tjbot">
-      <br/><br/>
-      <img src="images/tjbot.png" width="500" height="400" />
+	<br/><br/>
+	<br/><br/>
+      	<img src="images/tjbot.png" width="400" height="400" />
     </div>
 
     <!-- TJBot baloon -->
@@ -138,17 +174,17 @@
 
 
   <!-- Talk form -->
-  <div style="display: table-row;font-size: 30px; margin-left: 40px; margin-top: 20px;">
+  <div id="talk_form" class="talk_form" ">
 
     <img id="recordImg" src='/images/microphone.png' width="50" height="50" />
     <img id="typeImg" src='/images/keyboard.png' width="50" height="50" />
 
     <!-- Dialog Box-->
-    <div class="dialog" id="typeForm" style='display: none'>
+    <div class="talk_form" id="typeForm" style='display: none'>
       <label id="tellme">
                 Tell me!
           </label>
-      <input type="text" id="textToJarvis" size="40" maxlength="25" />
+      <input type="text" id="textToJarvis" size="40" maxlength="30" />
     </div>
 
   </div>

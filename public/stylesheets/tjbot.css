@@ -10,22 +10,34 @@
 	vertical-align: bottom;
 }
 
+#animated_stuff {
+	width: 1%;
+	margin: 50 auto;
+	vertical-align: bottom;
+}
+
 #tjbot_baloon {
-	width: 20%;
+	width: 10%;
 	margin: 0 auto;
 	vertical-align: top;
 }
 
 #question_image {
-	width: 2%;
+	width: 5%;
 	margin: auto;
 }
 
 #question {
-	width: 30%;
+	width: 40%;
 	margin: auto;
 	font-family: arial, helvetica, freesans, sans-serif;
 	font-size: 300%;
+}
+
+#talk_form {
+	style="font-size: 30px;
+	margin-left: 40px;
+	margin-top: 20px;
 }
 
 body
@@ -124,3 +136,4 @@ input
 	-moz-border-radius: 50px;
 	border-radius: 50px;
 }
+
