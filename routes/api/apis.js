@@ -26,6 +26,8 @@ router.post('/actions', function(req, res, next) {
         return;
     }
 
+    setSessionId(req, core);
+
     actionsProcessor.process(req.body,
         (err) => {
             res.json({'status': err});
@@ -44,6 +46,8 @@ router.post('/command', upload.single('command'), function(req, res, next) {
         res.json(busyStatus);
         return;
     }
+
+    setSessionId(req, core);
 
     jarvis.processCommandBuffer(req.file.buffer,
         () => {
@@ -66,6 +70,8 @@ router.post('/text', function(req, res, next) {
         return;
     }
 
+    setSessionId(req, core);
+
     jarvis.processCommandText(req.body.text,
         () => {
             res.json(successStatus);
@@ -80,5 +86,18 @@ router.get('/status', function(req, res, next) {
         res.json(availableStatus);
     }
 });
+
+/**
+ * Retrieves the session id from the http headers, and saves it into the core.
+ *
+ * @param {*} req
+ * @param {*} core
+ *
+ */
+function setSessionId(req, core) {
+    if (req && req.headers && req.headers.sessionid) {
+        core.setSessionId(req.headers.sessionid);
+    }
+}
 
 module.exports = router;

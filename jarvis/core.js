@@ -19,6 +19,7 @@ let commandEvents = 0;
 
 let FINALBUFFER = Buffer.from('');
 let io;
+let sessionId;
 let processCommandIniTime;
 
 let jarvis = new Jarvis();
@@ -34,6 +35,15 @@ function setIO(_io) {
 }
 
 /**
+ * Sets the session id
+ *
+ * @param {*} id
+ */
+function setSessionId(id) {
+    sessionId = id;
+}
+
+/**
  * Retrieves the jarvis
  *
  * @return {*} jarvis
@@ -42,41 +52,47 @@ function getJarvis() {
     return jarvis;
 }
 
-jarvis.on('error', function(err) {
-    logger.logError(err.message);
-    io.emit('error', JSON.stringify({status: 'ERROR', text: err.message}));
-    resetFlags();
-});
+/**
+ * Setup events and connect them to the socket.io
+ */
+function setupEvents() {
+    jarvis.on('error', function(err) {
+        logger.logError(err.message);
+        io.to(sessionId).emit('error',
+            JSON.stringify({status: 'ERROR', text: err.message}));
+        resetFlags();
+    });
 
-jarvis.on('speaking', function(event) {
-    io.emit('speaking', JSON.stringify(event));
-});
+    jarvis.on('speaking', function(event) {
+        io.to(sessionId).emit('speaking', JSON.stringify(event));
+    });
 
-jarvis.on('waiting_for_command', function(event) {
-    io.emit('waiting_for_command', JSON.stringify(
-        {status: 'WAITING', text: 'Waiting for command...'}));
-});
+    jarvis.on('waiting_for_command', function(event) {
+        io.to(sessionId).emit('waiting_for_command', JSON.stringify(
+            {status: 'WAITING', text: 'Waiting for command...'}));
+    });
 
-jarvis.on('command_received', function(event) {
-    io.emit('command_received', JSON.stringify(
-        {status: 'GOT_COMMAND', text: event}));
-});
+    jarvis.on('command_received', function(event) {
+        io.to(sessionId).emit('command_received', JSON.stringify(
+            {status: 'GOT_COMMAND', text: event}));
+    });
 
-jarvis.on('processing_command', function(event) {
-    io.emit('waiting_for_command', JSON.stringify(
-        {status: 'PROCESSING', text: 'Processing command...'}));
-});
+    jarvis.on('processing_command', function(event) {
+        io.to(sessionId).emit('waiting_for_command', JSON.stringify(
+            {status: 'PROCESSING', text: 'Processing command...'}));
+    });
 
-jarvis.on('understood_command', function(event) {
-    io.emit('understood_command', JSON.stringify(event));
-});
-
+    jarvis.on('understood_command', function(event) {
+        io.to(sessionId).emit('understood_command', JSON.stringify(event));
+    });
+}
 
 /**
  * Starts the core.
  */
 function start() {
     jarvis.start();
+    setupEvents();
     jarvis.processCommandText(coreConfig.initial_question, () => { });
     startHotWordDetector();
 }
@@ -283,4 +299,4 @@ function resetFlags() {
     commandEvents = 0;
 }
 
-exports = module.exports = {start, setIO, getJarvis};
+exports = module.exports = {start, setIO, getJarvis, setSessionId};

@@ -21,6 +21,17 @@
     $(document).ready(function () {
 
       var socket = io();
+      var sessionId;
+
+      socket.on('connect', function() {
+        console.log("Socket connected with id: " +  socket.id);
+        sessionId = socket.id;
+        
+        $.ajaxSetup({
+           headers: { 'sessionId': sessionId }
+        });
+      });
+
       var audio_context;
       var recorder;
       var recording = false;
@@ -71,6 +82,11 @@
             say(event.text);
           }
 
+          // Not beautiful, create new event later...
+          if (event.text == "diga x!") {
+            setTimeout(function(){ window.open("/images/photos/photo.jpg", "_blank", "toolbar=no,top=400,left=500,width=500,height=500"); }, 6000);
+          }
+
         }
 
         if (event.status) {
@@ -80,47 +96,45 @@
       }
 
       function thinking(status) {
-	if (status) {
-		console.log("Thinking...");
-		$("#thinking").css("visibility", "");
-	}
-	else {
-		console.log("Done thinking!");
-		$("#thinking").css("visibility", "hidden");
-	}
+        if (status) {
+          console.log("Thinking...");
+          $("#thinking").css("visibility", "");
+        }
+        else {
+          console.log("Done thinking!");
+          $("#thinking").css("visibility", "hidden");
+        }
       }
 
       function listening(status) {
         if (status) {
-                console.log("Listening...");
-                $("#listening").css("visibility", "");
+          console.log("Listening...");
+          $("#listening").css("visibility", "");
         }
         else {
-                console.log("Done listening!");
-                $("#listening").css("visibility", "hidden");
+          console.log("Done listening!");
+          $("#listening").css("visibility", "hidden");
         }
       }
 
-
-      socket.on('speaking', 		function (mesg) { updateStatus(mesg, true, true) });
-      socket.on('processing_command',	function (mesg) { thinking(true);  updateStatus(mesg, false) });
+      socket.on('speaking', 		        function (mesg) { updateStatus(mesg, true, true) });
+      socket.on('processing_command',	  function (mesg) { thinking(true);  updateStatus(mesg, false) });
       socket.on('waiting_for_command',	function (mesg) { thinking(true);  updateStatus(mesg, false) });
-      socket.on('error', 		function (mesg) { thinking(false); showError(mesg); });
-      socket.on('understood_command',	function (mesg) { thinking(false); updateStatus(mesg, false, false, true) });
+      socket.on('error', 		            function (mesg) { thinking(false); showError(mesg); });
+      socket.on('understood_command',	  function (mesg) { thinking(false); updateStatus(mesg, false, false, true) });
 
       $("#recordImg").click(() => {
         if (recording) {
           recording = false;
-	  listening(false);
+	        listening(false);
           stopRecording(this);
         }
         else {
           recording = true;
-	  listening(true);
+	        listening(true);
           startRecording(this);
         }
-      }
-      );
+      });
 
       $("#typeImg").click(() => {
         $('#typeForm').toggle();
@@ -151,6 +165,7 @@
       <label disabled></label>
     </div>
 
+    <!-- Animated gifs -->
     <div id="animated_stuff" class="animated_stuff">
 	<iframe src="https://giphy.com/embed/l1J9wbrQEZBEChVTO" width="120" height="120" frameBorder="0" class="giphy-embed" allowFullScreen allowTransparency="true" id="thinking"></iframe>
       	<img src="/images/ear.png" width="85" height="120" id="listening">
@@ -172,9 +187,8 @@
 
   <br/><br/>
 
-
   <!-- Talk form -->
-  <div id="talk_form" class="talk_form" ">
+  <div id="talk_form" class="talk_form">
 
     <img id="recordImg" src='/images/microphone.png' width="50" height="50" />
     <img id="typeImg" src='/images/keyboard.png' width="50" height="50" />
