@@ -65,6 +65,8 @@
                 "resource": "default/printer3d",
                 "url": "<printer_url>",
                 "success_message": "#user sucessfully added",
+                "cleared_message": "List cleared sucessfuly",
+                "print_message": "Printing started",
                 "error_message": "Sorry, it didnt work"
             }
         ],

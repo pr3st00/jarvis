@@ -11,6 +11,9 @@ const systemresources = require('./routes/systemresources');
 // apis
 const apis = require('./routes/api/apis');
 
+// printer stub
+const printer = require('./routes/api/printer');
+
 let app = express();
 
 // view engine setup
@@ -29,6 +32,7 @@ app.use('/', index);
 app.use('/systemresources', systemresources);
 
 app.use('/api', apis);
+app.use('/api/printer', printer);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
