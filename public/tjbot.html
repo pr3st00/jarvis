@@ -142,6 +142,11 @@
       }
       );
 
+      $("#helpImg").click(() => {
+        window.open("/help.html", "_blank", "toolbar=no,top=400,left=500,width=800,height=300");
+      }
+      );
+
       $("#textToJarvis").on("keydown", function search(e) {
         if (e.keyCode == 13) {
           sendTextToJarvis($(this).val());
@@ -190,15 +195,16 @@
   <!-- Talk form -->
   <div id="talk_form" class="talk_form">
 
-    <img id="recordImg" src='/images/microphone.png' width="50" height="50" />
-    <img id="typeImg" src='/images/keyboard.png' width="50" height="50" />
+    <img id="recordImg" src='/images/microphone.png'  width="50" height="50" />
+    <img id="typeImg"   src='/images/keyboard.png'    width="50" height="50" />
+    &nbsp;&nbsp; <img id="helpImg"   src='/images/help.jpg'        width="80" height="50" />
 
     <!-- Dialog Box-->
     <div class="talk_form" id="typeForm" style='display: none'>
       <label id="tellme">
                 Tell me!
           </label>
-      <input type="text" id="textToJarvis" size="40" maxlength="30" />
+      <input type="text" id="textToJarvis" size="80" maxlength="80" />
     </div>
 
   </div>
