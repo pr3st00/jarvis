@@ -59,6 +59,13 @@
                 "token": "<your_token>",
                 "url": "http://apiadvisor.climatempo.com.br/api/v1/weather/locale/",
                 "error_message": "Sorry, it didnt work"
+            },
+            {
+                "name": "printer3d",
+                "resource": "default/printer3d",
+                "url": "<printer_url>",
+                "success_message": "#user sucessfully added",
+                "error_message": "Sorry, it didnt work"
             }
         ],
         "services": {
