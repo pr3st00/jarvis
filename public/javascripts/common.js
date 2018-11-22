@@ -83,7 +83,15 @@ function sendAudioToJarvis(element) {
 }
 
 function say(text) {
-    var url = 'https://api.voicerss.org/?key=f716f782b498444c95b14a63fe05a917&hl=pt-br&r=2&src=' + encodeURIComponent(text);
+
+    let url;
+
+    if (text.startsWith('http')) {
+       url = text; 
+    } else {
+        url = 'https://api.voicerss.org/?key=f716f782b498444c95b14a63fe05a917&hl=pt-br&r=2&src=' + encodeURIComponent(text);
+    }
+
     var a = new Audio(url);
     a.play();
 }

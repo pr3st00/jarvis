@@ -23,8 +23,18 @@ const serviceConfig = config.jarvis.services.watson.text_to_speech;
  */
 function process(singleAction, jarvis) {
     let parameters = singleAction.parameters;
+    let text = parameters[0];
 
-    logger.log('Caling tts with text [' + parameters[0] + ']');
+    logger.log('Caling tts with text [' + text + ']');
+
+    jarvis.emit('speaking', {status: 'SPEAKING', text: text});
+    jarvis.busy = true;
+
+    if (parameters[0].startsWith('http')) {
+        player.playMp3(text);
+        jarvis.busy = false;
+        return;
+    }
 
     let textToSpeech = new TextToSpeechV1({
         username: serviceConfig.username,
@@ -32,13 +42,10 @@ function process(singleAction, jarvis) {
     });
 
     let params = {
-        text: parameters[0],
+        text: text,
         voice: serviceConfig.voice,
         accept: 'audio/wav',
     };
-
-    jarvis.emit('speaking', {status: 'SPEAKING', text: params.text});
-    jarvis.busy = true;
 
     let ini = new Date().getTime();
     let fromCache;

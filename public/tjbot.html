@@ -75,7 +75,11 @@
             $("#question").text('   "' + text.trim() + '"');
           }
           else {
-            $("#note_input").text(text);
+            if (event.text.startsWith('http')) {
+              $("#note_input").text("...");
+            } else {
+              $("#note_input").text(text);
+            }
           }
 
           if (play) {
@@ -98,7 +102,6 @@
             setTimeout(function() { $("#tjbotImage").attr("src","/images/tjbot.png") }, 6000);
           }
 
-          
         }
 
         if (event.status) {
