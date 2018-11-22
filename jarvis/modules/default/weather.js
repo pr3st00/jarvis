@@ -36,7 +36,8 @@ class WeatherModule extends JarvisModule {
             },
             function(err, httpResponse, body) {
                 if (err) {
-                    resolve(module.buildPlayAction(module.config.error_message));
+                    resolve(module.buildPlayAction(
+                        module.config.error_message));
                 } else {
                     resolve(module.buildResponse(JSON.parse(body)));
                 }

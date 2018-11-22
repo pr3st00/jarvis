@@ -6,7 +6,7 @@ const JarvisModule = require('../jarvisModule');
 let instance;
 
 /**
- * Tells the current weather conditions
+ * Interfaces with a 3d printer, adding, removing and listing printing jobs
  */
 class PrinterModule extends JarvisModule {
     /**
@@ -19,7 +19,7 @@ class PrinterModule extends JarvisModule {
     }
 
     /**
-     * Process a request to tell the weather
+     * Process a request to interface with the 3d printer
      *
      * @param {*} parameters
      * @return {*} promise
@@ -43,9 +43,11 @@ class PrinterModule extends JarvisModule {
             case 'print':
                 url = this.config.url + '/3dprint';
                 break;
-            }
+            default:
+                return buildPlayAction(module.config.error_message);
+        }
 
-        this.logger.log('Url is: ' + url);
+        this.logger.log('Printer url is: ' + url);
 
         return new Promise((resolve, reject) => {
             request.get({
@@ -91,6 +93,8 @@ class PrinterModule extends JarvisModule {
             case 'print':
                 text = module.config.print_message;
                 break;
+            default:
+                text = module.config.error_message;
         }
 
         return this.buildPlayAction(text);

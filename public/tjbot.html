@@ -87,6 +87,18 @@
             setTimeout(function(){ window.open("/images/photos/photo.jpg", "_blank", "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,top=400,left=500,width=500,height=500"); }, 6000);
           }
 
+          // Not beautiful, create new event later...
+          if (event.text == "Action!") {
+            setTimeout(function(){ window.open("https://youtu.be/KqEJaXhpG3A", "_blank", "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,top=400,left=500,width=500,height=500"); }, 6000);
+          }
+
+          // Not beautiful, create new event later...
+          if (event.text == "Mal educado." || event.text == "Nao respondo coisas desse tipo." || event.text == "Nao precisa ser mal educado.") {
+            $("#tjbotImage").attr("src","/images/angry_tjbot.png");
+            setTimeout(function() { $("#tjbotImage").attr("src","/images/tjbot.png") }, 6000);
+          }
+
+          
         }
 
         if (event.status) {
@@ -180,7 +192,7 @@
     <div id="tjbot" class="tjbot">
 	<br/><br/>
 	<br/><br/>
-      	<img src="images/tjbot.png" width="400" height="400" />
+      	<img src="images/tjbot.png" width="400" height="400" id="tjbotImage"/>
     </div>
 
     <!-- TJBot baloon -->
@@ -197,7 +209,7 @@
 
     <img id="recordImg" src='/images/microphone.png'  width="50" height="50" />
     <img id="typeImg"   src='/images/keyboard.png'    width="50" height="50" />
-    &nbsp;&nbsp; <img id="helpImg"   src='/images/help.jpg'        width="80" height="50" />
+    &nbsp;&nbsp; <img id="helpImg"   src='/images/help.png'        width="50" height="50" />
 
     <!-- Dialog Box-->
     <div class="talk_form" id="typeForm" style='display: none'>

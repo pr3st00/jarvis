@@ -25,7 +25,7 @@ BITRATE="44100"
 USE_ALSA="0"
 
 # Messages
-DONE_MESSAGE="Feito!"
+DONE_MESSAGE="Action!"
 
 if [[ $USE_ALSA -eq 1 ]]; then
 	SOUND_PARAMETERS="-f alsa -ac 4 -ab 256k -i $DEVICE"
