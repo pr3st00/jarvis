@@ -13,6 +13,9 @@ let jarvis = core.getJarvis();
 
 actionsProcessor.setJarvis(jarvis);
 
+const Logger = require('../../jarvis/logger');
+const logger = new Logger('API_CALLS');
+
 const busyStatus = {'status': 'busy'};
 const availableStatus = {'status': 'available'};
 const successStatus = {'status': 'success'};
@@ -81,8 +84,10 @@ router.post('/text', function(req, res, next) {
 
 router.get('/status', function(req, res, next) {
     if (jarvis.busy) {
+        logger.log('Sending status as busy');
         res.json(busyStatus);
     } else {
+        logger.log('Sending status as available');
         res.json(availableStatus);
     }
 });

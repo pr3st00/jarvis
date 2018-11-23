@@ -7,6 +7,7 @@ const wav = require('wav');
 const Player = require('player');
 
 const DEFAULT_SAMPLE_RATE = 22050;
+const WAIT_TIME = 500;
 
 const Logger = require('../logger');
 const logger = new Logger('PLAYER');
@@ -79,7 +80,7 @@ function stop(player) {
         setTimeout( () => {
             player.stop();
             busy = false;
-        }, 1000);
+        }, WAIT_TIME);
     }
 }
 
@@ -119,11 +120,13 @@ function recordFile(fileName, callback) {
  * @param {*} sampleRate
  */
 function play(file, callback, sampleRate) {
-    if (isBusy()) {
+    while (isBusy()) {
             logger.logError('Player is currently busy!');
+            callback('busy');
             return;
-        }
+    }
 
+    let stream;
     busy = true;
 
     let rate = sampleRate || DEFAULT_SAMPLE_RATE;
@@ -137,17 +140,27 @@ function play(file, callback, sampleRate) {
     });
 
     speaker.on('error', function(err) {
-        logger.logError('Speaker error : %s', err);
+        logger.logError('Speaker error : ' + err);
+
+        stream.unpipe();
+        speaker.close();
         busy = false;
+
         callback(err);
     });
 
     speaker.on('close', () => {
-        busy = false;
-        callback();
+        stream.unpipe();
+
+        setTimeout( () => {
+            callback();
+            busy = false;
+        }, WAIT_TIME);
     });
 
-    fs.createReadStream(file).pipe(speaker);
+    stream = fs.createReadStream(file);
+
+    stream.pipe(speaker);
 }
 
 /**

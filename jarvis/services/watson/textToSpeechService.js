@@ -22,15 +22,16 @@ const serviceConfig = config.jarvis.services.watson.text_to_speech;
  * @param {*} jarvis
  */
 function process(singleAction, jarvis) {
+    jarvis.busy = true;
+
     let parameters = singleAction.parameters;
     let text = parameters[0];
 
     logger.log('Caling tts with text [' + text + ']');
 
     jarvis.emit('speaking', {status: 'SPEAKING', text: text});
-    jarvis.busy = true;
 
-    if (parameters[0].startsWith('http')) {
+    if (text.startsWith('http')) {
         player.playMp3(text);
         jarvis.busy = false;
         return;
