@@ -6,8 +6,6 @@ const record2 = require('node-record-lpcm16');
 const wav = require('wav');
 const Player = require('player');
 
-let internalPlayer;
-
 const DEFAULT_SAMPLE_RATE = 22050;
 
 const Logger = require('../logger');
@@ -30,16 +28,23 @@ function isBusy() {
  * @param {*} list
  */
 function playMp3(list) {
+    if (isBusy()) {
+        logger.logError('Player is currently busy!');
+        return;
+    }
+
+    busy = true;
+
     logger.log('Now playing ' +
         (list instanceof Array ? list.length : 1) + ' item(s).');
 
     try {
-        internalPlayer = new Player(list);
+        let internalPlayer = new Player(list);
 
         internalPlayer.on('error', function(err) {
+            stop(internalPlayer);
             if (err && err.match && !err.match(/No next song was found/i)) {
                 logger.logError(err);
-                stop();
             }
         });
 
@@ -47,21 +52,26 @@ function playMp3(list) {
             logger.log('Playing [ item=' + item.src + ' ]');
         });
 
+        internalPlayer.on('playend', function(item) {
+            logger.log('Playing completed [ item=' + item.src +' ]');
+            busy = false;
+        });
+
         internalPlayer.play();
-        busy = true;
     } catch (err) {
         logger.logError(err);
-        stop();
+        stop(internalPlayer);
     }
 }
 
 /**
  * Stops the player
  *
+ *  @param {*} player
  */
-function stop() {
-    if (internalPlayer) {
-        internalPlayer.stop();
+function stop(player) {
+    if (player) {
+        player.stop();
     }
     busy = false;
 }
