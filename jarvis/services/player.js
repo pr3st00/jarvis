@@ -71,9 +71,16 @@ function playMp3(list) {
  */
 function stop(player) {
     if (player) {
-        player.stop();
+        /**
+         * Not beautiful, but rasp default sound driver has
+         * problems playing two streams,
+         * so give it sometime to finish
+         */
+        setTimeout( () => {
+            player.stop();
+            busy = false;
+        }, 1000);
     }
-    busy = false;
 }
 
 /**
