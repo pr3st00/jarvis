@@ -7,12 +7,13 @@ const wav = require('wav');
 const Player = require('player');
 
 const DEFAULT_SAMPLE_RATE = 22050;
-const WAIT_TIME = 500;
+const WAIT_TIME = 1000;
 
 const Logger = require('../logger');
 const logger = new Logger('PLAYER');
 
 let busy = false;
+let debugOn = true;
 
 /**
  * Returns if the player is busy
@@ -78,6 +79,7 @@ function stop(player) {
          * so give it sometime to finish
          */
         setTimeout( () => {
+            debug('Stopping the player');
             player.stop();
             busy = false;
         }, WAIT_TIME);
@@ -95,7 +97,7 @@ function recordFile(fileName, callback) {
         fs.unlinkSync(fileName);
     }
 
-    let file = fs.createWriteStream(fileName, {encoding: 'binary'});
+    // let file = fs.createWriteStream(fileName, {encoding: 'binary'});
 
     const mic = record2.start({
         threshold: 5,
@@ -105,7 +107,7 @@ function recordFile(fileName, callback) {
         verbose: true,
     });
 
-    let stream = mic.pipe(file);
+    // let stream = mic.pipe(file);
 
     mic.on('finish', callback);
     // stream.on('end', callback);
@@ -136,8 +138,10 @@ function play(file, callback, sampleRate) {
         bitDepth: 16,
         sampleRate: rate,
         // device: "hw:0,0",
-        verbose: false,
+        verbose: debug,
     });
+
+    debug('Speaker created');
 
     speaker.on('error', function(err) {
         logger.logError('Speaker error : ' + err);
@@ -150,6 +154,7 @@ function play(file, callback, sampleRate) {
     });
 
     speaker.on('close', () => {
+        debug('Speaker closing');
         stream.unpipe();
 
         setTimeout( () => {
@@ -243,6 +248,15 @@ function createWavFile(buffer, fileName, callback) {
 
     writer.write(buffer);
     writer.end();
+}
+
+/**
+ * Debugging to logger
+ *
+ * @param {*} mesg
+ */
+function debug(mesg) {
+    if (debugOn) logger.log('**DEBUG** ' + mesg);
 }
 
 module.exports = {
