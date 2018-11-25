@@ -58,11 +58,12 @@ Sample message for the music module:
 
 | Action        | Description             | Parameters                                                                                          |
 | ------------- | ------------------------| ----------------------------------------------------------------------------------------------------|
-| PLAY          | Says a phrase           | One parameter only with the phrase itself                                                           |
+| PLAY          | Says a phrase           | One parameter only with the phrase itself or a http url pointing to an mp3                          |
 | HTTPGET       | Do a HTTP GET           | First parameter is the url, Any remaining ones will be passed as parameters in the url              |
 | HTTPPOST      | Do a HTTP POST          | First parameter is the url, Second parameter is the body                                            |
 | SCRIPT        | Executes a shell script | First parameter is the script location. Any remaining ones will be passed as parameters to the same |
 | MODULE        | Calls a module          | First parameter is the module name. Any remaining ones will be passed as parameters to the same     |
+| STOP          | Stops processing        | Stops the processing of all actions right away                                                      |
 
 ## Modules
 Jarvis uses a module system, where you can extend its capabilities by implementing new individual classes.
@@ -94,9 +95,11 @@ A plugin consits of:
 | video         | searchs  for videos on youtube,      | video                            |
 | news          | displays current news                | -NONE-                           |
 | wikipedia     | looks for a term on wikipedia        | term                             |
+| 3dprinter     | interfaces with a 3d printer         | (add|remove),name or (list|clear)|
 
 ## Web interface
-It currently has a web interface, which displays real time events and also plays messages. In the future it will allow some level of interaction too.
+There are two web interfaces available (jarvis.html and tjbot.html), which displays real time events and also plays messages. They allow user to interact
+with both text and voice as well, and they will use socket.io to display events. 
 
 ## Web services layer
 Jarvis also exposes some RESTFull webservices in order for other systems to interact to it. This facilitates home automation allowing, for example, 
@@ -115,6 +118,7 @@ where code can be one of the following: "success", "an error message" or "busy"
 | /api/actions  |  POST    | Process all actions      |  JSON list of actions (see format above in Message format section)                   |
 | /api/command  |  POST    | Process a wav file       |  A wav file attached in a multipart/form-data with "command" as the contentId        |
 | /api/text     |  POST    | Process a command text   |  A text for jarvis to proces in json format. Sample: { "text" : "What time is it?" } |
+| /api/status   |  GET     | Process a status request |  Used for automation, it will reply with the current jarvis status (busy|available ) |
 
 ## Installation
 Quick installation for the Raspberry Pi 2+

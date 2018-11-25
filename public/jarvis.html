@@ -11,7 +11,7 @@
   <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
   <script src="/socket.io/socket.io.js"> </script>
   <script src="/javascripts/recorderjs/dist/recorder.js"></script>
-  <<!-- script src="/javascripts/main.js"></script> -->
+  <script src="/javascripts/common.js"></script>
 
 </head>
 
@@ -26,227 +26,65 @@
       var recorder;
       var recording = false;
 
-      function __log(e, data) {
-        let msg = e + " " + (data || '');
-        let json = '{"status":"AUDIO","text":"' + msg + '"}';
-        updateStatus(json, false, false);
-      }
+      socket.on('connect', function () {
+        console.log("Socket connected with id: " + socket.id);
+        sessionId = socket.id;
 
-      try {
-        // webkit shim
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
-        window.URL = window.URL || window.webkitURL;
-        
-        audio_context = new AudioContext;
-        __log('Audio context set up.');
-        __log('navigator.mediaDevices.getUserMedia ' + (navigator.mediaDevices.getUserMedia ? 'available.' : 'not present!'));
-      } catch (e) {
-        alert('No web audio support in this browser!');
-      }
-
-      navigator.mediaDevices.getUserMedia({audio: true}).then( (stream) => { startUserMedia(stream); } );
-
-      function startUserMedia(stream) {
-        var input = audio_context.createMediaStreamSource(stream);
-        __log('Media stream created.');
-
-        recorder = new Recorder(input);
-        __log('Recorder initialised.');
-      }
-
-      function startRecording(element) {
-
-        if (recording) {
-          return;
-        }
-
-        recorder && recorder.record();
-        recording = true;
-
-        __log('Recording...');
-
-        $("#recordImg").prop("onclick", false);
-        
-        $("#recordImg").attr({
-          src:      '/images/stop.png'
+        $.ajaxSetup({
+          headers: { 'sessionId': sessionId }
         });
+      });
 
-      }
-
-      function stopRecording(element) {
-
-        if (!recording) {
-          return;
-        }
-
-        recorder && recorder.stop();
- 
-        __log('Stopped recording.');
-        
-        // submit audio file to JARVIS
-        sendAudioToJarvis(element);
-        
-        recorder.clear();
-      }
-
-      function sendTextToJarvis(text) {
-
-        var data = { "text" : text };
-
-        $.ajax({
-          url: '/api/text',
-          data: data,
-          cache: false,
-          type: 'POST',
-          success: function(data) {
+      function updateStatus(msg, play, append) {
+        console.log("Received :" + msg);
+        var event = JSON.parse(msg);
+        if (event.text) {
+          var text = append ? $("#note_input").val()
+            + "\n> " + event.text
+            : "> " + event.text;
+          $("#note_input").val(text);
+          if (play) {
+            say(event.text);
           }
-        });
-
-      }
-
-      function sendAudioToJarvis(element) {
-        recorder && recorder.exportWAV(function(blob) {
-
-        var data = new FormData();
-        data.append('command', blob);
-
-        var e = element;
-
-        $.ajax({
-          url: '/api/command',
-          data: data,
-          cache: false,
-          contentType: false,
-          processData: false,
-          type: 'POST',
-          success: function(data) {
-            
-            recording = false;
-
-            $("#recordImg").attr({
-              src:      '/images/microphone.png'
-            });
-
-          }
-        });
-
-        });
-      }
-
-      function say(text) {
-        var url = 'https://api.voicerss.org/?key=f716f782b498444c95b14a63fe05a917&hl=pt-br&r=2&src=' + encodeURIComponent(text);
-        var a = new Audio(url);
-        a.play();
-      }
-
-      function fillWithZero(number) {
-        if (number < 10) {
-          return "0" + number;
         }
-
-        return number;
-      }
-
-      function setDateAndTime() {
-        var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-        var today = new Date();
-
-        $("#day").text(today.getDate());
-        $("#dayofweek").text(days[today.getDay()]);
-        $("#month").text(months[today.getMonth()]);
-        $("#hour").text(fillWithZero(today.getHours()) + ":" + fillWithZero(today.getMinutes()));
-        $("#minutes").text(fillWithZero(today.getHours()) + ":" + fillWithZero(today.getMinutes()));
-        $("#seconds").text(fillWithZero(today.getSeconds()));
-
-        setTimeout(setDateAndTime, 1000);
-      }
-
-      function getSystemResources() {
-
-        var response;
-
-        $.ajax({
-          type: "GET",
-          url: "/systemresources",
-          contentType: "application/json; charset=utf-8",
-          dataType: "json",
-          async: false,
-          success: function (data) { response = data; },
-          failure: function (errMsg) { alert(errMsg); }
-        });
-
-        return response;
-      }
-
-      function setSystemResources() {
-
-        var response = getSystemResources();
-
-        $("#proc").text("Processes: " + response.processes);
-        $("#cpu").text("CPU Usage: " + response.cpu + "%");
-        $("#mem").text("Memory: " + response.memory + "%");
-
-        setTimeout(setSystemResources, 10000);
-
+        if (event.status) {
+          $("#jarvis_status").text(event.status);
+        }
       }
 
       setDateAndTime();
       setSystemResources();
 
-      function updateStatus(msg, play, append) {
-        console.log("Received :" + msg);
-
-        var event = JSON.parse(msg);
-
-        if (event.text) {
-          var text = append ? $("#note_input").val()
-            + "\n> " + event.text
-            : "> " + event.text;
-
-          $("#note_input").val(text);
-
-          if (play) {
-            say(event.text);
-          }
-        }
-
-        if (event.status) {
-          $("#jarvis_status").text(event.status);
-        }
-
-      }
+      initializeAudio();
 
       socket.on('speaking', function (mesg) { updateStatus(mesg, true, true) });
       socket.on('processing_command', function (mesg) { updateStatus(mesg, false) });
-      socket.on('command_received', function (mesg) { updateStatus(mesg, false) });
       socket.on('waiting_for_command', function (mesg) { updateStatus(mesg, false) });
       socket.on('error', function (mesg) { updateStatus(mesg, false) });
-
+      socket.on('understood_command', function (mesg) { updateStatus(mesg, false, false, true) });
 
       $("#recordImg").click(() => {
-          if (recording) {
-            stopRecording(this);
-          }
-          else {
-            startRecording(this);
-          }
+        if (recording) {
+          recording = false;
+          stopRecording(this);
         }
-      );
+        else {
+          recording = true;
+          startRecording(this);
+        }
+      });
 
       $("#typeImg").click(() => {
-          $('#typeForm').toggle();
-          $('#textToJarvis').focus();
-        }
+        $('#typeForm').toggle();
+        $('#textToJarvis').focus();
+      }
       );
 
-      $("#textToJarvis").on("keydown",function search(e) {
-          if(e.keyCode == 13) {
-              sendTextToJarvis($(this).val());
-              $('#textToJarvis').val('');
-          }
+      $("#textToJarvis").on("keydown", function search(e) {
+        if (e.keyCode == 13) {
+          sendTextToJarvis($(this).val());
+          $('#textToJarvis').val('');
+        }
       });
 
     });
@@ -275,43 +113,45 @@
     <div class="hline title_underline"></div>
 
     <span class="menuitem entypo-gauge" style="font-size: 30px; margin-left: 10px;">
-    <p id="cpu" class="caption" style="font-size: 20px;">CPU Usage: 19%</p>
-  </span> <br/>
+      <p id="cpu" class="caption" style="font-size: 20px;">CPU Usage: 19%</p>
+    </span> <br />
 
     <span class="menuitem entypo-chart-area" style="font-size: 30px; margin-left: 10px;">
-    <p id="mem" class="caption" style="font-size: 20px;"></p>
-  </span> <br/>
+      <p id="mem" class="caption" style="font-size: 20px;"></p>
+    </span> <br />
 
     <span class="menuitem entypo-chart-pie" style="font-size: 30px; margin-left: 10px;">
-    <p id="proc" class="caption" style="font-size: 20px;"></p>
-  </span>
+      <p id="proc" class="caption" style="font-size: 20px;"></p>
+    </span>
 
     <p class="title">Status</p>
     <div class="hline title_underline"></div>
 
     <div class="menu">
-      <button class="menuitem"> <span class="entypo-right-open"/> <p id="jarvis_status" class="caption">Running</p> </button>
-      
+      <button class="menuitem"> <span class="entypo-right-open" />
+        <p id="jarvis_status" class="caption">Running</p>
+      </button>
+
       <hr style="border-color: transparent; margin: 0;" />
-      
+
       <div class="hline" style="margin-top: 5px; margin-bottom: 5px;"></div>
 
       <hr style="border-color: transparent; margin: 0;" />
 
-      <br/>
-      <br/>
-      
+      <br />
+      <br />
+
       <!-- Talk form -->
       <div style="font-size: 30px; margin-left: 40px; margin-top: 20px;">
         <img id="recordImg" src='/images/microphone.png' width="50" height="50" />
-        <img id="typeImg"   src='/images/keyboard.png'   width="50" height="50" />
+        <img id="typeImg" src='/images/keyboard.png' width="50" height="50" />
 
         <!-- Dialog Box-->
         <div class="dialog" id="typeForm" style='display: none'>
-            <label id="tellme">
-                Tell me!
-            </label>
-            <input type="text" id="textToJarvis" size="30" maxlength="40" />
+          <label id="tellme">
+            Tell me!
+          </label>
+          <input type="text" id="textToJarvis" size="30" maxlength="40" />
         </div>
 
       </div>
@@ -508,7 +348,7 @@
     > > > >
   </div>
 
-  <div id="particle2">▶<br/>▶<br/>▶</div>
+  <div id="particle2">▶<br />▶<br />▶</div>
   <div id="particle3" class="vline" />
   <div id="particle4" class="vline" />
   <div id="particle5" class="vline" />

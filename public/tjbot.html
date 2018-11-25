@@ -23,12 +23,12 @@
       var socket = io();
       var sessionId;
 
-      socket.on('connect', function() {
-        console.log("Socket connected with id: " +  socket.id);
+      socket.on('connect', function () {
+        console.log("Socket connected with id: " + socket.id);
         sessionId = socket.id;
-        
+
         $.ajaxSetup({
-           headers: { 'sessionId': sessionId }
+          headers: { 'sessionId': sessionId }
         });
       });
 
@@ -40,7 +40,7 @@
       listening(false);
 
       $("#busyImg").css("visibility", "hidden");
-	
+
       initializeAudio();
 
       function showError(msg) {
@@ -48,7 +48,7 @@
 
         var event = JSON.parse(msg);
 
-      	thinking(false);
+        thinking(false);
         listening(false);
 
         $("#question").text('"Whoot?"');
@@ -63,7 +63,7 @@
         console.log("Received :" + msg);
 
         var event = JSON.parse(msg);
-	
+
         if (event.text) {
           var text = append ? $("#note_input").val()
             + "\n" + event.text
@@ -90,18 +90,18 @@
 
           // Not beautiful, create new event later...
           if (event.text == "diga x!") {
-            setTimeout(function(){ window.open("/images/photos/photo.jpg", "_blank", "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,top=400,left=500,width=500,height=500"); }, 6000);
+            setTimeout(function () { window.open("/images/photos/photo.jpg", "_blank", "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,top=400,left=500,width=500,height=500"); }, 6000);
           }
 
           // Not beautiful, create new event later...
           if (event.text == "Action!") {
-            setTimeout(function(){ window.open("https://youtu.be/KqEJaXhpG3A", "_blank", "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,top=400,left=500,width=500,height=500"); }, 6000);
+            setTimeout(function () { window.open("https://youtu.be/KqEJaXhpG3A", "_blank", "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,top=400,left=500,width=500,height=500"); }, 6000);
           }
 
           // Not beautiful, create new event later...
           if (event.text == "Mal educado." || event.text == "Nao respondo coisas desse tipo." || event.text == "Nao precisa ser mal educado.") {
-            $("#tjbotImage").attr("src","/images/angry_tjbot.png");
-            setTimeout(function() { $("#tjbotImage").attr("src","/images/tjbot.png") }, 6000);
+            $("#tjbotImage").attr("src", "/images/angry_tjbot.png");
+            setTimeout(function () { $("#tjbotImage").attr("src", "/images/tjbot.png") }, 6000);
           }
 
         }
@@ -139,21 +139,21 @@
         setTimeout(() => { $("#busyImg").css("visibility", "hidden"); }, 2000);
       }
 
-      socket.on('speaking', 		        function (mesg) { updateStatus(mesg, true, true) });
-      socket.on('processing_command',	  function (mesg) { thinking(true);  updateStatus(mesg, false) });
-      socket.on('waiting_for_command',	function (mesg) { thinking(true);  updateStatus(mesg, false) });
-      socket.on('error', 		            function (mesg) { thinking(false); showError(mesg); });
-      socket.on('understood_command',	  function (mesg) { thinking(false); updateStatus(mesg, false, false, true) });
+      socket.on('speaking', function (mesg) { updateStatus(mesg, true, true) });
+      socket.on('processing_command', function (mesg) { thinking(true); updateStatus(mesg, false) });
+      socket.on('waiting_for_command', function (mesg) { thinking(true); updateStatus(mesg, false) });
+      socket.on('error', function (mesg) { thinking(false); showError(mesg); });
+      socket.on('understood_command', function (mesg) { thinking(false); updateStatus(mesg, false, false, true) });
 
       $("#recordImg").click(() => {
         if (recording) {
           recording = false;
-	        listening(false);
+          listening(false);
           stopRecording(this);
         }
         else {
           recording = true;
-	        listening(true);
+          listening(true);
           startRecording(this);
         }
       });
@@ -171,12 +171,12 @@
 
       $("#textToJarvis").on("keydown", function search(e) {
         if (e.keyCode == 13) {
-          
+
           sendTextToJarvis($(this).val(), (response) => {
             if (response && response.status && response.status == "busy") {
-                jarvisBusy();
+              jarvisBusy();
             }
-           });
+          });
 
           $('#textToJarvis').val('');
         }
@@ -200,15 +200,16 @@
 
     <!-- Animated gifs -->
     <div id="animated_stuff" class="animated_stuff">
-	<iframe src="https://giphy.com/embed/l1J9wbrQEZBEChVTO" width="120" height="120" frameBorder="0" class="giphy-embed" allowFullScreen allowTransparency="true" id="thinking"></iframe>
-      	<img src="/images/ear.png" width="85" height="120" id="listening">
+      <iframe src="https://giphy.com/embed/l1J9wbrQEZBEChVTO" width="120" height="120" frameBorder="0" class="giphy-embed"
+        allowFullScreen allowTransparency="true" id="thinking"></iframe>
+      <img src="/images/ear.png" width="85" height="120" id="listening">
     </div>
 
     <!-- TJBot image -->
     <div id="tjbot" class="tjbot">
-	<br/><br/>
-	<br/><br/>
-      	<img src="images/tjbot.png" width="400" height="400" id="tjbotImage"/>
+      <br /><br />
+      <br /><br />
+      <img src="images/tjbot.png" width="400" height="400" id="tjbotImage" />
     </div>
 
     <!-- TJBot baloon -->
@@ -218,22 +219,22 @@
 
   </div>
 
-  <br/><br/>
+  <br /><br />
 
   <!-- Talk form -->
   <div id="talk_form" class="talk_form">
 
-    <img id="recordImg" src='/images/microphone.png'  width="50" height="50" />
-    <img id="typeImg"   src='/images/keyboard.png'    width="50" height="50" />
-    &nbsp;&nbsp; 
-    <img id="helpImg"   src='/images/help.png'        width="50" height="50" />
-    <img id="busyImg"   src='/images/busy.png'        width="50" height="50" />
+    <img id="recordImg" src='/images/microphone.png' width="50" height="50" />
+    <img id="typeImg" src='/images/keyboard.png' width="50" height="50" />
+    &nbsp;&nbsp;
+    <img id="helpImg" src='/images/help.png' width="50" height="50" />
+    <img id="busyImg" src='/images/busy.png' width="50" height="50" />
 
     <!-- Dialog Box-->
     <div class="talk_form" id="typeForm" style='display: none'>
       <label id="tellme">
-                Tell me!
-          </label>
+        Tell me!
+      </label>
       <input type="text" id="textToJarvis" size="80" maxlength="80" />
     </div>
 
