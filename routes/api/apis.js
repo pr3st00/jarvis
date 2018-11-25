@@ -24,11 +24,9 @@ const successStatus = {'status': 'success'};
  * Receives json actions and process them.
  */
 router.post('/actions', function(req, res, next) {
-    if (jarvis.busy) {
-        res.json(busyStatus);
-        return;
-    }
+    logger.log('Received action');
 
+    if (isJarvisBusy(res, jarvis)) return;
     setSessionId(req, core);
 
     actionsProcessor.process(req.body,
@@ -45,11 +43,9 @@ router.post('/actions', function(req, res, next) {
  * Receives a wav file in a multiform-data form and process it.
  */
 router.post('/command', upload.single('command'), function(req, res, next) {
-    if (jarvis.busy) {
-        res.json(busyStatus);
-        return;
-    }
+    logger.log('Received command');
 
+    if (isJarvisBusy(res, jarvis)) return;
     setSessionId(req, core);
 
     jarvis.processCommandBuffer(req.file.buffer,
@@ -63,10 +59,9 @@ router.post('/command', upload.single('command'), function(req, res, next) {
  * Receives a text and process it.
  */
 router.post('/text', function(req, res, next) {
-    if (jarvis.busy) {
-        res.json(busyStatus);
-        return;
-    }
+    logger.log('Received text');
+
+    if (isJarvisBusy(res, jarvis)) return;
 
     if (!req.body || !req.body.text) {
         res.json({'status': 'Missing text'});
@@ -103,6 +98,24 @@ function setSessionId(req, core) {
     if (req && req.headers && req.headers.sessionid) {
         core.setSessionId(req.headers.sessionid);
     }
+}
+
+/**
+ * Checks if jarvis is busy and responds accordingly
+ *
+ * @param {*} res
+ * @param {*} jarvis
+ *
+ * @return {*} boolean
+ */
+function isJarvisBusy(res, jarvis) {
+    if (jarvis.busy) {
+        logger.log('Api call found jarvis busy');
+        res.json(busyStatus);
+        return true;
+    }
+
+    return false;
 }
 
 module.exports = router;

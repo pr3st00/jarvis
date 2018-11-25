@@ -38,6 +38,8 @@
 
       thinking(false);
       listening(false);
+
+      $("#busyImg").css("visibility", "hidden");
 	
       initializeAudio();
 
@@ -132,6 +134,11 @@
         }
       }
 
+      function jarvisBusy() {
+        $("#busyImg").css("visibility", "");
+        setTimeout(() => { $("#busyImg").css("visibility", "hidden"); }, 2000);
+      }
+
       socket.on('speaking', 		        function (mesg) { updateStatus(mesg, true, true) });
       socket.on('processing_command',	  function (mesg) { thinking(true);  updateStatus(mesg, false) });
       socket.on('waiting_for_command',	function (mesg) { thinking(true);  updateStatus(mesg, false) });
@@ -164,7 +171,13 @@
 
       $("#textToJarvis").on("keydown", function search(e) {
         if (e.keyCode == 13) {
-          sendTextToJarvis($(this).val());
+          
+          sendTextToJarvis($(this).val(), (response) => {
+            if (response && response.status && response.status == "busy") {
+                jarvisBusy();
+            }
+           });
+
           $('#textToJarvis').val('');
         }
       });
@@ -212,7 +225,9 @@
 
     <img id="recordImg" src='/images/microphone.png'  width="50" height="50" />
     <img id="typeImg"   src='/images/keyboard.png'    width="50" height="50" />
-    &nbsp;&nbsp; <img id="helpImg"   src='/images/help.png'        width="50" height="50" />
+    &nbsp;&nbsp; 
+    <img id="helpImg"   src='/images/help.png'        width="50" height="50" />
+    <img id="busyImg"   src='/images/busy.png'        width="50" height="50" />
 
     <!-- Dialog Box-->
     <div class="talk_form" id="typeForm" style='display: none'>
