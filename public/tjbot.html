@@ -8,6 +8,7 @@
   <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/javascripts/recorderjs/dist/recorder.js"></script>
+  <script src="/javascripts/jquery.popupoverlay.js"></script>
   <script src="/javascripts/common.js"></script>
 
   <!-- TJBot -->
@@ -40,6 +41,16 @@
       listening(false);
 
       $("#busyImg").css("visibility", "hidden");
+      $("#helpDiv").load("/help.html");
+
+      $('#helpDiv').popup({
+        onopen: function() {
+          //alert('Popup just opened!');
+        },
+        type: 'overlay',
+        opacity: 0.3,
+        transition: 'all 0.3s'
+      });
 
       initializeAudio();
 
@@ -164,11 +175,6 @@
       }
       );
 
-      $("#helpImg").click(() => {
-        window.open("/help.html", "_blank", "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=0,top=400,left=500,width=800,height=350");
-      }
-      );
-
       $("#textToJarvis").on("keydown", function search(e) {
         if (e.keyCode == 13) {
 
@@ -227,7 +233,7 @@
     <img id="recordImg" src='/images/microphone.png' width="50" height="50" />
     <img id="typeImg" src='/images/keyboard.png' width="50" height="50" />
     &nbsp;&nbsp;
-    <img id="helpImg" src='/images/help.png' width="50" height="50" />
+    <img id="helpImg" src='/images/help.png' width="50" height="50" class="helpDiv_open" />
     <img id="busyImg" src='/images/busy.png' width="50" height="50" />
 
     <!-- Dialog Box-->
@@ -238,6 +244,11 @@
       <input type="text" id="textToJarvis" size="80" maxlength="80" />
     </div>
 
+  </div>
+
+  <!-- Help -->
+  <div id="helpDiv">
+      Teste
   </div>
 
 </body>
