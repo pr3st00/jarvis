@@ -86,16 +86,16 @@ A plugin consits of:
 
 ## Current available modules
 
-| Name          | Description                          | Parameters                       |
-| ------------- | ------------------------------------ | -------------------------------- |
-| joke          | tells a random joke                  | -NONE-                           |
-| weather       | tells the current weather condition  | -NONE-                           |
-| tv            | controls a bravia tv                 | Action (netflix or turnoff)      |
-| music         | searchs  for musics on youtube,      | music/artist                     |
-| video         | searchs  for videos on youtube,      | video                            |
-| news          | displays current news                | -NONE-                           |
-| wikipedia     | looks for a term on wikipedia        | term                             |
-| 3dprinter     | interfaces with a 3d printer         | (add|remove),name or (list|clear)|
+| Name          | Description                          | Parameters                              |
+| ------------- | ------------------------------------ | --------------------------------------- |
+| joke          | tells a random joke                  | -NONE-                                  |
+| weather       | tells the current weather condition  | -NONE-                                  |
+| tv            | controls a bravia tv                 | Action (netflix or turnoff)             |
+| music         | searchs  for musics on youtube,      | music/artist                            |
+| video         | searchs  for videos on youtube,      | video                                   |
+| news          | displays current news                | -NONE-                                  |
+| wikipedia     | looks for a term on wikipedia        | term                                    |
+| 3dprinter     | interfaces with a 3d printer         | (add or remove),name or (list or clear) |
 
 ## Web interface
 There are two web interfaces available (jarvis.html and tjbot.html), which displays real time events and also plays messages. They allow user to interact
@@ -113,12 +113,12 @@ All services will reply with a json message in the following format:
 
 where code can be one of the following: "success", "an error message" or "busy"
 
-| Endpoint      | Method   | Description              |  Parameters                                                                          |
-| ------------- | -------- | ------------------------ | ------------------------------------------------------------------------------------ |
-| /api/actions  |  POST    | Process all actions      |  JSON list of actions (see format above in Message format section)                   |
-| /api/command  |  POST    | Process a wav file       |  A wav file attached in a multipart/form-data with "command" as the contentId        |
-| /api/text     |  POST    | Process a command text   |  A text for jarvis to proces in json format. Sample: { "text" : "What time is it?" } |
-| /api/status   |  GET     | Process a status request |  Used for automation, it will reply with the current jarvis status (busy|available ) |
+| Endpoint      | Method   | Description              |  Parameters                                                                             |
+| ------------- | -------- | ------------------------ | --------------------------------------------------------------------------------------- |
+| /api/actions  |  POST    | Process all actions      |  JSON list of actions (see format above in Message format section)                      |
+| /api/command  |  POST    | Process a wav file       |  A wav file attached in a multipart/form-data with "command" as the contentId           |
+| /api/text     |  POST    | Process a command text   |  A text for jarvis to proces in json format. Sample: { "text" : "What time is it?" }    |
+| /api/status   |  GET     | Process a status request |  Used for automation, it will reply with the current jarvis status (busy or available ) |
 
 ## Installation
 Quick installation for the Raspberry Pi 2+
