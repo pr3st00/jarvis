@@ -68,6 +68,10 @@
                 "cleared_message": "List cleared sucessfuly",
                 "print_message": "Printing started",
                 "error_message": "Sorry, it didnt work"
+            },
+            {
+                "name": "mqttevent",
+                "resource": "default/mqttevent"
             }
         ],
         "services": {

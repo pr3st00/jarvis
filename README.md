@@ -86,16 +86,21 @@ A plugin consits of:
 
 ## Current available modules
 
-| Name          | Description                          | Parameters                              |
-| ------------- | ------------------------------------ | --------------------------------------- |
-| joke          | tells a random joke                  | -NONE-                                  |
-| weather       | tells the current weather condition  | -NONE-                                  |
-| tv            | controls a bravia tv                 | Action (netflix or turnoff)             |
-| music         | searchs  for musics on youtube,      | music/artist                            |
-| video         | searchs  for videos on youtube,      | video                                   |
-| news          | displays current news                | -NONE-                                  |
-| wikipedia     | looks for a term on wikipedia        | term                                    |
-| 3dprinter     | interfaces with a 3d printer         | (add or remove),name or (list or clear) |
+| Name          | Description                          | Parameters                                 |
+| ------------- | ------------------------------------ | ------------------------------------------ |
+| joke          | tells a random joke                  | -NONE-                                     |
+| weather       | tells the current weather condition  | -NONE-                                     |
+| tv            | controls a bravia tv                 | Action (netflix or turnoff)                |
+| music         | searchs  for musics on youtube,      | music/artist                               |
+| video         | searchs  for videos on youtube,      | video                                      |
+| news          | displays current news                | -NONE-                                     |
+| wikipedia     | looks for a term on wikipedia        | term                                       |
+| 3dprinter     | interfaces with a 3d printer         | (add or remove),name or (list or clear)    |
+| mqttevent     | publishes a mqtt message             | url,topic,data[username,password,clientId] |
+
+## MQTT support
+Currently it can interface with MQTT by using the mqttevent module. For example, it can respond to a command by publishing a mqtt message to a 
+broker, which opens up the possibilities for interacting with any device supporting the MQTT protocol.
 
 ## Web interface
 There are two web interfaces available (jarvis.html and tjbot.html), which displays real time events and also plays messages. They allow user to interact
