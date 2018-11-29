@@ -54,7 +54,7 @@ class MqttEventModule extends JarvisModule {
 
         client.on('error', (err) => {
             if (retries >= MAX_RETRIES) {
-                module.logger.log('Max retries reached, giving up..');
+                module.logger.logError('Max retries reached, giving up..');
                 client.end();
                 return;
             }
@@ -69,7 +69,7 @@ class MqttEventModule extends JarvisModule {
 
             client.publish(topic, data, {}, (err) => {
                 if (err) {
-                    module.logger.log('Error occurred: ' + err);
+                    module.logger.logError('Error occurred: ' + err);
                 } else {
                     module.logger.log('Message sent');
                 }

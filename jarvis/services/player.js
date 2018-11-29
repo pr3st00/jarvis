@@ -14,6 +14,7 @@ const logger = new Logger('PLAYER');
 
 let busy = false;
 let debugOn = true;
+let disabled = false;
 
 /**
  * Returns if the player is busy
@@ -25,11 +26,41 @@ function isBusy() {
 }
 
 /**
+ * Enables the player
+ *
+ */
+function enable() {
+    disabled = false;
+}
+
+/**
+ * Disables the player
+ *
+ */
+function disable() {
+    disabled = true;
+}
+
+/**
+ * Returns if the player is disabled
+ *
+ * @return {*} boolean
+ */
+function isDisabled() {
+    return disabled;
+}
+
+/**
  * Plays a mp3
  *
  * @param {*} list
  */
 function playMp3(list) {
+    if (isDisabled()) {
+        logger.logError('Player is currently disabled, no sound.');
+        return;
+    }
+
     if (isBusy()) {
         logger.logError('Player is currently busy!');
         return;
@@ -122,6 +153,12 @@ function recordFile(fileName, callback) {
  * @param {*} sampleRate
  */
 function play(file, callback, sampleRate) {
+    if (isDisabled()) {
+        logger.logError('Player is currently disabled, no sound.');
+        callback();
+        return;
+    }
+
     while (isBusy()) {
             logger.logError('Player is currently busy!');
             callback('busy');
@@ -137,7 +174,7 @@ function play(file, callback, sampleRate) {
         channels: 1,
         bitDepth: 16,
         sampleRate: rate,
-        // device: "hw:0,0",
+        device: 'hw:0,0',
         verbose: debug,
     });
 
@@ -261,5 +298,5 @@ function debug(mesg) {
 
 module.exports = {
     play, playMp3, stop, recordFile,
-    appendWavHeader, createWavFile, isBusy,
+    appendWavHeader, createWavFile, isBusy, enable, disable, isDisabled,
 };

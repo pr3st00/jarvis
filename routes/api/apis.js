@@ -5,6 +5,7 @@ const router = express.Router();
 const multer = require('multer');
 const upload = multer();
 
+const player = require('../../jarvis/services/player');
 const ActionsProcessor = require('../../jarvis/services/actionsProcessor');
 const actionsProcessor = new ActionsProcessor();
 
@@ -85,6 +86,16 @@ router.get('/status', function(req, res, next) {
         logger.log('Sending status as available');
         res.json(availableStatus);
     }
+});
+
+router.get('/disablesound', function(req, res, next) {
+    player.disable();
+    res.json(successStatus);
+});
+
+router.get('/enablesound', function(req, res, next) {
+    player.enable();
+    res.json(successStatus);
 });
 
 /**
