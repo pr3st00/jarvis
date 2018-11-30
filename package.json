@@ -19,6 +19,7 @@
     "node-record-lpcm16": "^0.3.0",
     "ogg": "^1.2.5",
     "opus": "0.0.0",
+    "play-sound": "^1.1.2",
     "player": "^0.6.1",
     "pug": "2.0.0-beta11",
     "request": "^2.87.0",

@@ -5,6 +5,7 @@ const Speaker = require('speaker');
 const record2 = require('node-record-lpcm16');
 const wav = require('wav');
 const Player = require('player');
+const shellPlayer = require('play-sound')({});
 
 const DEFAULT_SAMPLE_RATE = 22050;
 const WAIT_TIME = 1000;
@@ -15,6 +16,7 @@ const logger = new Logger('PLAYER');
 let busy = false;
 let debugOn = true;
 let disabled = false;
+let useShell = true;
 
 /**
  * Returns if the player is busy
@@ -86,7 +88,7 @@ function playMp3(list) {
         });
 
         internalPlayer.on('playend', function(item) {
-            logger.log('Playing completed [ item=' + item.src +' ]');
+            logger.log('Playing completed [ item=' + item.src + ' ]');
             busy = false;
         });
 
@@ -109,7 +111,7 @@ function stop(player) {
          * problems playing two streams,
          * so give it sometime to finish
          */
-        setTimeout( () => {
+        setTimeout(() => {
             debug('Stopping the player');
             player.stop();
             busy = false;
@@ -160,49 +162,18 @@ function play(file, callback, sampleRate) {
     }
 
     while (isBusy()) {
-            logger.logError('Player is currently busy!');
-            callback('busy');
-            return;
+        logger.logError('Player is currently busy!');
+        callback('busy');
+        return;
     }
 
-    let stream;
     busy = true;
 
-    let rate = sampleRate || DEFAULT_SAMPLE_RATE;
-
-    let speaker = new Speaker({
-        channels: 1,
-        bitDepth: 16,
-        sampleRate: rate,
-        device: 'hw:0,0',
-        verbose: debug,
-    });
-
-    debug('Speaker created');
-
-    speaker.on('error', function(err) {
-        logger.logError('Speaker error : ' + err);
-
-        stream.unpipe();
-        speaker.close();
-        busy = false;
-
-        callback(err);
-    });
-
-    speaker.on('close', () => {
-        debug('Speaker closing');
-        stream.unpipe();
-
-        setTimeout( () => {
-            callback();
-            busy = false;
-        }, WAIT_TIME);
-    });
-
-    stream = fs.createReadStream(file);
-
-    stream.pipe(speaker);
+    if (useShell) {
+        playUsingShell(file, callback, sampleRate);
+    } else {
+        playUsingSpeaker(file, callback, sampleRate);
+    }
 }
 
 /**
@@ -285,6 +256,72 @@ function createWavFile(buffer, fileName, callback) {
 
     writer.write(buffer);
     writer.end();
+}
+
+/**
+ * Plays file using speaker
+ *
+ * @param {*} file
+ * @param {*} callback
+ * @param {*} sampleRate
+ */
+function playUsingSpeaker(file, callback, sampleRate) {
+    debug('Speaker created');
+
+    let rate = sampleRate || DEFAULT_SAMPLE_RATE;
+
+    let speaker = new Speaker({
+        channels: 1,
+        bitDepth: 16,
+        sampleRate: rate,
+        // device: 'pulse',
+        verbose: debug,
+    });
+
+    speaker.on('error', function(err) {
+        logger.logError('Speaker error : ' + err);
+        callback(err);
+        busy = false;
+    });
+
+    speaker.on('close', () => {
+        debug('Speaker closing');
+
+        setTimeout(() => {
+            callback();
+            busy = false;
+        }, WAIT_TIME);
+    });
+
+    stream = fs.createReadStream(file);
+
+    stream.pipe(speaker);
+}
+
+/**
+ * Plays file using shell
+ *
+ * @param {*} file
+ * @param {*} callback
+ * @param {*} sampleRate
+ */
+function playUsingShell(file, callback, sampleRate) {
+    debug('Shell Speaker created');
+
+    // eslint-disable-next-line no-unused-vars
+    let rate = sampleRate || DEFAULT_SAMPLE_RATE;
+
+    shellPlayer.play(file, function(err) {
+        if (err) {
+            logger.logError('Shell speaker error : ' + err);
+            callback(err);
+            busy = false;
+        } else {
+            debug('Shell speaker closing');
+            callback();
+            busy = false;
+        }
+    });
 }
 
 /**
