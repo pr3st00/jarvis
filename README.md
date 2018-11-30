@@ -22,7 +22,7 @@ The implementation can be selected by modifying the processor config on jarvis.j
 ```
 </p>
 
-## Current Release: v0.0.15
+## Current Release: v0.0.20
 
 ## Message format
 
@@ -148,6 +148,9 @@ node_modules/wav/lib and modify the parameters as seen below:
 
 ## Current Feature Requests/Suggestions
 Pending..
+
+## Client libraries
+Currently there's a java client library available for home automation https://github.com/pr3st00/jarvis_client_library
 
 ## License
 MIT
