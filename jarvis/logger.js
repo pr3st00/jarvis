@@ -13,6 +13,16 @@ class Logger {
      */
     constructor(module) {
         this._module = module;
+        this.debug = false;
+    }
+
+    /**
+     * Turns debug on and off
+     *
+     * @param {*} enabled
+     */
+    setDebug(enabled) {
+        this.debug = enabled;
     }
 
     /**
@@ -33,7 +43,8 @@ class Logger {
      */
     log(mesg) {
         console.log('[' + this.getDate() + ']' + '['
-            + this._module + ']' + TAB.repeat(7/this._module.length + 1) + mesg);
+            + this._module + ']' +
+            TAB.repeat(7/this._module.length + 1) + mesg);
     }
 
     /**
@@ -43,6 +54,17 @@ class Logger {
      */
     logError(mesg) {
         this.log('[ERROR] ' + mesg);
+    }
+
+    /**
+     * Logs a debug message
+     *
+     * @param {*} mesg
+     */
+    logDebug(mesg) {
+        if (this.debug) {
+            this.log('**DEBUG** ' + mesg);
+        }
     }
 
     /**

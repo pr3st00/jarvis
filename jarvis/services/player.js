@@ -13,8 +13,9 @@ const WAIT_TIME = 1000;
 const Logger = require('../logger');
 const logger = new Logger('PLAYER');
 
+logger.setDebug(true);
+
 let busy = false;
-let debugOn = true;
 let disabled = false;
 let useShell = true;
 
@@ -112,7 +113,7 @@ function stop(player) {
          * so give it sometime to finish
          */
         setTimeout(() => {
-            debug('Stopping the player');
+            logger.logDebug('Stopping the player');
             player.stop();
             busy = false;
         }, WAIT_TIME);
@@ -266,7 +267,7 @@ function createWavFile(buffer, fileName, callback) {
  * @param {*} sampleRate
  */
 function playUsingSpeaker(file, callback, sampleRate) {
-    debug('Speaker created');
+    logger.logDebug('Speaker created');
 
     let rate = sampleRate || DEFAULT_SAMPLE_RATE;
 
@@ -285,7 +286,7 @@ function playUsingSpeaker(file, callback, sampleRate) {
     });
 
     speaker.on('close', () => {
-        debug('Speaker closing');
+        logger.logDebug('Speaker closing');
 
         setTimeout(() => {
             callback();
@@ -306,7 +307,7 @@ function playUsingSpeaker(file, callback, sampleRate) {
  * @param {*} sampleRate
  */
 function playUsingShell(file, callback, sampleRate) {
-    debug('Shell Speaker created');
+    logger.logDebug('Shell Speaker created');
 
     // eslint-disable-next-line no-unused-vars
     let rate = sampleRate || DEFAULT_SAMPLE_RATE;
@@ -317,20 +318,11 @@ function playUsingShell(file, callback, sampleRate) {
             callback(err);
             busy = false;
         } else {
-            debug('Shell speaker closing');
+            logger.logDebug('Shell speaker closing');
             callback();
             busy = false;
         }
     });
-}
-
-/**
- * Debugging to logger
- *
- * @param {*} mesg
- */
-function debug(mesg) {
-    if (debugOn) logger.log('**DEBUG** ' + mesg);
 }
 
 module.exports = {
