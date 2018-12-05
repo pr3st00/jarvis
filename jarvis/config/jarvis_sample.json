@@ -72,7 +72,11 @@
             },
             {
                 "name": "mqttevent",
-                "resource": "default/mqttevent"
+                "resource": "default/mqtt/mqttevent"
+            },
+            {
+                "name": "mqttpull",
+                "resource": "default/mqtt/mqttpull"
             }
         ],
         "services": {

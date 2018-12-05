@@ -2,15 +2,15 @@
 
 const mqtt = require('mqtt');
 
-const JarvisModule = require('../jarvisModule');
+const JarvisModule = require('../../jarvisModule');
 let instance;
 
 const MAX_RETRIES = 5;
 
 /**
- * Posts a message to a mqtt broker based on the parameters
+ * Subscribers and waits for a message to a mqtt broker based on the parameters
  */
-class MqttEventModule extends JarvisModule {
+class MqttPullModule extends JarvisModule {
     /**
      * Constructor
      *
@@ -30,10 +30,9 @@ class MqttEventModule extends JarvisModule {
 
         let url = parameters[1];
         let topic = parameters[2];
-        let data = parameters[3];
-        let username = parameters[4] ? parameters[4] : undefined;
-        let password = parameters[5] ? parameters[5] : undefined;
-        let clientId = parameters[6] ? parameters[6] : undefined;
+        let username = parameters[3] ? parameters[3] : undefined;
+        let password = parameters[4] ? parameters[4] : undefined;
+        let clientId = parameters[5] ? parameters[5] : undefined;
 
         let options = {};
         let retries = 0;
@@ -64,18 +63,20 @@ class MqttEventModule extends JarvisModule {
                 + retries + '): ' + err);
         });
 
-        client.on('connect', function() {
-            module.logger.log('Posting mqtt message to topic: [' + topic + ']');
+        client.on('message', function(topic, message) {
+            module.logger.log('Message arrived: ' + message.toString());
+            client.end();
+        });
 
-            client.publish(topic, data, {}, (err) => {
+        client.on('connect', function() {
+            module.logger.log('Subscribing to topic: [' +
+                topic + ']');
+
+            client.subscribe(topic, function(err) {
                 if (err) {
-                    module.logger.logError('Error occurred: ' + err);
-                } else {
-                    module.logger.log('Message sent');
+                    module.logger.log('Error subscribing to topic: ' + err);
                 }
             });
-
-            client.end();
         });
     };
 }
@@ -88,7 +89,7 @@ class MqttEventModule extends JarvisModule {
  */
 function getInstance(moduleName) {
     if (!instance) {
-        instance = new MqttEventModule(moduleName);
+        instance = new MqttPullModule(moduleName);
     }
     return instance;
 }
