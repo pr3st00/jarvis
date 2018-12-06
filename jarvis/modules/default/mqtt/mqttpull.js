@@ -5,8 +5,6 @@ const mqtt = require('mqtt');
 const JarvisModule = require('../../jarvisModule');
 let instance;
 
-const MAX_RETRIES = 5;
-
 /**
  * Subscribers and waits for a message to a mqtt broker based on the parameters
  */
@@ -21,9 +19,10 @@ class MqttPullModule extends JarvisModule {
     }
 
     /**
-     * Process a request to interface with the 3d printer
+     * Process a request to subscriber and pull a message from a mqtt topic
      *
      * @param {*} parameters
+     * @return {*} Promise
      */
     process(parameters) {
         let module = this;
@@ -51,31 +50,37 @@ class MqttPullModule extends JarvisModule {
 
         let client = mqtt.connect(url, options);
 
-        client.on('error', (err) => {
-            if (retries >= MAX_RETRIES) {
-                module.logger.logError('Max retries reached, giving up..');
-                client.end();
-                return;
-            }
-
-            retries++;
-            module.logger.log('Connection error (attempt '
-                + retries + '): ' + err);
-        });
-
-        client.on('message', function(topic, message) {
-            module.logger.log('Message arrived: ' + message.toString());
-            client.end();
-        });
-
-        client.on('connect', function() {
-            module.logger.log('Subscribing to topic: [' +
-                topic + ']');
-
-            client.subscribe(topic, function(err) {
-                if (err) {
-                    module.logger.log('Error subscribing to topic: ' + err);
+        return new Promise((resolve, reject) => {
+            client.on('error', (err) => {
+                if (retries >= module.config.max_retries) {
+                    module.logger.logError('Max retries reached, giving up..');
+                    client.end();
+                    resolve(module.buildPlayAction(
+                        module.config.error_message));
                 }
+
+                retries++;
+                module.logger.log('Connection error (attempt '
+                    + retries + '): ' + err);
+            });
+
+            client.on('connect', function() {
+                module.logger.log('Subscribing to topic: [' +
+                    topic + ']');
+
+                client.subscribe(topic, function(err) {
+                    if (err) {
+                        module.logger.log('Error subscribing to topic: ' + err);
+                        resolve(module.buildPlayAction(
+                            module.config.error_message));
+                    }
+                });
+            });
+
+            client.on('message', function(topic, message) {
+                module.logger.log('Message arrived: ' + message.toString());
+                client.end();
+                resolve(JSON.parse(message.toString()));
             });
         });
     };

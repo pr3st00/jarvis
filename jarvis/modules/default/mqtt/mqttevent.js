@@ -5,8 +5,6 @@ const mqtt = require('mqtt');
 const JarvisModule = require('../../jarvisModule');
 let instance;
 
-const MAX_RETRIES = 5;
-
 /**
  * Posts a message to a mqtt broker based on the parameters
  */
@@ -53,7 +51,7 @@ class MqttEventModule extends JarvisModule {
         let client = mqtt.connect(url, options);
 
         client.on('error', (err) => {
-            if (retries >= MAX_RETRIES) {
+            if (retries >= module.config.max_retries) {
                 module.logger.logError('Max retries reached, giving up..');
                 client.end();
                 return;

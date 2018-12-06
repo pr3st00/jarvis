@@ -72,11 +72,15 @@
             },
             {
                 "name": "mqttevent",
-                "resource": "default/mqtt/mqttevent"
+                "resource": "default/mqtt/mqttevent",
+                "max_retries": 5,
+                "error_message": "Sorry, something went wrong"
             },
             {
                 "name": "mqttpull",
-                "resource": "default/mqtt/mqttpull"
+                "resource": "default/mqtt/mqttpull",
+                "max_retries": 5,
+                "error_message": "Sorry, something went wrong"
             }
         ],
         "services": {
