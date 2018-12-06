@@ -1,6 +1,7 @@
 'use strict';
 
 const config = require('../config').getConfig();
+const exceptions = require('../exceptions');
 const fs = require('fs');
 const player = require('../player');
 
@@ -26,6 +27,10 @@ function process(singleAction, jarvis) {
 
     let parameters = singleAction.parameters;
     let text = parameters[0];
+
+    if (!text) {
+        throw new exceptions.ActionServiceError('Text cannot be empty!');
+    }
 
     logger.log('Caling tts with text [' + text + ']');
 

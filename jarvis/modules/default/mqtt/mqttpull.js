@@ -45,6 +45,8 @@ class MqttPullModule extends JarvisModule {
             options.clientId = clientId;
         }
 
+        module.logger.setDebug(true);
+
         module.logger.log('Trying to connect to broker: [' + url
             + '] using options: ' + JSON.stringify(options));
 
@@ -73,6 +75,8 @@ class MqttPullModule extends JarvisModule {
                         module.logger.log('Error subscribing to topic: ' + err);
                         resolve(module.buildPlayAction(
                             module.config.error_message));
+                    } else {
+                        module.logger.logDebug('Subscribed!');
                     }
                 });
             });

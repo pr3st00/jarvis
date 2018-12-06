@@ -37,6 +37,8 @@ class ActionsProcessor {
             this.processActions(multipleActions, this.factory.getProcessor());
             successCallBack();
         } catch (err) {
+            logger.logError('Error processing action: ' + err);
+            this._jarvis.busy = false;
             errorCallBack(err.message);
         }
     }
