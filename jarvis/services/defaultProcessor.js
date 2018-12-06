@@ -36,6 +36,10 @@ class DefaultProcessor {
 
             case 'STOP':
                 return;
+
+            default:
+               throw new exceptions.ActionServiceError(
+                   'Action not recognized');
         }
     }
 
