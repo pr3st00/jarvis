@@ -97,10 +97,13 @@ A plugin consits of:
 | wikipedia     | looks for a term on wikipedia        | term                                       |
 | 3dprinter     | interfaces with a 3d printer         | (add or remove),name or (list or clear)    |
 | mqttevent     | publishes a mqtt message             | url,topic,data[username,password,clientId] |
+| mqttpull      | subscribers to an mqtt topic         | url,topic,[username,password,clientId]     |
 
 ## MQTT support
-Currently it can interface with MQTT by using the mqttevent module. For example, it can respond to a command by publishing a mqtt message to a 
+Currently it can interface with MQTT by using the mqttevent and mqttpull modules. For example, it can respond to a command by publishing a mqtt message to a 
 broker, which opens up the possibilities for interacting with any device supporting the MQTT protocol.
+The mqttpull module subscriber to a mqtt topic and expects a JSON message with the actions format supported by the framework, executing the actions when the 
+message arrives. 
 
 ## Web interface
 There are two web interfaces available (jarvis.html and tjbot.html), which displays real time events and also plays messages. They allow user to interact
