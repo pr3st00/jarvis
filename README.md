@@ -9,6 +9,14 @@ for waiting for a keyword, and then executes actions based on a pre-determined j
 Actions can be executed in parallel or sequentially, and can in turn return another actions. This simple framework allows complex actions to be executed with little effort.
 </p>
 
+## Web interface
+There are two web interfaces available (jarvis.html and tjbot.html), which displays real time events and also plays messages. They allow user to interact
+with both text and voice as well, and they will use socket.io to display events. 
+
+![Jarvis Interface](https://i.imgur.com/Sno8uFV.png "Jarvis interface")
+
+![TJBOT interface](https://i.imgur.com/VDc4Yfn.png "TJBOT interface")
+
 ## Services backend
 <p>
 It currently supports two backend systems: WATSON and WIT (in progress).
@@ -104,10 +112,6 @@ Currently it can interface with MQTT by using the mqttevent and mqttpull modules
 broker, which opens up the possibilities for interacting with any device supporting the MQTT protocol.
 The mqttpull module subscriber to a mqtt topic and expects a JSON message with the actions format supported by the framework, executing the actions when the 
 message arrives. 
-
-## Web interface
-There are two web interfaces available (jarvis.html and tjbot.html), which displays real time events and also plays messages. They allow user to interact
-with both text and voice as well, and they will use socket.io to display events. 
 
 ## Web services layer
 Jarvis also exposes some RESTFull webservices in order for other systems to interact to it. This facilitates home automation allowing, for example, 
