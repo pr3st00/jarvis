@@ -52,7 +52,7 @@ class ActionsProcessor {
      */
     processActions(multipleActions, processor, callback) {
         if (!multipleActions) {
-            throw new exceptions.ActionServiceError('actions cannot be empty!');
+            throw new exceptions.ActionServiceError('Actions cannot be empty!');
         }
 
         processor.setJarvis(this._jarvis);
@@ -64,7 +64,12 @@ class ActionsProcessor {
                 if (resultingAction instanceof Promise) {
                     resultingAction.then(function(r) {
                         processor.process(r.actions[0]);
-                    }).catch((err) => console.log(err));
+                    }).catch((err) => {
+                        logger.logError('Error proccessing result action: '
+                            + err);
+                    }).finally(() => {
+                        this._jarvis.busy = false;
+                    });
                 } else {
                     processor.process(resultingAction);
                 }
