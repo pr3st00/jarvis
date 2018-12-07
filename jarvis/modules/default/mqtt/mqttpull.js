@@ -84,7 +84,18 @@ class MqttPullModule extends JarvisModule {
             client.on('message', function(topic, message) {
                 module.logger.log('Message arrived: ' + message.toString());
                 client.end();
-                resolve(JSON.parse(message.toString()));
+
+                let payload;
+
+                try {
+                    payload = JSON.parse(message.toString());
+                } catch (err) {
+                    module.logger.logError(
+                        'Unable to parse message payload to a JSON object : '
+                        + err);
+                }
+
+                resolve(payload);
             });
         });
     };
