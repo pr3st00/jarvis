@@ -67,7 +67,6 @@ class ActionsProcessor {
                     }).catch((err) => {
                         logger.logError('Error proccessing result action: '
                             + err);
-                    }).finally(() => {
                         this._jarvis.busy = false;
                     });
                 } else {
