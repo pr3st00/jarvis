@@ -67,7 +67,7 @@ function process(text, callback) {
  * @return {*} boolean
  */
 function containsNonCacheableCode(body) {
-    if (!body) {
+    if (!body || !body.actions) {
         return false;
     }
 
