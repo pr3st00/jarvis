@@ -49,7 +49,7 @@ class Musicmodule extends JarvisModule {
     };
 
     /**
-     * Plays all files inside mp3List
+     * Plays a random file inside mp3List
      *
      * @param {*} mp3List
      * @return {*} action
@@ -58,7 +58,7 @@ class Musicmodule extends JarvisModule {
         let module = this;
 
         if (mp3List && mp3List.length > 0) {
-            player.playMp3(mp3List);
+            player.playMp3(mp3List[Math.floor(Math.random() * mp3List.length)]);
             return module.buildStopAction();
         } else {
             setTimeout(function() {
@@ -109,15 +109,16 @@ class Musicmodule extends JarvisModule {
         request.get({
             url: url,
         },
-        function(err, httpResponse, body) {
-            if (err) {
-                setTimeout(function() {
-                    callback(module.buildPlayAction(module.config.not_found_message));
-                }, 2000);
-            } else {
-                callback(buildResponse(JSON.parse(body)));
-            }
-        });
+            function(err, httpResponse, body) {
+                if (err) {
+                    setTimeout(function() {
+                        callback(module.buildPlayAction(
+                            module.config.not_found_message));
+                    }, 2000);
+                } else {
+                    callback(buildResponse(JSON.parse(body)));
+                }
+            });
     }
 }
 

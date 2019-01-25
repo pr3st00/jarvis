@@ -14,7 +14,11 @@ const logger = new Logger('TEXT_TO_SPEECH');
 const Cache = require('../cache');
 const cache = new Cache('TEXT_TO_SPEECH');
 
+const ModuleFactory = require('../../modules/moduleFactory');
+const moduleFactory = new ModuleFactory();
+
 const serviceConfig = config.jarvis.services.watson.text_to_speech;
+let animationModule = moduleFactory.getModule('speakanimations');
 
 /**
  * Process the request
@@ -63,7 +67,8 @@ function process(singleAction, jarvis) {
             let timeTaken = new Date().getTime() - ini;
             logger.log('Took: (' + timeTaken + ') ms.');
 
-            player.play(fromCache, () => jarvis.busy = false);
+            beforeSpeak();
+            player.play(fromCache, () => afterSpeak(jarvis));
             return;
         }
     }
@@ -74,12 +79,35 @@ function process(singleAction, jarvis) {
             let timeTaken = new Date().getTime() - ini;
             logger.log('Took: (' + timeTaken + ') ms.');
 
-            player.play(AUDIO_FILE, () => jarvis.busy = false);
+            beforeSpeak();
+            player.play(AUDIO_FILE, () => afterSpeak(jarvis));
 
             if (serviceConfig.useCache) {
                 cache.putFileCacheValue(params.text, AUDIO_FILE);
             }
         });
+}
+
+/**
+ * Action to be executed before speaking
+ */
+function beforeSpeak() {
+    if (animationModule) {
+        animationModule.process(['speakanimations', 'BEFORE']);
+    }
+}
+
+/**
+ * Action to be executed after speaking
+ *
+ * @param {*} jarvis
+ */
+function afterSpeak(jarvis) {
+    jarvis.busy = false;
+
+    if (animationModule) {
+        animationModule.process(['speakanimations', 'AFTER']);
+    }
 }
 
 module.exports = {process};

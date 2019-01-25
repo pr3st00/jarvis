@@ -10,6 +10,11 @@
         },
         "modules": [
             {
+                "name" : "speakanimations",
+                "resource" : "default/speakanimations.js",
+                "enabled" : false
+            },
+            {
                 "name": "joke",
                 "resource": "default/joke",
                 "error_message": "Couldn't find any"
