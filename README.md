@@ -94,18 +94,19 @@ A plugin consits of:
 
 ## Current available modules
 
-| Name          | Description                          | Parameters                                 |
-| ------------- | ------------------------------------ | ------------------------------------------ |
-| joke          | tells a random joke                  | -NONE-                                     |
-| weather       | tells the current weather condition  | -NONE-                                     |
-| tv            | controls a bravia tv                 | Action (netflix or turnoff)                |
-| music         | searchs  for musics on youtube,      | music/artist                               |
-| video         | searchs  for videos on youtube,      | video                                      |
-| news          | displays current news                | -NONE-                                     |
-| wikipedia     | looks for a term on wikipedia        | term                                       |
-| 3dprinter     | interfaces with a 3d printer         | (add or remove),name or (list or clear)    |
-| mqttevent     | publishes a mqtt message             | url,topic,data[username,password,clientId] |
-| mqttpull      | subscribers to an mqtt topic         | url,topic,[username,password,clientId]     |
+| Name              | Description                          | Parameters                                 |
+| ----------------- | ------------------------------------ | ------------------------------------------ |
+| joke              | tells a random joke                  | -NONE-                                     |
+| weather           | tells the current weather condition  | -NONE-                                     |
+| tv                | controls a bravia tv                 | Action (netflix or turnoff)                |
+| music             | searchs  for musics on youtube,      | music/artist                               |
+| video             | searchs  for videos on youtube,      | video                                      |
+| news              | displays current news                | -NONE-                                     |
+| wikipedia         | looks for a term on wikipedia        | term                                       |
+| 3dprinter         | interfaces with a 3d printer         | (add or remove),name or (list or clear)    |
+| mqttevent         | publishes a mqtt message             | url,topic,data[username,password,clientId] |
+| mqttpull          | subscribers to an mqtt topic         | url,topic,[username,password,clientId]     |
+| imagerecognition  | tells what Jarvis is seeing          | -NONE-                                     |
 
 ## MQTT support
 Currently it can interface with MQTT by using the mqttevent and mqttpull modules. For example, it can respond to a command by publishing a mqtt message to a 

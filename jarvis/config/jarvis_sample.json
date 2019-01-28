@@ -15,6 +15,15 @@
                 "enabled" : false
             },
             {
+                "name": "imagerecognition",
+                "resource": "default/watson/imagerecognition",
+                "language": "en",
+                "key": "FXYfnHOB5K5TJ7h4i0IJkjFzToxjxHL908QXAhbQXkw9",
+                "version": "2018-03-19",
+                "error_message": "Sorry, I could'nt identify anything.",
+                "success_messages": ["I can see a #item", "Looks like a #item"]
+            },
+            {
                 "name": "joke",
                 "resource": "default/joke",
                 "error_message": "Couldn't find any"
