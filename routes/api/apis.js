@@ -88,6 +88,12 @@ router.get('/status', function(req, res, next) {
     }
 });
 
+router.get('/language', function(req, res, next) {
+    let value = jarvis.getConfig('language');
+    logger.log('Jarvis currently speaks : ' + value);
+    res.json({'language': value});
+});
+
 router.get('/disablesound', function(req, res, next) {
     player.disable();
     res.json(successStatus);

@@ -135,6 +135,16 @@ class Jarvis extends EventEmitter {
         this.busy = false;
         this.emit('error', new Error(message));
     }
+
+    /**
+     * Returns the current value of this config
+     *
+     * @param {*} key
+     * @return {*} config value
+     */
+    getConfig(key) {
+        return config.jarvis[key];
+    }
 }
 
 exports = module.exports = Jarvis;
