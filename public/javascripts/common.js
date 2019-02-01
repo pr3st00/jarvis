@@ -112,11 +112,12 @@ function sendAudioToJarvis(element) {
 function say(text) {
     let url;
     let apiKeys = ['f716f782b498444c95b14a63fe05a917', '0c71f8bb93674f98bfc70e930d26c79b'];
+    let lang = 'en-us';
 
     if (text.startsWith('http')) {
         url = text;
     } else {
-        url = 'https://api.voicerss.org/?key=' + apiKeys[0] +'&hl=pt-br&r=2&src=' + encodeURIComponent(text);
+        url = 'https://api.voicerss.org/?key=' + apiKeys[0] +'&hl=' + lang + '&r=2&src=' + encodeURIComponent(text);
     }
 
     let a = new Audio(url);
