@@ -68,8 +68,8 @@ class Cache {
             return;
         }
 
-        logger.log('Adding to cache. [key =' + key + ', type=' + type
-            + ', value=' + value + ']');
+        logger.log('Adding to cache. [key = ' + key + ', type = ' + type
+            + ', value = ' + value + ']');
 
         this.config.entries.push({key: key,
             type: type,
@@ -93,7 +93,7 @@ class Cache {
 
         for (const entry of this.config.entries) {
             if (entry.key == key && entry.service == this.serviceName) {
-                logger.log('Found in cache [value=' + entry.value + ']');
+                logger.log('Found in cache [value = ' + entry.value + ']');
                 return entry.value;
             }
         }
@@ -132,7 +132,7 @@ class Cache {
             let ttl = this.serviceConfig.ttl * 3600 * 1000;
 
             if (now - entry.date >= ttl) {
-                logger.log('Expiring entry [ value=' + entry.value + ' ]');
+                logger.log('Expiring entry [ value = ' + entry.value + ' ]');
 
                 if (FILE_TYPE == entry.type) {
                     fs.unlinkSync(entry.value);
@@ -151,7 +151,7 @@ class Cache {
      * @return {*} json
      */
     getConfig() {
-        logger.log('Loading cache config [ file=' +
+        logger.log('Loading cache config [ file = ' +
             this.serviceConfig.cacheConfig + ' ]');
 
         try {

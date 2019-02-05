@@ -18,6 +18,8 @@ const ModuleFactory = require('../../modules/moduleFactory');
 const moduleFactory = new ModuleFactory();
 
 const serviceConfig = config.jarvis.services.watson.text_to_speech;
+const language = config.jarvis.language;
+
 let animationModule = moduleFactory.getModule('speakanimations');
 
 /**
@@ -60,8 +62,10 @@ function process(singleAction, jarvis) {
     let ini = new Date().getTime();
     let fromCache;
 
+    let cacheKey = language + '-' + params.text;
+
     if (serviceConfig.useCache) {
-        fromCache = cache.getCacheValue(params.text);
+        fromCache = cache.getCacheValue(cacheKey);
 
         if (fromCache) {
             let timeTaken = new Date().getTime() - ini;
@@ -83,7 +87,7 @@ function process(singleAction, jarvis) {
             player.play(AUDIO_FILE, () => afterSpeak(jarvis));
 
             if (serviceConfig.useCache) {
-                cache.putFileCacheValue(params.text, AUDIO_FILE);
+                cache.putFileCacheValue(cacheKey, AUDIO_FILE);
             }
         });
 }

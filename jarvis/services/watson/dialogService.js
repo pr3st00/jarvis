@@ -9,6 +9,7 @@ const Cache = require('../cache');
 const cache = new Cache('DIALOG');
 
 const serviceConfig = config.jarvis.services.watson.dialog;
+const language = config.jarvis.language;
 
 /**
  * Calls waston assistant and receives an action back
@@ -21,9 +22,10 @@ function process(text, callback) {
 
     let ini = new Date().getTime();
     let fromCache;
+    let cacheKey = language + '-' + text;
 
     if (serviceConfig.useCache) {
-        fromCache = cache.getCacheValue(text);
+        fromCache = cache.getCacheValue(cacheKey);
 
         if (fromCache) {
             let timeTaken = new Date().getTime() - ini;
@@ -36,7 +38,7 @@ function process(text, callback) {
     }
 
     request.post({
-        url: serviceConfig.url,
+        url: serviceConfig.url + '?lang=' + language,
         json: {
             'parameter': text,
         },
@@ -51,7 +53,8 @@ function process(text, callback) {
             } else {
                 if (serviceConfig.useCache) {
                     if (!containsNonCacheableCode(body)) {
-                        cache.putStringCacheValue(text, JSON.stringify(body));
+                        cache.putStringCacheValue(cacheKey,
+                            JSON.stringify(body));
                     }
                 }
 
