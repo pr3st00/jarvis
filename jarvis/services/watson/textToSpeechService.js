@@ -62,7 +62,7 @@ function process(singleAction, jarvis) {
     let ini = new Date().getTime();
     let fromCache;
 
-    let cacheKey = language + '-' + params.text;
+    let cacheKey = language + '|' + params.text;
 
     if (serviceConfig.useCache) {
         fromCache = cache.getCacheValue(cacheKey);

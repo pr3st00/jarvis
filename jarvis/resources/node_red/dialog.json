@@ -93,8 +93,8 @@
         ],
         "out": [
             {
-                "x": 909.5,
-                "y": 385.20001220703125,
+                "x": 881.5,
+                "y": 382.20001220703125,
                 "wires": [
                     {
                         "id": "968fdd35.16f8f",
@@ -114,7 +114,7 @@
         "url": "",
         "tls": "",
         "x": 231.49998474121094,
-        "y": 383.20001220703125,
+        "y": 382.20001220703125,
         "wires": [
             [
                 "cd0d43a8.8936b"
@@ -126,11 +126,11 @@
         "type": "function",
         "z": "cad8295e.f34d68",
         "name": "Get Extract",
-        "func": "var results = msg.payload;\n\nmsg.payload = results[0];\n\nreturn msg;",
+        "func": "var results = msg.payload;\n\nmsg.payload = results[0];\n\nnode.warn(\"Wikipedia response is: [\" + msg.payload + \"]\");\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 567.5,
-        "y": 383.20001220703125,
+        "x": 573.5,
+        "y": 382.20001220703125,
         "wires": [
             [
                 "968fdd35.16f8f"
@@ -142,11 +142,11 @@
         "type": "function",
         "z": "cad8295e.f34d68",
         "name": "Set url      ",
-        "func": "// base url\nvar url = \"https://pt.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro&exsentences=1&titles=\";\nvar text = msg.payload.trim();\n\nvar textToSearch;\n\nnode.warn(\"Original question was: \" + text);\n\ntext = text.replace(/\\so$/ig,'');\n\nvar regex = /\\s+/;\nvar matches = text.split(regex);\n\nif (matches)\n{\n    var originalText = matches[matches.length-1];\n    textToSearch = originalText.replace(/[^A-Z]/ig,'');\n}\n\nnode.warn(\"Text to be searched is \" + textToSearch);\nmsg.url = url+textToSearch;\n\nnode.warn(\"URL is : \" + msg.url);\n\nreturn msg;",
+        "func": "var lang = msg.language;\n\nvar baseUrl = { \n    ptbr : \"https://pt.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro&exsentences=1&titles=\",\n    en: \"https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro&exsentences=1&titles=\"\n};\n\n// base url\nvar url = baseUrl[lang];\nvar text = msg.payload.trim();\n\nvar textToSearch;\n\nnode.warn(\"Original question was: [\" + text + \"]\");\n\ntext = text.replace(/\\so$/ig,'');\n\nvar regex = /\\s+/;\nvar matches = text.split(regex);\n\nif (matches)\n{\n    var originalText = matches[matches.length-1];\n    textToSearch = originalText.replace(/[^A-Z]/ig,'');\n}\n\nnode.warn(\"Text to be searched is [\" + textToSearch + \"]\");\nmsg.url = url+textToSearch;\n\nnode.warn(\"URL is [\" + msg.url + \"]\");\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 85.49998474121094,
-        "y": 383.5999755859375,
+        "y": 382.5999755859375,
         "wires": [
             [
                 "672b400f.f30e4"
@@ -161,8 +161,8 @@
         "func": "var response = msg.payload;\n\nif (response)\n{\n    response=response.replace(/<[^>]*>?/g,'');\n    response=response.replace(/\\([^)]*\\)?/g,'');\n    response=response.replace(/\\n/g,'');\n    \n    msg.payload = response;\n}\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 752.5,
-        "y": 384.60003662109375,
+        "x": 749.5,
+        "y": 381.60003662109375,
         "wires": [
             []
         ]
@@ -174,7 +174,7 @@
         "expression": "$.query.pages.*.extract",
         "split": false,
         "name": "Get extract",
-        "x": 387.5,
+        "x": 396.5,
         "y": 382,
         "wires": [
             [
@@ -200,48 +200,7 @@
         "y": 137.1999969482422,
         "wires": [
             [
-                "2447f6e2.a4fd42"
-            ]
-        ]
-    },
-    {
-        "id": "2447f6e2.a4fd42",
-        "type": "change",
-        "z": "44b04325.43d55c",
-        "name": "Set Payload",
-        "rules": [
-            {
-                "t": "set",
-                "p": "payload",
-                "pt": "msg",
-                "to": "req.query.text",
-                "tot": "msg"
-            },
-            {
-                "t": "set",
-                "p": "question",
-                "pt": "flow",
-                "to": "req.query.text",
-                "tot": "msg"
-            },
-            {
-                "t": "set",
-                "p": "cachekey",
-                "pt": "msg",
-                "to": "req.query.text",
-                "tot": "msg"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 316.20001220703125,
-        "y": 137.19998168945312,
-        "wires": [
-            [
-                "20b69877.a959a"
+                "81b2b702.85b77"
             ]
         ]
     },
@@ -253,8 +212,8 @@
         "func": "var intent;\nvar text;\nvar action;\nvar entity;\n\nif (msg.payload.intents[0])\n{\n    intent = msg.payload.intents[0].intent;\n    node.status({fill: \"green\", shape: \"dot\", text: \"Has intents\"});\n}\n\nif (msg.payload.entities[0])\n{\n    entity = msg.payload.entities[0].entity;\n    node.status({fill: \"green\", shape: \"dot\", text: \"Has entities\"});\n}\n\nvar text   = msg.payload.output.text[0];\n\naction = intent;\n\nnode.warn(\"Intent is \" + intent);\nnode.warn(\"Entity is \" + entity);\nnode.warn(\"Action is \" + action);\nnode.warn(\"Text   is \" + text);\n\nflow.set(\"action\", action);\nflow.set(\"intent\", intent);\nflow.set(\"entity\", entity);\nflow.set(\"text\", text);\n\nmsg.payload = {\n  \"selector\": {\n    \"code\": action\n  },\n  \"fields\": [\n  ],\n  \"sort\": [\n    {\n      \"_id\": \"asc\"\n    }\n  ]\n}\n\nsetTimeout(() => { node.status({});}, 2000);\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 875.199951171875,
-        "y": 337.20001220703125,
+        "x": 710,
+        "y": 360,
         "wires": [
             [
                 "9fa7c139.3cbbb"
@@ -279,7 +238,7 @@
         "type": "function",
         "z": "44b04325.43d55c",
         "name": "Build Response",
-        "func": "var intent = flow.get(\"intent\");\nvar action = flow.get(\"action\");\nvar text   = flow.get(\"text\");\nvar entity = flow.get(\"entity\");\nvar language = flow.get(\"language\");\nvar hasAction = false;\n\n// MQTT Credentials\nvar mqtt = {};\n        \nmqtt.url = \"tcp://kj78sj.messaging.internetofthings.ibmcloud.com:1883\";\nmqtt.user = \"a-kj78sj-4fw1gsxso6\";\nmqtt.pass = \"t1m@Y5VTvEXJz7hljt\";\nmqtt.clientId = \"a:kj78sj:jarvis\";\nmqtt.clientId2 = \"a:kj78sj:jarvis2\";\n\n// Default language\nif (!language)\n{\n    language = \"en\";\n}\n\nnode.warn(\"Using language \" + language);\n\n// Default Messages\nvar defaultMessages = {\n    ptbr : {\n        addprinterqueue : {\n            success : \" adicionado com sucesso.\"\n        },\n        cleanprinterqueue : {\n            success : \"Fila impressao limpa.\"\n        },\n        startprinting : {\n            success : \"Impressao iniciada.\"\n        }\n    },\n    en : {\n        addprinterqueue : {\n            success : \" sucessfully added.\"\n        },\n        cleanprinterqueue : {\n            success : \"Printer queue is now clean.\"\n        },\n        startprinting : {\n            success : \"Printer initiated.\"\n        }\n    }\n};\n\nvar messages = defaultMessages[language];\n\nvar response = '{ \"actions\": [ ';\n\nif (entity == \"netflix\") {\n    action = \"netflix\";\n}\n\nif (entity == \"Tv\" && intent == \"desligar\") {\n    action = \"turnofftv\"\n}\n\nif (action)\n{\n    if (action == \"iniciarapresentacao\")\n    {\n        mqtt.topic = \"iot-2/type/Raspberry/id/Jarvis/cmd/startPresentation/fmt/json\";\n\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttevent\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"{ d: { value : 10 } }\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId+'\"],\"synchronous\":true }';\n        text = \"NONE\";\n    }\n    else if (action == \"tocarmusica\")\n    {\n        hasAction = true;\n        var searchString = text.replace(/tocar?/g, '');\n        searchString = searchString.replace(/uma?/g, '');\n        searchString = searchString.replace(/ /g, '');\n        \n        // response +='{\"code\": \"' + action + '\",\"action\":\"PLAY\",\"parameters\":[\"ok, procurando.\"],\"synchronous\":true }, ';\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"music\",\"' + searchString + '\"],\"synchronous\":true }';\n        text = \"NONE\";\n    }\n    else if (action == \"oquevoceve\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"imagerecognition\"],\"synchronous\":true }';\n        text = \"NONE\";\n    }\n\n    else if (action == \"adicionarfilaimpressao\")\n    {\n        hasAction = true;\n        text = text.replace(/\\so\\s*$/ig,'');\n        text = text.replace(/\\s+$/ig,'');\n\n        var name2;\n        var regex = /\\s+/;\n        var matches = text.split(regex);\n        \n        if (matches)\n        {\n            var originalText = matches[matches.length-1];\n\n            name2 = originalText.replace(new RegExp('[ÁÀÂÃ]','gi'), 'a');\n            name2 = name2.replace(new RegExp('[ÉÈÊ]','gi'), 'e');\n            name2 = name2.replace(new RegExp('[ÍÌÎ]','gi'), 'i');\n            name2 = name2.replace(new RegExp('[ÓÒÔÕ]','gi'), 'o');\n            name2 = name2.replace(new RegExp('[ÚÙÛ]','gi'), 'u');\n            name2 = name2.replace(new RegExp('[Ç]','gi'), 'c');\n            \n            name2 = name2.replace(/[^A-Z]/ig,'');\n            \n            node.warn(\"Final name for printing is \" + name2);\n        }\n\n        mqtt.topic = \"iot-2/type/Raspberry/id/Jarvis/cmd/addToPrinterQueue/fmt/json\";\n\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttevent\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"' + name2 + '\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId+'\"],\"synchronous\":true }';\n        text = name2 + messages.addprinterqueue.success;\n    }\n    else if (action == \"listarfilaimpressao\")\n    {\n        hasAction = true;\n        \n        mqtt.topic = \"iot-2/type/Raspberry/id/Jarvis/cmd/listPrintQueue/fmt/json\";\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttpull\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId+'\"],\"synchronous\":true }, ';\n        \n        mqtt.topic = \"iot-2/type/Printer/id/Printer/cmd/listPrintQueue/fmt/json\";\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttevent\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"list\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId2+'\"],\"synchronous\":true }';\n        \n        text = \"NONE\";\n    }\n    else if (action == \"limparfilaimpressao\")\n    {\n        mqtt.topic = \"iot-2/type/Raspberry/id/Jarvis/cmd/clearPrintQueue/fmt/json\";\n\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttevent\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"clear\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId+'\"],\"synchronous\":true }';\n        text = messages.cleanprinterqueue.success;\n    }    \n    else if (action == \"iniciarimpressao\")\n    {\n        mqtt.topic = \"iot-2/type/Raspberry/id/Jarvis/cmd/startPrinter/fmt/json\";\n\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttevent\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"start\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId+'\"],\"synchronous\":true }';\n        text = messages.startprinting.success;\n    }\n    else if (action == \"tocarvideo\")\n    {\n        hasAction = true;\n        var searchString = text.replace(/assisti.?/g, '');\n        searchString = searchString.replace(/v.deo/g, '');\n        searchString = searchString.replace(/uma?/g, '');\n        searchString = searchString.replace(/ /g, '');\n    \n        response +='{\"code\": \"' + action + '\",\"action\":\"PLAY\",\"parameters\":[\"ok, procurando.\"],\"synchronous\":true }, ';    \n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"video\",\"' + searchString + '\"],\"synchronous\":true }';\n        text = \"NONE\";\n    }\n    else if (action == \"piada\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"joke\"],\"synchronous\":true }';\n    }\n    else if (action == \"listar_agenda\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"reminder\",\"LIST\"],\"synchronous\":true }';\n    }    \n    else if (action == \"noticias\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"news\"],\"synchronous\":true }';\n    }\n    else if (action == \"previsaotempo\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"weather\"],\"synchronous\":true }';\n    }\n    else if (action == \"tirarfoto\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"PLAY\",\"parameters\":[\"diga x!\"],\"synchronous\":true }, ';\n        response +='{\"code\": \"' + action + '\",\"action\":\"EXECUTE\",\"parameters\":[\"/home/pi/jarvis/jarvis/scripts/webcam.sh\"],\"synchronous\":true }';\n    }\n    else if (action == \"netflix\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"tv\", \"netflix\"],\"synchronous\":true }';\n    }\n    else if (action == \"turnofftv\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"tv\", \"turnoff\"],\"synchronous\":true }';\n    }\n    else if (action == \"horas\")\n    {\n        hasAction = true;\n        var d = new Date();\n        var offset = -2;\n        \n        var utc = d.getTime() + (d.getTimezoneOffset() * 60000);\n\n        var date = new Date(utc + (3600000*offset));\n        var minutes = date.getMinutes();\n        var hour = date.getHours();\n        \n        var timeText = \"Sao \" + hour + (hour > 1 ? \" horas\" : \" hora\") + \" e \" + minutes + (minutes > 1 ? \" minutos\" : \" minuto\") + \"!\";\n        \n        response +='{\"code\": \"' + action + '\",\"action\":\"PLAY\",\"parameters\":[\"' + timeText + '\"],\"synchronous\":true } ';\n    }\n    else if (action == \"filmar\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"EXECUTE\",\"parameters\":[\"/home/pi/jarvis/jarvis/scripts/streamToYoutube.sh\"],\"synchronous\":true }';\n    }\n\n}\n\nif (text != \"NONE\")\n{\n    if (hasAction)\n    {\n        response += \",\";\n    }\n    \n    response += '{    \"code\": \"PLAY_TEXT\",\t\"action\": \"PLAY\",\t\"parameters\": [ \"' + text + '\"\t],      \"synchronous\": true  } ';\n}\n\nif (action)\n{\n    if (action == \"STOP\")\n    {\n        hasAction = true;\n        response +=', {\"code\": \"' + action + '\",\"action\":\"STOP\",\"synchronous\":true }';\n    }\n}\n\nresponse += \" ] } \"\n\nmsg.payload = response;\n\nif (action)\n{\n    node.status({fill: \"green\", form: \"dot\", text: \"Action is \" + action});\n    setTimeout(() => { node.status({}) }, 2000);\n}\n\nreturn msg;",
+        "func": "var intent = flow.get(\"intent\");\nvar action = flow.get(\"action\");\nvar text   = flow.get(\"text\");\nvar entity = flow.get(\"entity\");\nvar language = flow.get(\"language\");\nvar hasAction = false;\n\n// MQTT Credentials\nvar mqtt = {};\n        \nmqtt.url = \"tcp://kj78sj.messaging.internetofthings.ibmcloud.com:1883\";\nmqtt.user = \"a-kj78sj-4fw1gsxso6\";\nmqtt.pass = \"t1m@Y5VTvEXJz7hljt\";\nmqtt.clientId = \"a:kj78sj:jarvis\";\nmqtt.clientId2 = \"a:kj78sj:jarvis2\";\n\n// Default language\nif (!language)\n{\n    language = \"pt-br\";\n}\n\nnode.warn(\"Using language \" + language);\n\n// Default Messages\nvar defaultMessages = {\n    \"pt-br\" : {\n        addprinterqueue : {\n            success : \" adicionado com sucesso.\"\n        },\n        cleanprinterqueue : {\n            success : \"Fila impressao limpa.\"\n        },\n        startprinting : {\n            success : \"Impressao iniciada.\"\n        }\n    },\n    \"en-us\" : {\n        addprinterqueue : {\n            success : \" successfully added.\"\n        },\n        cleanprinterqueue : {\n            success : \"Printer queue is now clean.\"\n        },\n        startprinting : {\n            success : \"Printer initiated.\"\n        }\n    }\n};\n\nvar messages = defaultMessages[language];\n\nvar response = '{ \"actions\": [ ';\n\nif (entity == \"netflix\") {\n    action = \"netflix\";\n}\n\nif (entity == \"Tv\" && intent == \"desligar\") {\n    action = \"turnofftv\"\n}\n\nif (action)\n{\n    if (action == \"iniciarapresentacao\")\n    {\n        mqtt.topic = \"iot-2/type/Raspberry/id/Jarvis/cmd/startPresentation/fmt/json\";\n\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttevent\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"{ d: { value : 10 } }\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId+'\"],\"synchronous\":true }';\n        text = \"NONE\";\n    }\n    else if (action == \"tocarmusica\")\n    {\n        hasAction = true;\n        var searchString = text.replace(/tocar?/g, '');\n        searchString = searchString.replace(/uma?/g, '');\n        searchString = searchString.replace(/ /g, '');\n        \n        // response +='{\"code\": \"' + action + '\",\"action\":\"PLAY\",\"parameters\":[\"ok, procurando.\"],\"synchronous\":true }, ';\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"music\",\"' + searchString + '\"],\"synchronous\":true }';\n        text = \"NONE\";\n    }\n    else if (action == \"oquevoceve\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"imagerecognition\"],\"synchronous\":true }';\n        text = \"NONE\";\n    }\n\n    else if (action == \"adicionarfilaimpressao\")\n    {\n        hasAction = true;\n        text = text.replace(/\\so\\s*$/ig,'');\n        text = text.replace(/\\s+$/ig,'');\n\n        var name2;\n        var regex = /\\s+/;\n        var matches = text.split(regex);\n        \n        if (matches)\n        {\n            var originalText = matches[matches.length-1];\n\n            name2 = originalText.replace(new RegExp('[ÁÀÂÃ]','gi'), 'a');\n            name2 = name2.replace(new RegExp('[ÉÈÊ]','gi'), 'e');\n            name2 = name2.replace(new RegExp('[ÍÌÎ]','gi'), 'i');\n            name2 = name2.replace(new RegExp('[ÓÒÔÕ]','gi'), 'o');\n            name2 = name2.replace(new RegExp('[ÚÙÛ]','gi'), 'u');\n            name2 = name2.replace(new RegExp('[Ç]','gi'), 'c');\n            \n            name2 = name2.replace(/[^A-Z]/ig,'');\n            \n            node.warn(\"Final name for printing is \" + name2);\n        }\n\n        mqtt.topic = \"iot-2/type/Raspberry/id/Jarvis/cmd/addToPrinterQueue/fmt/json\";\n\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttevent\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"' + name2 + '\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId+'\"],\"synchronous\":true }';\n        text = name2 + messages.addprinterqueue.success;\n    }\n    else if (action == \"listarfilaimpressao\")\n    {\n        hasAction = true;\n        \n        mqtt.topic = \"iot-2/type/Raspberry/id/Jarvis/cmd/listPrintQueue/fmt/json\";\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttpull\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId+'\"],\"synchronous\":true }, ';\n        \n        mqtt.topic = \"iot-2/type/Printer/id/Printer/cmd/listPrintQueue/fmt/json\";\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttevent\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"list\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId2+'\"],\"synchronous\":true }';\n        \n        text = \"NONE\";\n    }\n    else if (action == \"limparfilaimpressao\")\n    {\n        mqtt.topic = \"iot-2/type/Raspberry/id/Jarvis/cmd/clearPrintQueue/fmt/json\";\n\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttevent\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"clear\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId+'\"],\"synchronous\":true }';\n        text = messages.cleanprinterqueue.success;\n    }    \n    else if (action == \"iniciarimpressao\")\n    {\n        mqtt.topic = \"iot-2/type/Raspberry/id/Jarvis/cmd/startPrinter/fmt/json\";\n\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"mqttevent\",\"' + mqtt.url + '\",\"' + mqtt.topic +'\",\"start\",\"'+mqtt.user+'\",\"'+mqtt.pass+'\",\"'+mqtt.clientId+'\"],\"synchronous\":true }';\n        text = messages.startprinting.success;\n    }\n    else if (action == \"tocarvideo\")\n    {\n        hasAction = true;\n        var searchString = text.replace(/assisti.?/g, '');\n        searchString = searchString.replace(/v.deo/g, '');\n        searchString = searchString.replace(/uma?/g, '');\n        searchString = searchString.replace(/ /g, '');\n    \n        response +='{\"code\": \"' + action + '\",\"action\":\"PLAY\",\"parameters\":[\"ok, procurando.\"],\"synchronous\":true }, ';    \n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"video\",\"' + searchString + '\"],\"synchronous\":true }';\n        text = \"NONE\";\n    }\n    else if (action == \"piada\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"joke\"],\"synchronous\":true }';\n    }\n    else if (action == \"listar_agenda\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"reminder\",\"LIST\"],\"synchronous\":true }';\n    }    \n    else if (action == \"noticias\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"news\"],\"synchronous\":true }';\n    }\n    else if (action == \"previsaotempo\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"weather\"],\"synchronous\":true }';\n    }\n    else if (action == \"tirarfoto\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"PLAY\",\"parameters\":[\"diga x!\"],\"synchronous\":true }, ';\n        response +='{\"code\": \"' + action + '\",\"action\":\"EXECUTE\",\"parameters\":[\"/home/pi/jarvis/jarvis/scripts/webcam.sh\"],\"synchronous\":true }';\n    }\n    else if (action == \"netflix\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"tv\", \"netflix\"],\"synchronous\":true }';\n    }\n    else if (action == \"turnofftv\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"MODULE\",\"parameters\":[\"tv\", \"turnoff\"],\"synchronous\":true }';\n    }\n    else if (action == \"horas\")\n    {\n        hasAction = true;\n        var d = new Date();\n        var offset = -2;\n        \n        var utc = d.getTime() + (d.getTimezoneOffset() * 60000);\n\n        var date = new Date(utc + (3600000*offset));\n        var minutes = date.getMinutes();\n        var hour = date.getHours();\n        \n        var timeText = \"Sao \" + hour + (hour > 1 ? \" horas\" : \" hora\") + \" e \" + minutes + (minutes > 1 ? \" minutos\" : \" minuto\") + \"!\";\n        \n        response +='{\"code\": \"' + action + '\",\"action\":\"PLAY\",\"parameters\":[\"' + timeText + '\"],\"synchronous\":true } ';\n    }\n    else if (action == \"filmar\")\n    {\n        hasAction = true;\n        response +='{\"code\": \"' + action + '\",\"action\":\"EXECUTE\",\"parameters\":[\"/home/pi/jarvis/jarvis/scripts/streamToYoutube.sh\"],\"synchronous\":true }';\n    }\n\n}\n\nif (text != \"NONE\")\n{\n    if (hasAction)\n    {\n        response += \",\";\n    }\n    \n    response += '{    \"code\": \"PLAY_TEXT\",\t\"action\": \"PLAY\",\t\"parameters\": [ \"' + text + '\"\t],      \"synchronous\": true  } ';\n}\n\nif (action)\n{\n    if (action == \"STOP\")\n    {\n        hasAction = true;\n        response +=', {\"code\": \"' + action + '\",\"action\":\"STOP\",\"synchronous\":true }';\n    }\n}\n\nresponse += \" ] } \"\n\nmsg.payload = response;\n\nif (action)\n{\n    node.status({fill: \"green\", form: \"dot\", text: \"Action is \" + action});\n    setTimeout(() => { node.status({}) }, 2000);\n}\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 1042.5943603515625,
@@ -311,12 +270,12 @@
         "id": "81b2b702.85b77",
         "type": "function",
         "z": "44b04325.43d55c",
-        "name": "Set Payload",
-        "func": "var text = msg.req.body.parameter;\n\nmsg.payload = text;\nmsg.cachekey = text;\n\nflow.set(\"question\", text);\n\nreturn msg;",
+        "name": "Set Data",
+        "func": "const DEFAULT_LANGUAGE = \"pt-br\";\n\nvar text = msg.req.body.parameter ? msg.req.body.parameter : msg.req.query.text;\nvar lang = msg.req.query.lang ? msg.req.query.lang : DEFAULT_LANGUAGE;\n\nmsg.payload = text;\nmsg.cachekey = lang + \"|\" + text;\n\nflow.set(\"question\", text);\nflow.set(\"language\", lang);\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "x": 316.70001220703125,
-        "y": 215.99998474121094,
+        "x": 332,
+        "y": 173,
         "wires": [
             [
                 "20b69877.a959a"
@@ -328,7 +287,7 @@
         "type": "comment",
         "z": "44b04325.43d55c",
         "name": "JARVIS main dialog flow. Can identify texts and actions.",
-        "info": "### Jarvis main dialog",
+        "info": "### Jarvis main dialog\n### V3",
         "x": 227.09999084472656,
         "y": 38.79998779296875,
         "wires": []
@@ -388,6 +347,13 @@
                 "pt": "msg",
                 "to": "question",
                 "tot": "flow"
+            },
+            {
+                "t": "set",
+                "p": "language",
+                "pt": "msg",
+                "to": "language",
+                "tot": "flow"
             }
         ],
         "action": "",
@@ -408,7 +374,7 @@
         "type": "function",
         "z": "44b04325.43d55c",
         "name": "Set Response",
-        "func": "var response = \"Nao encontrei essa informacao.\";\n\nif (msg.payload)\n{\n    node.status({fill: \"green\", shape: \"dot\", text: \"Response found!\"});\n\n    if (\n        !msg.payload.match(/may refer to:/) &&\n        !msg.payload.match(/This is a redirect from/)\n    )\n    {\n        response = msg.payload;\n    }\n}\nelse\n{\n    node.status({fill: \"red\", shape: \"dot\", text: \"No Response found!\"});\n}\n\nflow.set(\"text\", response);\n\nsetTimeout(() => { node.status({});}, 2000);\n\nreturn msg;",
+        "func": "var language = flow.get(\"language\");\n\nvar response = { \n    ptbr : \"Nao encontrei essa informacao.\",\n    en: \"Sorry, I have found no information about it\"\n};\n\nif (msg.payload)\n{\n    node.status({fill: \"green\", shape: \"dot\", text: \"Response found!\"});\n\n    if (\n        !msg.payload.match(/may refer to:/) &&\n        !msg.payload.match(/This is a redirect from/)\n    )\n    {\n        response[language] = msg.payload;\n    }\n}\nelse\n{\n    node.status({fill: \"red\", shape: \"dot\", text: \"No Response found!\"});\n}\n\nflow.set(\"text\", response[language]);\n\nsetTimeout(() => { node.status({});}, 2000);\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 422.28892517089844,
@@ -512,7 +478,7 @@
         "type": "function",
         "z": "44b04325.43d55c",
         "name": "Set Response",
-        "func": "var response = \"Nao encontrei essa informacao.\";\n\nif (msg.payload)\n{\n    node.status({fill: \"green\", shape: \"dot\", text: \"Response found!\"});\n\n    if (\n        !msg.payload.match(/may refer to:/) &&\n        !msg.payload.match(/This is a redirect from/)\n    )\n    {\n        response = msg.payload;\n    }\n}\nelse\n{\n    node.status({fill: \"red\", shape: \"dot\", text: \"No Response found!\"});\n}\n\nflow.set(\"text\", response);\n\nsetTimeout(() => { node.status({});}, 2000);\n\nreturn msg;",
+        "func": "var language = flow.get(\"language\");\n\nvar response = { \n    ptbr : \"Nao encontrei essa informacao.\",\n    en: \"Sorry, I have found no information about it\"\n};\n\n\nif (msg.payload)\n{\n    node.status({fill: \"green\", shape: \"dot\", text: \"Response found!\"});\n\n    if (\n        !msg.payload.match(/may refer to:/) &&\n        !msg.payload.match(/This is a redirect from/)\n    )\n    {\n        response[language] = msg.payload;\n    }\n}\nelse\n{\n    node.status({fill: \"red\", shape: \"dot\", text: \"No Response found!\"});\n}\n\nflow.set(\"text\", response[language]);\n\nsetTimeout(() => { node.status({});}, 2000);\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 906.3889617919922,
@@ -549,8 +515,8 @@
         "service-endpoint": "",
         "timeout": "",
         "optout-learning": false,
-        "x": 623.2000122070312,
-        "y": 316.1999816894531,
+        "x": 458.00006103515625,
+        "y": 338.9999694824219,
         "wires": [
             [
                 "864273a8.e2093"
@@ -576,7 +542,7 @@
                 "808c902d.c7d7b8"
             ],
             [
-                "7b1869c6.aa5f"
+                "70752b07.6d211c"
             ]
         ],
         "inputLabels": [
@@ -636,7 +602,7 @@
         "type": "debug",
         "z": "44b04325.43d55c",
         "name": "Debug exception",
-        "active": false,
+        "active": true,
         "console": "false",
         "complete": "true",
         "x": 1001.5,
@@ -656,8 +622,8 @@
         "service-endpoint": "https://gateway.watsonplatform.net/assistant/api",
         "timeout": "",
         "optout-learning": false,
-        "x": 621.5,
-        "y": 363,
+        "x": 456.300048828125,
+        "y": 385.79998779296875,
         "wires": [
             [
                 "864273a8.e2093"
@@ -665,55 +631,26 @@
         ]
     },
     {
-        "id": "7b1869c6.aa5f",
-        "type": "change",
-        "z": "44b04325.43d55c",
-        "name": "Set language Here",
-        "rules": [
-            {
-                "t": "set",
-                "p": "language",
-                "pt": "flow",
-                "to": "en",
-                "tot": "str"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 216.5,
-        "y": 345,
-        "wires": [
-            [
-                "70752b07.6d211c"
-            ]
-        ]
-    },
-    {
         "id": "70752b07.6d211c",
         "type": "switch",
         "z": "44b04325.43d55c",
-        "name": "",
+        "name": "Language",
         "property": "language",
         "propertyType": "flow",
         "rules": [
             {
                 "t": "eq",
-                "v": "ptbr",
+                "v": "pt-br",
                 "vt": "str"
             },
             {
-                "t": "eq",
-                "v": "en",
-                "vt": "str"
+                "t": "else"
             }
         ],
         "checkall": "true",
         "outputs": 2,
-        "x": 403.5,
-        "y": 345,
+        "x": 230,
+        "y": 361,
         "wires": [
             [
                 "dcb00f0e.fe1e2"

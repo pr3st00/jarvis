@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
 /* eslint-disable valid-jsdoc */
 
+const DEFAULT_LANGUAGE = 'pt-br';
+
 /**
  * Logs
  *
@@ -108,11 +110,15 @@ function sendAudioToJarvis(element) {
 /**
  *
  * @param {*} text
+ * @param {*} lang
  */
-function say(text) {
+function say(text, lang) {
     let url;
     let apiKeys = ['f716f782b498444c95b14a63fe05a917', '0c71f8bb93674f98bfc70e930d26c79b'];
-    let lang = 'en-us';
+
+    if (!lang) {
+        lang = DEFAULT_LANGUAGE;
+    };
 
     if (text.startsWith('http')) {
         url = text;

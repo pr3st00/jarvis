@@ -35,6 +35,20 @@
         });
       });
 
+      var language;
+
+      $.ajax({
+        url: '/api/language',
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'GET',
+        success: function (data) {
+            language = data.language;
+            console.log('Language is : ' + language);
+        },
+      });
+
       function updateStatus(msg, play, append) {
         console.log("Received :" + msg);
         var event = JSON.parse(msg);
@@ -44,7 +58,7 @@
             : "> " + event.text;
           $("#note_input").val(text);
           if (play) {
-            say(event.text);
+            say(event.text, language);
           }
         }
         if (event.status) {

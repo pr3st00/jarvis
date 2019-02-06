@@ -22,7 +22,7 @@ function process(text, callback) {
 
     let ini = new Date().getTime();
     let fromCache;
-    let cacheKey = language + '-' + text;
+    let cacheKey = language + '|' + text;
 
     if (serviceConfig.useCache) {
         fromCache = cache.getCacheValue(cacheKey);
