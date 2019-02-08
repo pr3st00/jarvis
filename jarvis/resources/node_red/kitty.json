@@ -1,0 +1,378 @@
+[
+    {
+        "id": "a2e1b387.8846d8",
+        "type": "tab",
+        "label": "Kitty",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "ebb09d66.43882",
+        "type": "inject",
+        "z": "a2e1b387.8846d8",
+        "name": "ON",
+        "topic": "",
+        "payload": "1",
+        "payloadType": "num",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 130,
+        "y": 240,
+        "wires": [
+            [
+                "36b584b1.b00894"
+            ]
+        ]
+    },
+    {
+        "id": "af9eec9b.af9078",
+        "type": "inject",
+        "z": "a2e1b387.8846d8",
+        "name": "OFF",
+        "topic": "",
+        "payload": "0",
+        "payloadType": "num",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 130,
+        "y": 320,
+        "wires": [
+            [
+                "87a8f814.36b108"
+            ]
+        ]
+    },
+    {
+        "id": "6fb34b15.fc491c",
+        "type": "rpi-gpio out",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "pin": "7",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 1020,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "8f1d1d69.04b9d8",
+        "type": "rpi-gpio out",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "pin": "11",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 1020,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "b60dd920.9ff4d",
+        "type": "rpi-gpio out",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "pin": "12",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 1020,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "6aa3068f.5a54f",
+        "type": "rpi-gpio out",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "pin": "13",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 1020,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "661e3bf7.29f774",
+        "type": "rpi-gpio out",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "pin": "15",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 1020,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "448cd808.5b78a",
+        "type": "rpi-gpio out",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "pin": "16",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 1020,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "dbc4c0c6.bb0638",
+        "type": "rpi-gpio out",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "pin": "18",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 1020,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "cb9ddecc.906498",
+        "type": "rpi-gpio out",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "pin": "19",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 1020,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "6323aedd.34dd3",
+        "type": "function",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "func": "node.status({text:flow.get(\"number\")});\n\ninput = flow.get(\"number\");\n\nvar msg1 = { payload:(input^1) === 0 ? 1:0 };\nvar msg2 = { payload:(input^2) === 0? 1:0 };\nvar msg3 = { payload:(input^4) === 0? 1:0 };\nvar msg4 = { payload:(input^8) === 0? 1:0 };\nvar msg5 = { payload:(input^16) === 0? 1:0 };\nvar msg6 = { payload:(input^32) === 0? 1:0 };\nvar msg7 = { payload:(input^64) === 0? 1:0 };\nvar msg8 = { payload:(input^128) === 0? 1:0 };\nvar msg9 = { payload:(input^256) === 0? 1:0 };\nvar msg10 = { payload:(input^512) === 0? 1:0 };\n\nif(input == 512)\n{\n    flow.set(\"direction\", 1/2);\n}\nelse if(input == 1)\n{\n    flow.set(\"direction\", 2);\n}\n\nflow.set(\"number\", input * flow.get(\"direction\"));\n\n\nreturn [ msg1, msg2, msg3, msg4, msg5, msg6, msg7, msg8,msg9, msg10 ];",
+        "outputs": "10",
+        "noerr": 0,
+        "x": 790,
+        "y": 280,
+        "wires": [
+            [
+                "6fb34b15.fc491c"
+            ],
+            [
+                "8f1d1d69.04b9d8"
+            ],
+            [
+                "b60dd920.9ff4d"
+            ],
+            [
+                "6aa3068f.5a54f"
+            ],
+            [
+                "661e3bf7.29f774"
+            ],
+            [
+                "448cd808.5b78a"
+            ],
+            [
+                "dbc4c0c6.bb0638"
+            ],
+            [
+                "cb9ddecc.906498"
+            ],
+            [
+                "181b9099.b65e47"
+            ],
+            [
+                "6d710aed.4dce4c"
+            ]
+        ]
+    },
+    {
+        "id": "1e0d3a02.e62ea6",
+        "type": "change",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "number",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 440,
+        "y": 280,
+        "wires": [
+            [
+                "491926b5.759168",
+                "d2b0a4f4.11df"
+            ]
+        ]
+    },
+    {
+        "id": "491926b5.759168",
+        "type": "trigger",
+        "z": "a2e1b387.8846d8",
+        "op1": "",
+        "op2": "",
+        "op1type": "pay",
+        "op2type": "pay",
+        "duration": "-50",
+        "extend": false,
+        "units": "ms",
+        "reset": "",
+        "name": "",
+        "x": 630,
+        "y": 280,
+        "wires": [
+            [
+                "6323aedd.34dd3"
+            ]
+        ]
+    },
+    {
+        "id": "2ae7beed.5951aa",
+        "type": "http in",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "url": "/mouth/on",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 200,
+        "wires": [
+            [
+                "36b584b1.b00894"
+            ]
+        ]
+    },
+    {
+        "id": "36b584b1.b00894",
+        "type": "change",
+        "z": "a2e1b387.8846d8",
+        "name": "ON",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "1",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 250,
+        "y": 220,
+        "wires": [
+            [
+                "1e0d3a02.e62ea6"
+            ]
+        ]
+    },
+    {
+        "id": "87a8f814.36b108",
+        "type": "change",
+        "z": "a2e1b387.8846d8",
+        "name": "OFF",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "0",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 250,
+        "y": 340,
+        "wires": [
+            [
+                "1e0d3a02.e62ea6"
+            ]
+        ]
+    },
+    {
+        "id": "a891d132.33d7c8",
+        "type": "http in",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "url": "/mouth/off",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 360,
+        "wires": [
+            [
+                "87a8f814.36b108"
+            ]
+        ]
+    },
+    {
+        "id": "d2b0a4f4.11df",
+        "type": "http response",
+        "z": "a2e1b387.8846d8",
+        "name": "Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 610,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "181b9099.b65e47",
+        "type": "rpi-gpio out",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "pin": "21",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 1020,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "6d710aed.4dce4c",
+        "type": "rpi-gpio out",
+        "z": "a2e1b387.8846d8",
+        "name": "",
+        "pin": "22",
+        "set": true,
+        "level": "0",
+        "freq": "",
+        "out": "out",
+        "x": 1020,
+        "y": 640,
+        "wires": []
+    }
+]

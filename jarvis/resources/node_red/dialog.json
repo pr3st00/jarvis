@@ -142,7 +142,7 @@
         "type": "function",
         "z": "cad8295e.f34d68",
         "name": "Set url      ",
-        "func": "var lang = msg.language;\n\nvar baseUrl = { \n    ptbr : \"https://pt.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro&exsentences=1&titles=\",\n    en: \"https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro&exsentences=1&titles=\"\n};\n\n// base url\nvar url = baseUrl[lang];\nvar text = msg.payload.trim();\n\nvar textToSearch;\n\nnode.warn(\"Original question was: [\" + text + \"]\");\n\ntext = text.replace(/\\so$/ig,'');\n\nvar regex = /\\s+/;\nvar matches = text.split(regex);\n\nif (matches)\n{\n    var originalText = matches[matches.length-1];\n    textToSearch = originalText.replace(/[^A-Z]/ig,'');\n}\n\nnode.warn(\"Text to be searched is [\" + textToSearch + \"]\");\nmsg.url = url+textToSearch;\n\nnode.warn(\"URL is [\" + msg.url + \"]\");\n\nreturn msg;",
+        "func": "var lang = msg.language;\n\nvar baseUrl = { \n    \"pt-br\" : \"https://pt.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro&exsentences=1&titles=\",\n    \"en-us\": \"https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro&exsentences=1&titles=\"\n};\n\n// base url\nvar url = baseUrl[lang];\nvar text = msg.payload.trim();\n\nvar textToSearch;\n\nnode.warn(\"Original question was: [\" + text + \"]\");\n\ntext = text.replace(/\\so$/ig,'');\n\nvar regex = /\\s+/;\nvar matches = text.split(regex);\n\nif (matches)\n{\n    var originalText = matches[matches.length-1];\n    textToSearch = originalText.replace(/[^A-Z]/ig,'');\n}\n\nnode.warn(\"Text to be searched is [\" + textToSearch + \"]\");\nmsg.url = url+textToSearch;\n\nnode.warn(\"URL is [\" + msg.url + \"]\");\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 85.49998474121094,
@@ -185,7 +185,9 @@
     {
         "id": "44b04325.43d55c",
         "type": "tab",
-        "label": "JARVIS Dialog"
+        "label": "JARVIS Dialog",
+        "disabled": false,
+        "info": ""
     },
     {
         "id": "44f39ffb.2e9fd8",
@@ -374,7 +376,7 @@
         "type": "function",
         "z": "44b04325.43d55c",
         "name": "Set Response",
-        "func": "var language = flow.get(\"language\");\n\nvar response = { \n    ptbr : \"Nao encontrei essa informacao.\",\n    en: \"Sorry, I have found no information about it\"\n};\n\nif (msg.payload)\n{\n    node.status({fill: \"green\", shape: \"dot\", text: \"Response found!\"});\n\n    if (\n        !msg.payload.match(/may refer to:/) &&\n        !msg.payload.match(/This is a redirect from/)\n    )\n    {\n        response[language] = msg.payload;\n    }\n}\nelse\n{\n    node.status({fill: \"red\", shape: \"dot\", text: \"No Response found!\"});\n}\n\nflow.set(\"text\", response[language]);\n\nsetTimeout(() => { node.status({});}, 2000);\n\nreturn msg;",
+        "func": "var language = flow.get(\"language\");\n\nvar response = { \n    \"pt-br\": \"Nao encontrei essa informacao.\",\n    \"en-us\": \"Sorry, I have found no information about it\"\n};\n\nif (msg.payload)\n{\n    node.status({fill: \"green\", shape: \"dot\", text: \"Response found!\"});\n\n    if (\n        !msg.payload.match(/may refer to:/) &&\n        !msg.payload.match(/This is a redirect from/)\n    )\n    {\n        response[language] = msg.payload;\n    }\n}\nelse\n{\n    node.status({fill: \"red\", shape: \"dot\", text: \"No Response found!\"});\n}\n\nflow.set(\"text\", response[language]);\n\nsetTimeout(() => { node.status({});}, 2000);\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "x": 422.28892517089844,
@@ -602,7 +604,7 @@
         "type": "debug",
         "z": "44b04325.43d55c",
         "name": "Debug exception",
-        "active": true,
+        "active": false,
         "console": "false",
         "complete": "true",
         "x": 1001.5,
