@@ -6,12 +6,22 @@
 # Author: Fernando Costa de Almeida
 #
 
+. $(dirname $0)/functions/functions.sh
 . $(dirname $0)/functions/actions.sh
+
+JARVIS_CONFIG=$(dirname $0)/../config/jarvis.json
 
 DATE=$(date +"%Y-%m-%d_%H%M")
 PATH=/home/pi/jarvis/public/images/photos
-DONE_MESSAGE="Feito!"
 SLEEP_TIME=6
+
+LANG=$(getLanguage $JARVIS_CONFIG)
+
+if [[ $LANG == "en-us" ]]; then
+	DONE_MESSAGE="Done!";
+else
+	DONE_MESSAGE="Feito!";
+fi
 
 FILE_NAME=$1
 PLAY_MESSAGE=$2

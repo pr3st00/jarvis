@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable camelcase */
 /* eslint-disable valid-jsdoc */
 
@@ -63,14 +64,14 @@ function stopRecording(element) {
  * @param {*} callback
  */
 function sendTextToJarvis(text, callback) {
-    let data = { 'text': text };
+    let data = {'text': text};
 
     $.ajax({
         url: '/api/text',
         data: data,
         cache: false,
         type: 'POST',
-        success: function (apiResponse) {
+        success: function(apiResponse) {
             if (callback) {
                 callback(apiResponse);
             }
@@ -83,7 +84,7 @@ function sendTextToJarvis(text, callback) {
  * @param {*} element
  */
 function sendAudioToJarvis(element) {
-    recorder && recorder.exportWAV(function (blob) {
+    recorder && recorder.exportWAV(function(blob) {
         let data = new FormData();
         data.append('command', blob);
 
@@ -96,7 +97,7 @@ function sendAudioToJarvis(element) {
             contentType: false,
             processData: false,
             type: 'POST',
-            success: function (data) {
+            success: function(data) {
                 recording = false;
 
                 $('#recordImg').attr({
@@ -114,7 +115,7 @@ function sendAudioToJarvis(element) {
  */
 function say(text, lang) {
     let url;
-    let apiKeys = ['f716f782b498444c95b14a63fe05a917', '0c71f8bb93674f98bfc70e930d26c79b'];
+    let apiKeys = ['d093167b85da405dba4459d617d817cf', '0c71f8bb93674f98bfc70e930d26c79b'];
 
     if (!lang) {
         lang = DEFAULT_LANGUAGE;
@@ -147,18 +148,18 @@ function initializeAudio() {
         alert('No web audio support in this browser!');
     }
 
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+    navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
         startUserMedia(stream);
     });
 }
 
 /**
  *
- * @param {*} number 
+ * @param {*} number
  */
 function fillWithZero(number) {
     if (number < 10) {
-        return "0" + number;
+        return '0' + number;
     }
 
     return number;
@@ -168,17 +169,17 @@ function fillWithZero(number) {
  *
  */
 function setDateAndTime() {
-    var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    let months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    var today = new Date();
+    let today = new Date();
 
-    $("#day").text(today.getDate());
-    $("#dayofweek").text(days[today.getDay()]);
-    $("#month").text(months[today.getMonth()]);
-    $("#hour").text(fillWithZero(today.getHours()) + ":" + fillWithZero(today.getMinutes()));
-    $("#minutes").text(fillWithZero(today.getHours()) + ":" + fillWithZero(today.getMinutes()));
-    $("#seconds").text(fillWithZero(today.getSeconds()));
+    $('#day').text(today.getDate());
+    $('#dayofweek').text(days[today.getDay()]);
+    $('#month').text(months[today.getMonth()]);
+    $('#hour').text(fillWithZero(today.getHours()) + ':' + fillWithZero(today.getMinutes()));
+    $('#minutes').text(fillWithZero(today.getHours()) + ':' + fillWithZero(today.getMinutes()));
+    $('#seconds').text(fillWithZero(today.getSeconds()));
 
     setTimeout(setDateAndTime, 1000);
 }
@@ -187,17 +188,20 @@ function setDateAndTime() {
  *
  */
 function getSystemResources() {
-
-    var response;
+    let response;
 
     $.ajax({
-        type: "GET",
-        url: "/systemresources",
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
+        type: 'GET',
+        url: '/systemresources',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
         async: false,
-        success: function (data) { response = data; },
-        failure: function (errMsg) { alert(errMsg); }
+        success: function(data) {
+                response = data;
+            },
+            failure: function(errMsg) {
+                alert(errMsg);
+            },
     });
 
     return response;
@@ -207,13 +211,11 @@ function getSystemResources() {
  *
  */
 function setSystemResources() {
+    let response = getSystemResources();
 
-    var response = getSystemResources();
-
-    $("#proc").text("Processes: " + response.processes);
-    $("#cpu").text("CPU Usage: " + response.cpu + "%");
-    $("#mem").text("Memory: " + response.memory + "%");
+    $('#proc').text('Processes: ' + response.processes);
+    $('#cpu').text('CPU Usage: ' + response.cpu + '%');
+    $('#mem').text('Memory: ' + response.memory + '%');
 
     setTimeout(setSystemResources, 10000);
-
 }
