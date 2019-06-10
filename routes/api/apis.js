@@ -6,13 +6,8 @@ const multer = require('multer');
 const upload = multer();
 
 const player = require('../../jarvis/services/player');
-const ActionsProcessor = require('../../jarvis/services/actionsProcessor');
-const actionsProcessor = new ActionsProcessor();
-
-const core = require('../../jarvis/core');
-let jarvis = core.getJarvis();
-
-actionsProcessor.setJarvis(jarvis);
+const Jarvis = require('../../jarvis/jarvis');
+const jarvis = Jarvis.getInstance();
 
 const Logger = require('../../jarvis/logger');
 const logger = new Logger('API_CALLS');
@@ -28,9 +23,9 @@ router.post('/actions', function(req, res, next) {
     logger.log('Received action');
 
     if (isJarvisBusy(res, jarvis)) return;
-    setSessionId(req, core);
+    setSessionId(req, jarvis);
 
-    actionsProcessor.process(req.body,
+    jarvis.processActions(req.body,
         (err) => {
             res.json({'status': err});
         },
@@ -47,7 +42,7 @@ router.post('/command', upload.single('command'), function(req, res, next) {
     logger.log('Received command');
 
     if (isJarvisBusy(res, jarvis)) return;
-    setSessionId(req, core);
+    setSessionId(req, jarvis);
 
     jarvis.processCommandBuffer(req.file.buffer,
         () => {
@@ -69,7 +64,7 @@ router.post('/text', function(req, res, next) {
         return;
     }
 
-    setSessionId(req, core);
+    setSessionId(req, jarvis);
 
     jarvis.processCommandText(req.body.text,
         () => {
@@ -108,13 +103,17 @@ router.get('/enablesound', function(req, res, next) {
  * Retrieves the session id from the http headers, and saves it into the core.
  *
  * @param {*} req
- * @param {*} core
+ * @param {*} jarvis
  *
  */
-function setSessionId(req, core) {
+function setSessionId(req, jarvis) {
+    let sessionId;
+
     if (req && req.headers && req.headers.sessionid) {
-        core.setSessionId(req.headers.sessionid);
+        sessionId = req.headers.sessionid;
     }
+
+    jarvis.setSessionId(sessionId);
 }
 
 /**

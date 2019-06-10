@@ -1,5 +1,5 @@
 {
-    "initial_question": "What can you do?",
+    "initial_question": "O que voce pode fazer?",
     "silence": {
         "min": 5,
         "max": 10

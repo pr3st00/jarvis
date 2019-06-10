@@ -30,7 +30,7 @@ The implementation can be selected by modifying the processor config on jarvis.j
 ```
 </p>
 
-## Current Release: v0.0.21
+## Current Release: v0.0.22
 
 ## Message format
 

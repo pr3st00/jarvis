@@ -1,8 +1,6 @@
 'use strict';
 
 const record = require('node-record-lpcm16');
-const Detector = require('snowboy').Detector;
-const Models = require('snowboy').Models;
 
 let Logger = require('./logger');
 let Jarvis = require('./jarvis');
@@ -12,17 +10,11 @@ let Jarvis = require('./jarvis');
  */
 const coreConfig = require('./config/core.json');
 
-let waitingForCommand = false;
-let processingCommand = false;
-let silenceEvents = 0;
-let commandEvents = 0;
-
-let FINALBUFFER = Buffer.from('');
 let io;
 let sessionId;
 let processCommandIniTime;
 
-let jarvis = new Jarvis();
+let jarvis = Jarvis.getInstance();
 let logger = new Logger('CORE');
 
 /**
@@ -94,95 +86,13 @@ function start() {
     jarvis.start();
     setupEvents();
     jarvis.processCommandText(coreConfig.initial_question, () => { });
-    startHotWordDetector();
+    listen();
 }
 
 /**
- * Saves buffer to FINALLBUFFER
- *
- * @param {*} buffer
+ * Listen for commands
  */
-function saveCommandBuffer(buffer) {
-    /**
-     * Skips the very first chunk after the keyword. Usually it's the beep!
-     */
-    if (commandEvents === 0 && coreConfig.skip_first_chunk) {
-        return;
-    }
-
-    logger.log('Saving command buffer.');
-    FINALBUFFER = saveBuffer(buffer, FINALBUFFER);
-}
-
-/**
- * Uses snowboy for hotwork detection and calls jarvis when needed
- */
-function startHotWordDetector() {
-    const models = new Models();
-
-    models.add({
-        file: coreConfig.detector.model,
-        sensitivity: coreConfig.detector.sensitivity,
-        hotwords: coreConfig.detector.hotwords,
-    });
-
-    const detector = new Detector({
-        resource: coreConfig.detector.resource,
-        models: models,
-        audioGain: coreConfig.detector.audio_gain,
-        applyFrontend: coreConfig.detector.applyFrontend,
-    });
-
-    detector.on('silence', function() {
-        if (waitingForCommand && processingCommand) {
-            silenceEvents++;
-
-            if (stillNotReadyForCommand()) {
-                return;
-            }
-
-            processCommand();
-        }
-    });
-
-    detector.on('sound', function(buffer) {
-        if (waitingForCommand) {
-            commandEvents++;
-            processingCommand = true;
-
-            if (stillNotReadyForCommand()) {
-                saveCommandBuffer(buffer);
-            } else {
-                processCommand();
-            }
-        }
-    });
-
-    detector.on('error', function() {
-        logger.logError('error');
-    });
-
-    detector.on('hotword', function(index, hotword, buffer) {
-        silenceEvents = 0;
-
-        logger.log('Hotword [' + hotword + '] received at index ['
-            + index + ']');
-
-        if (waitingForCommand) {
-            saveCommandBuffer(buffer);
-            return;
-        }
-
-        if (jarvis.busy || processingCommand) {
-            logger.log('Hotword received but Jarvis is currently busy. Ignoring...');
-            return;
-        }
-
-        jarvis.waitForCommand();
-
-        waitingForCommand = true;
-    });
-
+function listen() {
     const mic = record.start({
         threshold: 0,
         channels: 1,
@@ -190,42 +100,6 @@ function startHotWordDetector() {
         device: coreConfig.devices.mic,
         verbose: false,
     });
-
-    mic.pipe(detector);
-
-    logger.log('STARTED');
-
-    if (coreConfig.logging.dumpFlags) {
-        dumpFlags();
-    }
-}
-
-/**
- * Saves the intermediate buffer
- *
- * @param {*} buffer
- * @param {*} finalBuffer
- * @return {*} newBuffer
- */
-function saveBuffer(buffer, finalBuffer) {
-    let newBuffer = Buffer.concat([finalBuffer, buffer]);
-    return newBuffer;
-}
-
-/**
- * Adds a wav header to the buffer
- *
- * @param {*} buffer
- * @return {*} newBuffer
- */
-function writeWavHeader(buffer) {
-    let wav = require('wav');
-    let writer = new wav.Writer();
-
-    writer.write(buffer);
-    writer.end();
-
-    return Buffer.concat([writer._header, buffer]);
 }
 
 /**
@@ -257,26 +131,6 @@ function processCommand() {
     });
 }
 
-/**
- * Verifies if the command is ready to be processed
- *
- * @return {*} boolean
- */
-function stillNotReadyForCommand() {
-    if (commandEvents >= coreConfig.command.max) {
-        return false;
-    }
-
-    if (silenceEvents <= coreConfig.silence.min) {
-        return true;
-    }
-
-    if (commandEvents < coreConfig.command.min &&
-        silenceEvents <= coreConfig.silence.max
-    ) {
-        return true;
-    }
-}
 
 /**
  * Dumps the current flags to the console

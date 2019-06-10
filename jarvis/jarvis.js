@@ -7,6 +7,7 @@ const Actions = require('./services/actions');
 const actions = new Actions();
 
 const Processor = require('./services/actionsProcessor');
+const listener = require('./listener/snowboy_listener');
 
 const config = require('./services/config').getConfig();
 
@@ -14,6 +15,8 @@ const Logger = require('./logger');
 const logger = new Logger('JARVIS');
 
 const NO_ANSWER_FOUND = 'NO_ANSWER_FOUND';
+
+let instance;
 
 /**
  * Jarvis
@@ -103,11 +106,31 @@ class Jarvis extends EventEmitter {
         if (player.isBusy()) {
             player.stop();
             setTimeout(function() {
-                player.play(config.jarvis.waiting_for_command_wav, () => {}, 44100);
+                player.play(config.jarvis.waiting_for_command_wav,
+                    () => {}, 44100);
             }, 2000);
         } else {
             player.play(config.jarvis.waiting_for_command_wav, () => {}, 44100);
         }
+    }
+
+    /**
+     * Process all the actions under the parameter action
+     *
+     * @param {*} actions
+     * @param {*} errorCallback
+     * @param {*} sucessCallBack
+     */
+    processActions(actions, errorCallback, sucessCallBack) {
+        let _jarvis = this;
+        this.processor.process(actions,
+            (err) => {
+                _jarvis.onError('Error processing actions: ' + err);
+                errorCallback(err);
+            },
+            () => {
+                sucessCallBack();
+            });
     }
 
     /**
@@ -124,6 +147,18 @@ class Jarvis extends EventEmitter {
             },
             () => {
             });
+    }
+
+    /**
+     * Listen to commands
+     *
+     * @param {*} io
+     */
+    listen(io) {
+        this.emit('listening');
+        listener.setJarvis(this);
+        listener.setIO(io);
+        listener.start();
     }
 
     /**
@@ -145,6 +180,37 @@ class Jarvis extends EventEmitter {
     getConfig(key) {
         return config.jarvis[key];
     }
+
+    /**
+     * Sets the sessionId
+     *
+     * @param {*} id
+     */
+    setSessionId(id) {
+        this.sessionId = id;
+    }
+
+    /**
+     * Retrieves the sessionId
+     *
+     * @return {*} session id
+     */
+    getSessionId() {
+        return this.sessionId;
+    }
 }
 
-exports = module.exports = Jarvis;
+/**
+ * Returns a singleton of Jarvis
+ *
+ * @return {*} Jarvis
+ */
+function getInstance() {
+    if (!instance) {
+        instance = new Jarvis();
+    }
+
+    return instance;
+}
+
+exports = module.exports = {getInstance};

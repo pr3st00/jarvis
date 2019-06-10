@@ -6,7 +6,7 @@ const router = express.Router();
 const ActionsProcessor = require('../../jarvis/services/actionsProcessor');
 const actionsProcessor = new ActionsProcessor();
 
-const core = require('../../jarvis/core');
+const core = require('../../jarvis/listener/snowboy_listener');
 let jarvis = core.getJarvis();
 
 actionsProcessor.setJarvis(jarvis);
