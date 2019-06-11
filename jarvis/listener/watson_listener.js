@@ -1,21 +1,24 @@
 'use strict';
 
 const record = require('node-record-lpcm16');
+const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 
-let Logger = require('./logger');
-let Jarvis = require('./jarvis');
+let Logger = require('../logger');
 
 /**
  * CORE configuration
  */
-const coreConfig = require('./config/core.json');
+const coreConfig = require('../config/core.json');
 
 let io;
 let sessionId;
 let processCommandIniTime;
 
-let jarvis = Jarvis.getInstance();
-let logger = new Logger('CORE');
+let jarvis;
+let processingCommand = false;
+let logger = new Logger('WLISTENER');
+
+logger.setDebug(true);
 
 /**
  * Sets an io to jarvis
@@ -27,12 +30,12 @@ function setIO(_io) {
 }
 
 /**
- * Sets the session id
+ * Set jarvis
  *
- * @param {*} id
+ * @param {*} _jarvis
  */
-function setSessionId(id) {
-    sessionId = id;
+function setJarvis(_jarvis) {
+    jarvis = _jarvis;
 }
 
 /**
@@ -100,57 +103,68 @@ function listen() {
         device: coreConfig.devices.mic,
         verbose: false,
     });
+
+    let servicesConfig = jarvis.getConfig('services');
+    let name = jarvis.getConfig('name');
+    let nameRegex = '^.*' + name + ' ?';
+    let sttConfig = servicesConfig.watson.speech_to_text;
+
+    let stt = new SpeechToTextV1({
+        username: sttConfig.username,
+        password: sttConfig.password,
+    });
+
+    const webSocketparams = {
+        content_type: 'audio/wav',
+        timestamps: false,
+        interim_results: true,
+        model: sttConfig.model,
+        inactivity_timeout: -1,
+        acoustic_customization_id: sttConfig.acoustic_customization_id,
+    };
+
+    let sttStream = stt.createRecognizeStream(webSocketparams);
+    sttStream.setEncoding('utf8');
+
+    sttStream.on('error', function(err) {
+        if (err) {
+            logger.logError(err);
+            record.stop();
+            listen();
+        }
+    });
+
+    sttStream.on('data', function(text) {
+        logger.logDebug('Got text: ' + text);
+        if (!processingCommand && !jarvis.busy) {
+            if (text.includes(name)) {
+                processingCommand = true;
+                processCommand(text.replace(new RegExp(nameRegex, 'g'), ''));
+            }
+        }
+    });
+
+    mic.pipe(sttStream);
 }
 
 /**
  * Process command
+ *
+ * @param{*} text
  */
-function processCommand() {
-    logger.log('Processing command. [ commandEvents=' + commandEvents +
-        ', silenceEvents=' + silenceEvents + ' ]');
-
-    resetFlags();
+function processCommand(text) {
+    logger.log('Processing command.');
 
     processCommandIniTime = new Date().getTime();
 
-    jarvis.processCommandBuffer(writeWavHeader(FINALBUFFER), () => {
+    jarvis.processCommandText(text.replace(/ +$/, ''), () => {
         /**
          * Total time spent for processing a command.
          */
         let totalTime = new Date().getTime() - processCommandIniTime;
         logger.log('TOTAL COMMAND PROCESSING TIME = [' + totalTime + '] ms');
-
-        /**
-         * Give it sometime for JARVIS to talk.
-         * Avoid Jarvis responding to itself :-)
-         */
-        setTimeout(function() {
-            processingCommand = false;
-            FINALBUFFER = Buffer.from('');
-        }, coreConfig.wait_for_javis_time);
+        processingCommand = false;
     });
 }
 
-
-/**
- * Dumps the current flags to the console
- */
-function dumpFlags() {
-    logger.log('STATUS [waiting_for_comand=' + waitingForCommand +
-        ', processing_command=' + processingCommand + ']');
-    logger.log('EVENTS [silence=' + silenceEvents + ', command=' +
-        commandEvents + ']');
-    setTimeout(dumpFlags, coreConfig.logging.dumpFlagsInterval);
-}
-
-/**
- * Resets all internal flags
- */
-function resetFlags() {
-    waitingForCommand = false;
-    processingCommand = false;
-    silenceEvents = 0;
-    commandEvents = 0;
-}
-
-exports = module.exports = {start, setIO, getJarvis, setSessionId};
+exports = module.exports = {start, setIO, getJarvis, setJarvis};

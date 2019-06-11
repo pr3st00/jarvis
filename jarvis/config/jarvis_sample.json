@@ -1,6 +1,7 @@
 {
     "jarvis": {
         "processor": "WATSON",
+        "name": "jarvis",
         "soundDevice": "hw:0,0",
         "waiting_for_command_wav": "./jarvis/resources/sounds/ding.wav",
         "language": "en-us",

@@ -7,7 +7,7 @@ const Actions = require('./services/actions');
 const actions = new Actions();
 
 const Processor = require('./services/actionsProcessor');
-const listener = require('./listener/snowboy_listener');
+const listener = require('./listener/watson_listener');
 
 const config = require('./services/config').getConfig();
 
