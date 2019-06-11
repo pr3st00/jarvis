@@ -1,12 +1,18 @@
+/**
+ * Contains code for setting up and connecting events
+ * from jarvis to a socket.io object.
+ */
+
 /* eslint-disable no-invalid-this */
-'use strict';
+
+ 'use strict';
 
  /**
   * Setup events and connect them to the socket.io
   *
-  * @param {*} jarvis
-  * @param {*} io
-  * @param {*} errorCallBack
+  * @param {Object} jarvis
+  * @param {Object} io
+  * @param {Object} errorCallBack
   */
 function setupEvents(jarvis, io, errorCallBack) {
     jarvis.on('error', function(err) {

@@ -1,3 +1,15 @@
+/**
+ * Listener implementation which uses snowboy hotword
+ * detection.
+ *
+ * It will work as detailed below:
+ *
+ * 1. Waits for the hotword;
+ * 2. When the hotword is detected, it will call jarvis.waitForCommand'
+ * 3. Every sound afer that is collected until stillNotReadyForCommand is false;
+ * 4. The resulting wav is then given to jarvis for processing.
+ */
+
 'use strict';
 
 const record = require('node-record-lpcm16');

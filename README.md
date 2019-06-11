@@ -3,8 +3,16 @@
 <p>
 A voice controlled home automation system, along with plugins for doing cool things. 
 
+It has two available listeners:
+
+1. SNOWBOY
 It uses the amazing snowboy product (https://snowboy.kitt.ai/)
 for waiting for a keyword, and then executes actions based on a pre-determined json format.
+
+2. WATSON STT
+It opens a websocket to watson speech to text service and continously listen for commands. When 
+it detects a phrase starting with Jarvis name (configurable on jarvis.json), it will strip off the name and
+pass the remaining string to jarvis for processing.
 
 Actions can be executed in parallel or sequentially, and can in turn return another actions. This simple framework allows complex actions to be executed with little effort.
 </p>

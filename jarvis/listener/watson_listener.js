@@ -1,3 +1,15 @@
+/**
+ * Listener implemenation for watson speech_to_text.
+ *
+ * It will work as detailed below:
+ *
+ * 1. A websocket is opened with watson STT service;
+ * 2. When the services detects a phrase which starts with jarvis name,
+ *    it will strip the name from the phrase, along with any trailing spaces;
+ * 3. The resulting text is then send for jarvis to process.
+ *
+ */
+
 'use strict';
 
 const record = require('node-record-lpcm16');
