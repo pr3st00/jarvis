@@ -2,6 +2,7 @@
 
 const record = require('node-record-lpcm16');
 const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
+const events = require('./events');
 
 let Logger = require('../logger');
 
@@ -11,13 +12,12 @@ let Logger = require('../logger');
 const coreConfig = require('../config/core.json');
 
 let io;
-let sessionId;
 let processCommandIniTime;
 
 let jarvis;
 let processingCommand = false;
-let logger = new Logger('WLISTENER');
 
+let logger = new Logger('WLISTENER');
 logger.setDebug(true);
 
 /**
@@ -48,46 +48,11 @@ function getJarvis() {
 }
 
 /**
- * Setup events and connect them to the socket.io
- */
-function setupEvents() {
-    jarvis.on('error', function(err) {
-        logger.logError(err.message);
-        io.to(sessionId).emit('error',
-            JSON.stringify({status: 'ERROR', text: err.message}));
-        resetFlags();
-    });
-
-    jarvis.on('speaking', function(event) {
-        io.to(sessionId).emit('speaking', JSON.stringify(event));
-    });
-
-    jarvis.on('waiting_for_command', function(event) {
-        io.to(sessionId).emit('waiting_for_command', JSON.stringify(
-            {status: 'WAITING', text: 'Waiting for command...'}));
-    });
-
-    jarvis.on('command_received', function(event) {
-        io.to(sessionId).emit('command_received', JSON.stringify(
-            {status: 'GOT_COMMAND', text: event}));
-    });
-
-    jarvis.on('processing_command', function(event) {
-        io.to(sessionId).emit('waiting_for_command', JSON.stringify(
-            {status: 'PROCESSING', text: 'Processing command...'}));
-    });
-
-    jarvis.on('understood_command', function(event) {
-        io.to(sessionId).emit('understood_command', JSON.stringify(event));
-    });
-}
-
-/**
  * Starts the core.
  */
 function start() {
     jarvis.start();
-    setupEvents();
+    events.setupEvents(jarvis, io);
     jarvis.processCommandText(coreConfig.initial_question, () => { });
     listen();
 }
@@ -98,8 +63,8 @@ function start() {
 function listen() {
     const mic = record.start({
         threshold: 0,
-        channels: 1,
-        sampleRate: 16000,
+        channels: 2,
+        sampleRate: 44100,
         device: coreConfig.devices.mic,
         verbose: false,
     });
