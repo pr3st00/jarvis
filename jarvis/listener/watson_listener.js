@@ -73,6 +73,8 @@ function start() {
  * Listen for commands
  */
 function listen() {
+    logger.log('Starting to listen now');
+
     const mic = record.start({
         threshold: 0,
         channels: 2,
@@ -83,7 +85,7 @@ function listen() {
 
     let servicesConfig = jarvis.getConfig('services');
     let name = jarvis.getConfig('name');
-    let nameRegex = '^.*' + name + ' ?';
+    let nameRegex = '\s*' + name + '\s*';
     let sttConfig = servicesConfig.watson.speech_to_text;
 
     let stt = new SpeechToTextV1({
@@ -116,7 +118,7 @@ function listen() {
         if (!processingCommand && !jarvis.busy) {
             if (text.includes(name)) {
                 processingCommand = true;
-                processCommand(text.replace(new RegExp(nameRegex, 'g'), ''));
+                processCommand(text.replace(new RegExp(nameRegex, 'gi'), ''));
             }
         }
     });
@@ -134,7 +136,7 @@ function processCommand(text) {
 
     processCommandIniTime = new Date().getTime();
 
-    jarvis.processCommandText(text.replace(/ +$/, ''), () => {
+    jarvis.processCommandText(text.replace(/\s+$/, ''), () => {
         /**
          * Total time spent for processing a command.
          */

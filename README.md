@@ -151,6 +151,7 @@ cd jarvis
 npm install
 npm start
 ```
+ONLY APPLICABLE IF USING THE SNOWBOY LISTENER:
 A small tweak is needed on the wav module, since it has all options hardcoded. Please edit the file writer.js under 
 node_modules/wav/lib and modify the parameters as seen below:
 

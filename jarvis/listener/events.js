@@ -7,6 +7,9 @@
 
  'use strict';
 
+ let Logger = require('../logger');
+ let logger = new Logger('EVENTS');
+
  /**
   * Setup events and connect them to the socket.io
   *
