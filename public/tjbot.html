@@ -28,6 +28,8 @@
         console.log("Socket connected with id: " + socket.id);
         sessionId = socket.id;
 
+        $('#sessionId').text('Session id: ' + sessionId);
+
         $.ajaxSetup({
           headers: { 'sessionId': sessionId }
         });
@@ -257,6 +259,8 @@
         Tell me!
       </label>
       <input type="text" id="textToJarvis" size="80" maxlength="80" />
+      <br/><br/>
+      <label id="sessionId"/>
     </div>
 
   </div>
