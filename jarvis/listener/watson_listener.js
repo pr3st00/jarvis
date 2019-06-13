@@ -85,7 +85,7 @@ function listen() {
 
     let servicesConfig = jarvis.getConfig('services');
     let name = jarvis.getConfig('name');
-    let nameRegex = '\s*' + name + '\s*';
+    let nameRegex = '\\s*' + name + '\\s*';
     let sttConfig = servicesConfig.watson.speech_to_text;
 
     let stt = new SpeechToTextV1({
@@ -104,6 +104,8 @@ function listen() {
 
     let sttStream = stt.createRecognizeStream(webSocketparams);
     sttStream.setEncoding('utf8');
+
+    logger.logDebug('Regex is : ' + nameRegex);
 
     sttStream.on('error', function(err) {
         if (err) {
