@@ -152,12 +152,10 @@ class Jarvis extends EventEmitter {
     /**
      * Listen to commands
      *
-     * @param {*} io
      */
-    listen(io) {
+    listen() {
         this.emit('listening');
         listener.setJarvis(this);
-        listener.setIO(io);
         listener.start();
     }
 

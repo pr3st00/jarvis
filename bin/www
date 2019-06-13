@@ -31,9 +31,14 @@ server.on('listening', onListening);
  * Starts jarvis core
  */
 const Jarvis = require('../jarvis/jarvis');
+const events = require('../jarvis/listener/events');
+
 let jarvis = Jarvis.getInstance();
 jarvis.start();
-jarvis.listen(io);
+jarvis.listen();
+
+events.setIo(io);
+events.setupEvents(jarvis);
 
 /**
  * Normalize a port into a number, string, or false.

@@ -10,15 +10,34 @@
  let Logger = require('../logger');
  let logger = new Logger('EVENTS');
 
+ let io;
+
+ /**
+  * Returns the internal socket io object
+  *
+  * @return {Object} _io
+  */
+ function getIo() {
+    return io;
+ }
+
+ /**
+  * Sets the internal socket io object
+  *
+  * @param {Object} _io
+  */
+ function setIo(_io) {
+     io = _io;
+ }
+
  /**
   * Setup events and connect them to the socket.io
   *
   * @param {Object} jarvis
-  * @param {Object} io
   * @param {Object} errorCallBack
   */
-function setupEvents(jarvis, io, errorCallBack) {
-    jarvis.on('error', function(err) {
+function setupEvents(jarvis, errorCallBack) {
+     jarvis.on('error', function(err) {
         logger.logError(err.message);
         io.to(this.getSessionId()).emit('error',
             JSON.stringify({status: 'ERROR', text: err.message}));
@@ -52,4 +71,4 @@ function setupEvents(jarvis, io, errorCallBack) {
     });
 }
 
-exports = module.exports = {setupEvents};
+exports = module.exports = {setupEvents, getIo, setIo};

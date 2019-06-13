@@ -32,20 +32,10 @@ let silenceEvents = 0;
 let commandEvents = 0;
 
 let FINALBUFFER = Buffer.from('');
-let io;
 let processCommandIniTime;
 
 let jarvis;
 let logger = new Logger('SLISTENER');
-
-/**
- * Sets an io to jarvis
- *
- * @param {*} _io
- */
-function setIO(_io) {
-    io = _io;
-}
 
 /**
  * Set jarvis
@@ -70,8 +60,8 @@ function getJarvis() {
  */
 function start() {
     jarvis.start();
-    events.setupEvents(jarvis, io, () => {
-        resetFlags();
+    events.setupEvents(jarvis, () => {
+      resetFlags();
     });
     jarvis.processCommandText(coreConfig.initial_question, () => { });
     startHotWordDetector();
@@ -279,4 +269,4 @@ function resetFlags() {
     commandEvents = 0;
 }
 
-exports = module.exports = {start, setIO, getJarvis, setJarvis};
+exports = module.exports = {start, getJarvis, setJarvis};

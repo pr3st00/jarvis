@@ -14,7 +14,6 @@
 
 const record = require('node-record-lpcm16');
 const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
-const events = require('./events');
 
 let Logger = require('../logger');
 
@@ -23,7 +22,6 @@ let Logger = require('../logger');
  */
 const coreConfig = require('../config/core.json');
 
-let io;
 let processCommandIniTime;
 
 let jarvis;
@@ -31,15 +29,6 @@ let processingCommand = false;
 
 let logger = new Logger('WLISTENER');
 logger.setDebug(true);
-
-/**
- * Sets an io to jarvis
- *
- * @param {*} _io
- */
-function setIO(_io) {
-    io = _io;
-}
 
 /**
  * Set jarvis
@@ -64,7 +53,6 @@ function getJarvis() {
  */
 function start() {
     jarvis.start();
-    events.setupEvents(jarvis, io);
     jarvis.processCommandText(coreConfig.initial_question, () => { });
     listen();
 }
@@ -105,7 +93,7 @@ function listen() {
     let sttStream = stt.createRecognizeStream(webSocketparams);
     sttStream.setEncoding('utf8');
 
-    logger.logDebug('Regex is : ' + nameRegex);
+    logger.logDebug(`Regex is ${nameRegex}`);
 
     sttStream.on('error', function(err) {
         if (err) {
@@ -116,7 +104,7 @@ function listen() {
     });
 
     sttStream.on('data', function(text) {
-        logger.logDebug('Got text: ' + text);
+        logger.logDebug(`Got text: ${text}`);
         if (!processingCommand && !jarvis.busy) {
             if (text.includes(name)) {
                 processingCommand = true;
@@ -143,9 +131,9 @@ function processCommand(text) {
          * Total time spent for processing a command.
          */
         let totalTime = new Date().getTime() - processCommandIniTime;
-        logger.log('TOTAL COMMAND PROCESSING TIME = [' + totalTime + '] ms');
+        logger.log(`TOTAL COMMAND PROCESSING TIME = [${totalTime}] ms`);
         processingCommand = false;
     });
 }
 
-exports = module.exports = {start, setIO, getJarvis, setJarvis};
+exports = module.exports = {start, getJarvis, setJarvis};
