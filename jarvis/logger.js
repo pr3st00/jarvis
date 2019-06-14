@@ -9,7 +9,7 @@ class Logger {
     /**
      * Constructor
      *
-     * @param {*} module
+     * @param {String} module
      */
     constructor(module) {
         this._module = module;
@@ -19,7 +19,7 @@ class Logger {
     /**
      * Turns debug on and off
      *
-     * @param {*} enabled
+     * @param {Boolean} enabled
      */
     setDebug(enabled) {
         this.debug = enabled;
@@ -28,7 +28,7 @@ class Logger {
     /**
      * Logs at regular times
      *
-     * @param {*} mesg
+     * @param {String} mesg
      */
     logRestricted(mesg) {
         if (new Date().getSeconds() == 0) {
@@ -39,12 +39,10 @@ class Logger {
     /**
      * Logs a message
      *
-     * @param {*} mesg
+     * @param {String} mesg
      */
     log(mesg) {
-        console.log('[' + this.getDate() + ']' + '['
-            + this._module + ']' +
-            TAB.repeat(7/this._module.length + 1) + mesg);
+        console.log(this.format(mesg));
     }
 
     /**
@@ -53,24 +51,35 @@ class Logger {
      * @param {*} mesg
      */
     logError(mesg) {
-        this.log('[ERROR] ' + mesg);
+        console.error(this.format(`[ERROR] ${mesg}`));
     }
 
     /**
      * Logs a debug message
      *
-     * @param {*} mesg
+     * @param {String} mesg
      */
     logDebug(mesg) {
         if (this.debug) {
-            this.log('**DEBUG** ' + mesg);
+            console.warn(this.format(`**DEBUG** ${mesg}`));
         }
+    }
+
+    /**
+     * Formats mesg for logging
+     *
+     * @param {String} mesg
+     * @return {String} formatted message
+     */
+    format(mesg) {
+        // eslint-disable-next-line max-len
+        return `[${this.getDate()}][${this._module}] ${TAB.repeat(7/this._module.length + 1) + mesg}`;
     }
 
     /**
      * Gets the current date
      *
-     * @return {*} string
+     * @return {String} string
      */
     getDate() {
         let d = new Date();

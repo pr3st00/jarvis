@@ -35,14 +35,14 @@ class Jarvis extends EventEmitter {
     /**
      * Process a command buffer.
      *
-     * @param {*} buffer
-     * @param {*} callback
+     * @param {Object} buffer
+     * @param {Object} callback
      */
     processCommandBuffer(buffer, callback) {
         this.busy = true;
         this.emit('processing_command');
 
-        logger.log('Processing buffer of size: [' + buffer.byteLength + ']');
+        logger.log(`Processing buffer of size: [${buffer.byteLength}]`);
 
         let _jarvis = this;
 
@@ -68,8 +68,8 @@ class Jarvis extends EventEmitter {
     /**
      * Process a command included on text.
      *
-     * @param {*} text
-     * @param {*} callback
+     * @param {String} text
+     * @param {Object} callback
      */
     processCommandText(text, callback) {
         this.emit('command_received', text);
@@ -83,7 +83,7 @@ class Jarvis extends EventEmitter {
             },
             (err) => {
                 callback();
-                _jarvis.onError('Error processing text command: ' + err);
+                _jarvis.onError(`Error processing text command: ${err}`);
             });
     }
 
@@ -93,8 +93,7 @@ class Jarvis extends EventEmitter {
      */
     start() {
         this.emit('running');
-        logger.log('Using implementation: [' +
-            config.jarvis.processor + ']');
+        logger.log(`Using implementation: [${config.jarvis.processor}]`);
     }
 
     /**
@@ -117,15 +116,15 @@ class Jarvis extends EventEmitter {
     /**
      * Process all the actions under the parameter action
      *
-     * @param {*} actions
-     * @param {*} errorCallback
-     * @param {*} sucessCallBack
+     * @param {Object} actions
+     * @param {Object} errorCallback
+     * @param {Object} sucessCallBack
      */
     processActions(actions, errorCallback, sucessCallBack) {
         let _jarvis = this;
         this.processor.process(actions,
             (err) => {
-                _jarvis.onError('Error processing actions: ' + err);
+                _jarvis.onError(`Error processing actions: ${err}`);
                 errorCallback(err);
             },
             () => {
@@ -136,14 +135,14 @@ class Jarvis extends EventEmitter {
     /**
      * Speaks the message
      *
-     * @param {*} message
+     * @param {String} message
      */
     speak(message) {
         this.emit('speaking', {status: 'SPEAKING', text: message});
         let _jarvis = this;
         this.processor.process(actions.buildPlayAction(message),
             (err) => {
-                _jarvis.onError('Error speaking: ' + err);
+                _jarvis.onError(`Error speaking: ${err}`);
             },
             () => {
             });
@@ -162,7 +161,7 @@ class Jarvis extends EventEmitter {
     /**
      * Error handler
      *
-     * @param {*} message
+     * @param {String} message
      */
     onError(message) {
         this.busy = false;
@@ -172,8 +171,8 @@ class Jarvis extends EventEmitter {
     /**
      * Returns the current value of this config
      *
-     * @param {*} key
-     * @return {*} config value
+     * @param {String} key
+     * @return {String} config value
      */
     getConfig(key) {
         return config.jarvis[key];
@@ -182,7 +181,7 @@ class Jarvis extends EventEmitter {
     /**
      * Sets the sessionId
      *
-     * @param {*} id
+     * @param {String} id
      */
     setSessionId(id) {
         this.sessionId = id;
@@ -191,7 +190,7 @@ class Jarvis extends EventEmitter {
     /**
      * Retrieves the sessionId
      *
-     * @return {*} session id
+     * @return {String} session id
      */
     getSessionId() {
         return this.sessionId;
@@ -201,7 +200,7 @@ class Jarvis extends EventEmitter {
 /**
  * Returns a singleton of Jarvis
  *
- * @return {*} Jarvis
+ * @return {Jarvis} Jarvis
  */
 function getInstance() {
     if (!instance) {
