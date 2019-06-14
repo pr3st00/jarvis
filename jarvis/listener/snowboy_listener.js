@@ -148,7 +148,7 @@ function startHotWordDetector() {
             return;
         }
 
-        jarvis.waitForCommand();
+        jarvis.waitForCommand(() => {});
 
         waitingForCommand = true;
     });

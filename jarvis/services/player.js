@@ -281,16 +281,16 @@ function playUsingSpeaker(file, callback, sampleRate) {
 
     speaker.on('error', function(err) {
         logger.logError('Speaker error : ' + err);
-        callback(err);
         busy = false;
+        callback(err);
     });
 
     speaker.on('close', () => {
         logger.logDebug('Speaker closing');
 
         setTimeout(() => {
-            callback();
             busy = false;
+            callback();
         }, WAIT_TIME);
     });
 
@@ -319,8 +319,8 @@ function playUsingShell(file, callback, sampleRate) {
             busy = false;
         } else {
             logger.logDebug('Shell speaker closing');
-            callback();
             busy = false;
+            callback();
         }
     });
 }

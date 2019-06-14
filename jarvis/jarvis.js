@@ -99,17 +99,18 @@ class Jarvis extends EventEmitter {
     /**
      * Plays the bip wav sound and starts waiting for a command.
      *
+     * @param {Function} callback
      */
-    waitForCommand() {
+    waitForCommand(callback) {
         this.emit('waiting_for_command');
         if (player.isBusy()) {
             player.stop();
             setTimeout(function() {
                 player.play(config.jarvis.waiting_for_command_wav,
-                    () => {}, 44100);
+                    callback, 44100);
             }, 2000);
         } else {
-            player.play(config.jarvis.waiting_for_command_wav, () => {}, 44100);
+            player.play(config.jarvis.waiting_for_command_wav, callback, 44100);
         }
     }
 

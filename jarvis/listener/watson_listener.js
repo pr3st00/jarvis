@@ -17,6 +17,8 @@ const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
 
 let Logger = require('../logger');
 
+const RECOVER_TIME = 3000;
+
 /**
  * CORE configuration
  */
@@ -99,7 +101,9 @@ function listen() {
         if (err) {
             logger.logError(err);
             record.stop();
-            listen();
+            setTimeout(function() {
+                listen();
+            }, RECOVER_TIME);
         }
     });
 
@@ -108,7 +112,11 @@ function listen() {
         if (!processingCommand && !jarvis.busy) {
             if (text.includes(name)) {
                 processingCommand = true;
-                processCommand(text.replace(new RegExp(nameRegex, 'gi'), ''));
+
+                jarvis.waitForCommand(() => {
+                    processCommand(
+                        text.replace(new RegExp(nameRegex, 'gi'), ''));
+                });
             }
         }
     });
