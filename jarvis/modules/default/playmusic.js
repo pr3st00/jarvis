@@ -20,7 +20,7 @@ class Musicmodule extends JarvisModule {
     /**
      * Constructor
      *
-     * @param {*} name
+     * @param {String} name
      */
     constructor(name) {
         super(name);
@@ -29,7 +29,7 @@ class Musicmodule extends JarvisModule {
     /**
      * Process a request to play something
      *
-     * @param {*} parameters
+     * @param {Object} parameters
      */
     process(parameters) {
         let query = parameters[1];
@@ -51,8 +51,8 @@ class Musicmodule extends JarvisModule {
     /**
      * Plays a random file inside mp3List
      *
-     * @param {*} mp3List
-     * @return {*} action
+     * @param {Object} mp3List
+     * @return {Object} action
      */
     playList(mp3List) {
         let module = this;
@@ -70,9 +70,9 @@ class Musicmodule extends JarvisModule {
     /**
      * Finds music on local filesystem matching query
      *
-     * @param {*} query
-     * @param {*} musicConfig
-     * @param {*} callback
+     * @param {Object} query
+     * @param {Object} musicConfig
+     * @param {Function} callback
      */
     findFile(query, musicConfig, callback) {
         let fileList = [];
@@ -96,8 +96,8 @@ class Musicmodule extends JarvisModule {
     /**
      * Finds music on youtube matching query
      *
-     * @param {*} query
-     * @param {*} callback
+     * @param {String} query
+     * @param {Function} callback
      */
     findYouTube(query, callback) {
         let url = GOOGLE_YOUTUBE_API + query + '&key=' +
@@ -105,6 +105,8 @@ class Musicmodule extends JarvisModule {
             + this.config.max_results;
 
         let module = this;
+
+        this.logger.logDebug(`URL is [${url}]`);
 
         request.get({
             url: url,
@@ -125,8 +127,8 @@ class Musicmodule extends JarvisModule {
 /**
  * Builds a response
  *
- * @param {*} response
- * @return {*} response
+ * @param {Object} response
+ * @return {Object} response
  */
 function buildResponse(response) {
     let urlList = [];
@@ -145,8 +147,8 @@ function buildResponse(response) {
 /**
  * Builds the url to download the mp3 from
  *
- * @param {*} id
- * @return {*} string
+ * @param {String} id
+ * @return {String} string
  */
 function buildUrl(id) {
     return MP3_FROMYOUTUBE_URL + YOUTUBE_BASE_VIDEO_URL + id;
@@ -155,8 +157,8 @@ function buildUrl(id) {
 /**
  * Returns an instance of this class
  *
- * @param{*} moduleName
- * @return {*} instance
+ * @param {String} moduleName
+ * @return {MusicModule} instance
  */
 function getInstance(moduleName) {
     if (!instance) {
