@@ -33,11 +33,12 @@ server.on('listening', onListening);
 const Jarvis = require('../jarvis/jarvis');
 const events = require('../jarvis/listener/events');
 
+events.setIo(io);
+
 let jarvis = Jarvis.getInstance();
 jarvis.start();
 jarvis.listen();
 
-events.setIo(io);
 events.setupEvents(jarvis);
 
 /**

@@ -37,6 +37,9 @@
   * @param {Object} errorCallBack
   */
 function setupEvents(jarvis, errorCallBack) {
+
+     logger.log(`Setting events for Jarvis. Socket IO is ${io}`);
+
      jarvis.on('error', function(err) {
         logger.logError(err.message);
         io.to(this.getSessionId()).emit('error',
