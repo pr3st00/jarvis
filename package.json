@@ -30,7 +30,7 @@
     "speaker": "^0.4.1",
     "stream-converter": "0.0.1",
     "streamifier": "^0.1.1",
-    "systeminformation": "^3.42.2",
+    "systeminformation": "^4.27.11",
     "watson-developer-cloud": "^3.5.3",
     "wav": "^1.0.2"
   },
