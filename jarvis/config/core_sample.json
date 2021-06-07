@@ -1,0 +1,34 @@
+{
+    "initial_question": "O que voce pode fazer?",
+    "silence": {
+        "min": 5,
+        "max": 10
+    },
+    "command": {
+        "min": 5,
+        "max": 20
+    },
+    "logging": {
+        "dumpFlags": true,
+        "dumpFlagsInterval": 45000
+    },
+    "devices": {
+        "mic": "hw:1,0"
+    },
+    "skip_first_chunk": false,
+    "wait_for_javis_time": 5000,
+    "detector": {
+        "sensitivity": [
+            0.60,
+            0.60
+        ],
+        "audio_gain": 8.0,
+        "resource": "jarvis/resources/snowboy/common.res",
+        "hotwords": [
+            "Jarvis",
+            "Jarvis"
+        ],
+        "applyFrontend": true,
+        "model": "jarvis/resources/snowboy/models/jarvis.umdl"
+    }
+}

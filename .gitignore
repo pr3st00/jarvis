@@ -1,5 +1,7 @@
 node_modules
 .vscode
 jarvis.json
+core.json
 public/images/photos/*
 jarvis/config/backup
+jarvis/config/core.json

@@ -38,7 +38,7 @@ The implementation can be selected by modifying the processor config on jarvis.j
 ```
 </p>
 
-## Current Release: v0.0.22
+## Current Release: v0.0.23
 
 ## Message format
 
@@ -146,6 +146,8 @@ Quick installation for the Raspberry Pi 2+
 ```
 git clone https://github.com/pr3st00/jarvis.git
 rename the sample config jarvis/config/jarvis_sample.json to jarvis/config/jarvis.json
+edit the file and provide your details
+rename the sample config jarvis/config/core_sample.json to jarvis/config/core.json
 edit the file and provide your details
 cd jarvis
 npm install

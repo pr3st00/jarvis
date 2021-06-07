@@ -154,6 +154,12 @@ class Jarvis extends EventEmitter {
      *
      */
     listen() {
+        if (config.jarvis.api_only_mode)
+        {
+            logger.log("Api only mode enabled, no listener will be started.");
+            return;
+        }
+
         this.emit('listening');
         listener.setJarvis(this);
         listener.start();

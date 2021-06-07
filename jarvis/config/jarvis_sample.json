@@ -5,6 +5,7 @@
         "soundDevice": "hw:0,0",
         "waiting_for_command_wav": "./jarvis/resources/sounds/ding.wav",
         "language": "en-us",
+        "api_only_mode" : false,
         "dialogs": {
             "speak_when_not_recognized": true,
             "not_recognized_message": "Sorry, I didnt get it.",
