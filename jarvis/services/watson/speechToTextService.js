@@ -2,7 +2,8 @@
 
 const config = require('../config').getConfig();
 const streamifier = require('streamifier');
-const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
+const SpeechToTextV1 = require('ibm-watson/speech-to-text/v1');
+const { IamAuthenticator } = require('ibm-watson/auth');
 const Lame = require('node-lame').Lame;
 
 const serviceConfig = config.jarvis.services.watson.speech_to_text;
@@ -13,8 +14,8 @@ const logger = new Logger('SPEECH_TO_TEXT');
 const NO_ANSWER_FOUND = 'NO_ANSWER_FOUND';
 
 const speechToText = new SpeechToTextV1({
-    username: serviceConfig.username,
-    password: serviceConfig.password,
+    authenticator: new IamAuthenticator({ apikey: serviceConfig.apiKey }),
+    serviceUrl: serviceConfig.url
 });
 
 const webSocketparams = {
@@ -24,7 +25,7 @@ const webSocketparams = {
     acoustic_customization_id: serviceConfig.acoustic_customization_id,
 };
 
-let recognizeStream = speechToText.createRecognizeStream(webSocketparams);
+let recognizeStream = speechToText.recognizeUsingWebSocket(webSocketparams);
 recognizeStream.setEncoding('utf8');
 
 /**
@@ -86,7 +87,7 @@ function processWithRest(buffer, callback, errorCallBack) {
 function doTranslation(audioBuffer, contentType, callback, errorCallBack) {
     let params = {
         'audio': streamifier.createReadStream(audioBuffer),
-        'content_type': contentType,
+        'contentType': contentType,
         'timestamps': false,
         'interim_results': false,
         'model': serviceConfig.model,
@@ -99,21 +100,24 @@ function doTranslation(audioBuffer, contentType, callback, errorCallBack) {
 
     let ini = new Date().getTime();
 
-    speechToText.recognize(params, function(error, transcript) {
+    speechToText.recognize(params)
+    .then(transcript => {
         let timeTaken = new Date().getTime() - ini;
         logger.log('Took: (' + timeTaken + ') ms.');
 
-        if (error) {
-            errorCallBack(error);
+        let response = transcript.result;
+
+        logger.log(JSON.stringify(response));
+
+        if (response.results[0] &&
+            response.results[0].alternatives[0]) {
+            callback(response.results[0].alternatives[0].transcript);
         } else {
-            logger.log(JSON.stringify(transcript));
-            if (transcript.results[0] &&
-                transcript.results[0].alternatives[0]) {
-                callback(transcript.results[0].alternatives[0].transcript);
-            } else {
-                errorCallBack(NO_ANSWER_FOUND);
-            }
+            errorCallBack(NO_ANSWER_FOUND);
         }
+    })
+    .catch(error => {
+        errorCallBack(error);
     });
 }
 

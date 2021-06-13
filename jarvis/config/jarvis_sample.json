@@ -137,6 +137,8 @@
                 "speech_to_text": {
                     "username": "<username>",
                     "password": "<password>",
+                    "apiKey": "<apiKey>",
+                    "url": "<url>",
                     "model": "pt-BR_BroadbandModel",
                     "acoustic_customization_id": "<acoustic_custom_id>",
                     "use_websockets": false,

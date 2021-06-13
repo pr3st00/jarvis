@@ -13,7 +13,8 @@
 'use strict';
 
 const record = require('node-record-lpcm16');
-const SpeechToTextV1 = require('watson-developer-cloud/speech-to-text/v1');
+const SpeechToTextV1 = require('ibm-watson/speech-to-text/v1');
+const { IamAuthenticator } = require('ibm-watson/auth');
 
 let Logger = require('../logger');
 
@@ -78,11 +79,11 @@ function listen() {
     let nameRegex = '\\s*' + name + '\\s*';
     let sttConfig = servicesConfig.watson.speech_to_text;
 
-    let stt = new SpeechToTextV1({
-        username: sttConfig.username,
-        password: sttConfig.password,
+    const speechToText = new SpeechToTextV1({
+        authenticator: new IamAuthenticator({ apikey: sttConfig.apiKey }),
+        serviceUrl: sttConfig.url
     });
-
+      
     const webSocketparams = {
         content_type: 'audio/wav',
         timestamps: false,
@@ -92,11 +93,11 @@ function listen() {
         acoustic_customization_id: sttConfig.acoustic_customization_id,
     };
 
-    let sttStream = stt.createRecognizeStream(webSocketparams);
+    let sttStream = speechToText.recognizeUsingWebSocket(webSocketparams);
     sttStream.setEncoding('utf8');
 
     logger.logDebug(`Regex is ${nameRegex}`);
-
+    
     sttStream.on('error', function(err) {
         if (err) {
             logger.logError(err);
