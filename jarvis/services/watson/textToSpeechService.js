@@ -5,7 +5,8 @@ const exceptions = require('../exceptions');
 const fs = require('fs');
 const player = require('../player');
 
-const TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
+const TextToSpeechV1 = require('ibm-watson/text-to-speech/v1');
+const { IamAuthenticator } = require('ibm-watson/auth');
 
 const AUDIO_FILE = '/tmp/out.wav';
 
@@ -22,6 +23,11 @@ const language = config.jarvis.language;
 
 let animationModule = moduleFactory.getModule('speakanimations');
 
+const textToSpeech = new TextToSpeechV1({
+    authenticator: new IamAuthenticator({ apikey: serviceConfig.apikey }),
+    serviceUrl: serviceConfig.url
+});
+  
 /**
  * Process the request
  *
@@ -47,11 +53,6 @@ function process(singleAction, jarvis) {
         jarvis.busy = false;
         return;
     }
-
-    let textToSpeech = new TextToSpeechV1({
-        username: serviceConfig.username,
-        password: serviceConfig.password,
-    });
 
     let params = {
         text: text,

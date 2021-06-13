@@ -131,6 +131,8 @@
                 "text_to_speech": {
                     "username": "<username>",
                     "password": "<pass>",
+                    "apiKey": "<apiKey>",
+                    "url": "<url>",
                     "voice": "pt-BR_IsabelaVoice",
                     "useCache": true
                 },
