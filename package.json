@@ -22,7 +22,7 @@
     "opus": "0.0.0",
     "play-sound": "^1.1.2",
     "player": "^0.6.1",
-    "pug": "2.0.0-beta11",
+    "pug": "3.0.1",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
     "serve-favicon": "~2.4.5",
