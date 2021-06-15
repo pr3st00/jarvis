@@ -11,6 +11,9 @@ RUN npm install
 COPY . .
 COPY .asoundrc /root
 
+# Jarvis cache
+RUN mkdir /tmp/jarviscache && chmod 777 /tmp/jarviscache
+
 ENV PORT=8080
 EXPOSE 8080
 
