@@ -22,11 +22,6 @@ const serviceConfig = config.jarvis.services.watson.text_to_speech;
 const language = config.jarvis.language;
 
 let animationModule = moduleFactory.getModule('speakanimations');
-
-const textToSpeech = new TextToSpeechV1({
-    authenticator: new IamAuthenticator({ apikey: serviceConfig.apikey }),
-    serviceUrl: serviceConfig.url
-});
   
 /**
  * Process the request
@@ -78,9 +73,19 @@ function process(singleAction, jarvis) {
         }
     }
 
+    const textToSpeech = new TextToSpeechV1({
+        authenticator: new IamAuthenticator({ apikey: serviceConfig.apiKey }),
+        serviceUrl: serviceConfig.url
+    });
+
     textToSpeech.synthesize(params)
-        .pipe(fs.createWriteStream(AUDIO_FILE))
-        .on('close', function() {
+        .then(response => {
+            const audio = response.result;
+            return textToSpeech.repairWavHeaderStream(audio);
+        })
+        .then(repairedFile => {
+            fs.writeFileSync(AUDIO_FILE, repairedFile);
+
             let timeTaken = new Date().getTime() - ini;
             logger.log('Took: (' + timeTaken + ') ms.');
 
@@ -90,7 +95,10 @@ function process(singleAction, jarvis) {
             if (serviceConfig.useCache) {
                 cache.putFileCacheValue(cacheKey, AUDIO_FILE);
             }
-        });
+        })
+        .catch(err => {
+            logger.logError(err);
+    });
 }
 
 /**
