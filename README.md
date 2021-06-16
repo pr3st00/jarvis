@@ -81,6 +81,16 @@ Sample message for the music module:
 | MODULE        | Calls a module          | First parameter is the module name. Any remaining ones will be passed as parameters to the same     |
 | STOP          | Stops processing        | Stops the processing of all actions right away                                                      |
 
+## Api only mode
+In case you want to skip the listeners and only use the apis (or the web interface), you can set the following
+parameter in jarvis.json:
+
+```json
+        "api_only_mode" : false,
+```
+
+which will make Jarvis to not start any listener (it won't listen for commands locally)
+
 ## Modules
 Jarvis uses a module system, where you can extend its capabilities by implementing new individual classes.
 
@@ -142,6 +152,21 @@ where code can be one of the following: "success", "an error message" or "busy"
 | /api/status   |  GET     | Process a status request |  Used for automation, it will reply with the current jarvis status (busy or available ) |
 
 ## Installation
+
+There are two methods of running jarvis: standalone and as a docker container:
+
+1. Docker container (currently only supported in api_only mode)
+
+  1.1 Build the docker image by running the following command in the jarvis root directory:
+    docker build -t jarvis .
+  
+  1.2 Run the generated container:
+    sh docker_run.sh
+  
+  After that you can stop and start jarvis by using docker stop jarvis and docker start jarvis.
+
+2. Standalone
+
 Quick installation for the Raspberry Pi 2+
 ```
 git clone https://github.com/pr3st00/jarvis.git
